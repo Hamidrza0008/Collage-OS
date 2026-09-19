@@ -1,9 +1,10 @@
-import Image from "next/image";
+import Dashboard from "@/components/dashboard/Dashboard";
+
+export const metadata = {
+  title: "Dashboard - College OS",
+  description: "Student Academic and Campus Dashboard",
+};
 
 export default function Home() {
-  return (
-    <>
-      <h1>Collage OS</h1>
-    </>
-  );
+  return <Dashboard />;
 }
