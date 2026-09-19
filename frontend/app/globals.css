@@ -1,1 +1,99 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Light Theme Base Tokens */
+  --bg-page: #F7FBF9;
+  --bg-secondary: #F1F8F5;
+  --bg-sidebar: #FFFFFF;
+  --bg-navbar: rgba(247, 251, 249, 0.88);
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-elevated: #F7FBF9;
+  --bg-input: #FFFFFF;
+  --bg-active: #DDF3EB;
+  --bg-hover: #F1F8F5;
+  
+  --text-primary: #0B3024;
+  --text-secondary: #36594C;
+  --text-muted: #658278;
+  
+  --color-primary: #159B72;
+  --color-primary-dark: #087A5B;
+  --color-mint: #DDF4EB;
+  --color-mint-light: #ECF9F4;
+  --color-accent: #159B72;
+  
+  --border: #D8E8E2;
+  --border-subtle: #E8F1ED;
+  --border-active: #159B72;
+  
+  --badge-bg: rgba(21, 155, 114, 0.12);
+  --badge-text: #159B72;
+
+  --shadow-subtle: 0 1px 3px rgba(11, 48, 36, 0.04), 0 1px 2px rgba(11, 48, 36, 0.02);
+  --shadow-card: 0 2px 6px rgba(11, 48, 36, 0.04), 0 1px 3px rgba(11, 48, 36, 0.02);
+}
+
+.dark {
+  /* Dark Theme Base Tokens (Forest / Emerald Black) */
+  --bg-page: #031A16;
+  --bg-secondary: #06241F;
+  --bg-sidebar: #021512;
+  --bg-navbar: rgba(6, 31, 27, 0.88);
+  --bg-surface: #06241F;
+  --bg-card: #06241F;
+  --bg-card-elevated: #082A24;
+  --bg-input: #0A2A24;
+  --bg-active: #075A43;
+  --bg-hover: #082A24;
+  
+  --text-primary: #F1FAF6;
+  --text-secondary: #B5CCC5;
+  --text-muted: #789991;
+  
+  --color-primary: #18B887;
+  --color-primary-dark: #0F8F6B;
+  --color-mint: #123F35;
+  --color-mint-light: #0C3029;
+  --color-accent: #20D39B;
+  
+  --border: #16463D;
+  --border-subtle: #10372F;
+  --border-active: #0F8F6B;
+  
+  --badge-bg: #123F35;
+  --badge-text: #20D39B;
+
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
