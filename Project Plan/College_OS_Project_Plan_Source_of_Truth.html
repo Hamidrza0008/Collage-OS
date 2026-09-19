@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>College OS — Project Plan & Source of Truth</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 16mm 20mm 16mm;
+    @top-left {
+      content: "College OS — Project Planning & Source of Truth";
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 8pt;
+      color: #64748b;
+      font-weight: 500;
+    }
+    @top-right {
+      content: "🔒 LOCKED — SOURCE OF TRUTH (v1.0)";
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 7.5pt;
+      color: #047857;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    @bottom-left {
+      content: "Final-Year Major Project | Department of CSE | CSMU";
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 8pt;
+      color: #94a3b8;
+    }
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 8pt;
+      color: #64748b;
+      font-weight: 600;
+    }
+  }
+
+  @page :first {
+    margin: 0;
+    @top-left { content: none; }
+    @top-right { content: none; }
+    @bottom-left { content: none; }
+    @bottom-right { content: none; }
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.5;
+    font-size: 9pt;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+  }
+
+  /* Cover Page */
+  .cover-container {
+    width: 210mm;
+    min-height: 297mm;
+    height: 297mm;
+    background: linear-gradient(145deg, #090e17 0%, #0f172a 40%, #1e293b 100%);
+    color: #ffffff;
+    padding: 24mm 20mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover-accent-circle {
+    position: absolute;
+    width: 550px;
+    height: 550px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(37,99,235,0) 70%);
+    top: -160px;
+    right: -160px;
+    pointer-events: none;
+  }
+
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #60a5fa;
+    width: fit-content;
+  }
+
+  .cover-title-group {
+    margin-top: 25px;
+  }
+
+  .cover-main-title {
+    font-size: 38pt;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin: 0;
+    color: #ffffff;
+  }
+
+  .cover-subtitle {
+    font-size: 15pt;
+    font-weight: 500;
+    color: #93c5fd;
+    margin: 12px 0 0 0;
+    letter-spacing: 0.5px;
+  }
+
+  .cover-doc-type {
+    margin-top: 24px;
+    font-size: 11.5pt;
+    font-weight: 600;
+    color: #cbd5e1;
+    border-left: 3px solid #3b82f6;
+    padding-left: 14px;
+  }
+
+  .cover-metadata-card {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 18px 22px;
+    backdrop-filter: blur(10px);
+    margin-top: 18px;
+  }
+
+  .metadata-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+  }
+
+  .metadata-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .metadata-label {
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .metadata-value {
+    font-size: 9.5pt;
+    color: #f1f5f9;
+    font-weight: 600;
+  }
+
+  .cover-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 14px;
+    font-size: 8pt;
+    color: #94a3b8;
+  }
+
+  .cover-status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 8pt;
+  }
+
+  /* Document Body Typography */
+  .doc-wrapper {
+    padding: 0 4px;
+  }
+
+  h1 {
+    font-size: 15pt;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 18pt 0 8pt 0;
+    line-height: 1.25;
+    page-break-after: avoid;
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 4px;
+  }
+
+  h1.step-title {
+    margin-top: 0;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-left: 5px solid #2563eb;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 0 6px 6px 0;
+  }
+
+  h2 {
+    font-size: 11.5pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 12pt 0 4pt 0;
+    line-height: 1.3;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 9.8pt;
+    font-weight: 700;
+    color: #334155;
+    margin: 10pt 0 3pt 0;
+    line-height: 1.35;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #475569;
+    margin: 8pt 0 2pt 0;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin: 4pt 0;
+    color: #334155;
+  }
+
+  ul, ol {
+    margin: 4pt 0 6pt 0;
+    padding-left: 18px;
+  }
+
+  li {
+    margin-bottom: 2.5pt;
+    color: #334155;
+  }
+
+  strong {
+    color: #0f172a;
+  }
+
+  /* Badges */
+  .locked-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  .deferred-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  .phase-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  /* Callouts */
+  .callout {
+    background: #f8fafc;
+    border-left: 3.5px solid #3b82f6;
+    padding: 8px 12px;
+    margin: 8pt 0;
+    border-radius: 0 5px 5px 0;
+    page-break-inside: avoid;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    color: #1e3a8a;
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .callout-sot {
+    background: #f0fdf4;
+    border-left: 4px solid #059669;
+    border-top: 1px solid #d1fae5;
+    border-right: 1px solid #d1fae5;
+    border-bottom: 1px solid #d1fae5;
+    padding: 10px 14px;
+    margin: 8pt 0;
+    border-radius: 5px;
+    page-break-inside: avoid;
+  }
+
+  .callout-sot .callout-title {
+    color: #065f46;
+  }
+
+  .callout-warning {
+    background: #fffbeb;
+    border-left: 4px solid #d97706;
+    border-top: 1px solid #fef3c7;
+    border-right: 1px solid #fef3c7;
+    border-bottom: 1px solid #fef3c7;
+    padding: 8px 12px;
+    margin: 8pt 0;
+    border-radius: 5px;
+    page-break-inside: avoid;
+  }
+
+  .callout-warning .callout-title {
+    color: #92400e;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8pt 0 10pt 0;
+    font-size: 8pt;
+    page-break-inside: avoid;
+  }
+
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    text-align: left;
+    padding: 6px 8px;
+    font-size: 7.5pt;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid #0f172a;
+  }
+
+  td {
+    padding: 5.5px 8px;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  /* Code / Monospace */
+  code {
+    font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+    font-size: 8pt;
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid #e2e8f0;
+  }
+
+  pre {
+    background: #090e17;
+    color: #f8fafc;
+    border: 1px solid #1e293b;
+    border-radius: 5px;
+    padding: 10px 12px;
+    font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+    font-size: 7.5pt;
+    line-height: 1.4;
+    overflow: hidden;
+    margin: 6pt 0 10pt 0;
+    page-break-inside: avoid;
+  }
+
+  pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  .schema-box {
+    background: #090e17;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    margin: 7pt 0;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+
+  .schema-header {
+    background: #1e293b;
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+  }
+
+  .schema-title {
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-weight: 700;
+    color: #60a5fa;
+    font-size: 8pt;
+  }
+
+  .schema-ref {
+    font-size: 7pt;
+    color: #94a3b8;
+  }
+
+  .schema-body {
+    padding: 8px 12px;
+    color: #e2e8f0;
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 7.2pt;
+    line-height: 1.35;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow: hidden;
+  }
+
+  /* Diagrams */
+  .diagram-container {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 8pt 0;
+    page-break-inside: avoid;
+    text-align: center;
+  }
+
+  .diagram-title {
+    font-size: 8pt;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 5px 0;
+  }
+
+  .flow-node {
+    background: #ffffff;
+    border: 1.5px solid #2563eb;
+    border-radius: 5px;
+    padding: 6px 10px;
+    font-size: 8pt;
+    font-weight: 600;
+    color: #0f172a;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    min-width: 95px;
+  }
+
+  .flow-node.primary {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #1d4ed8;
+  }
+
+  .flow-node.highlight {
+    background: #ecfdf5;
+    border-color: #059669;
+    color: #065f46;
+  }
+
+  .flow-node.secondary {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #334155;
+  }
+
+  .flow-arrow {
+    color: #2563eb;
+    font-weight: 900;
+    font-size: 10pt;
+  }
+
+  .flow-arrow-down {
+    color: #2563eb;
+    font-weight: 900;
+    font-size: 11pt;
+    margin: 2px 0;
+  }
+
+  /* Tree Diagram */
+  .tree-node {
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 7.5pt;
+    background: #090e17;
+    color: #f8fafc;
+    border-radius: 5px;
+    padding: 10px 14px;
+    line-height: 1.4;
+    white-space: pre;
+    text-align: left;
+    margin: 6pt 0;
+    page-break-inside: avoid;
+    overflow: hidden;
+  }
+
+  /* Table of Contents - 2-Column Compact Layout */
+  .toc-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 8pt 0;
+    page-break-inside: avoid;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 18px;
+    font-size: 8pt;
+  }
+
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 2.5px 0;
+    border-bottom: 1px dotted #cbd5e1;
+  }
+
+  .toc-text {
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toc-tag {
+    font-size: 7pt;
+    font-weight: 700;
+    color: #059669;
+    margin-left: 6px;
+  }
+
+  /* Helper Classes */
+  .page-break {
+    page-break-before: always;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 14pt 0;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 6pt 0;
+    page-break-inside: avoid;
+  }
+
+  .panel-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    padding: 8px 12px;
+  }
+
+  .panel-header {
+    font-weight: 700;
+    font-size: 8.5pt;
+    color: #0f172a;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 3px;
+    margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover-container">
+  <div class="cover-accent-circle"></div>
+  
+  <div>
+    <div class="cover-badge">
+      <span>FINAL-YEAR MAJOR PROJECT &bull; ACADEMIC YEAR 2025 – 2026</span>
+    </div>
+
+    <div class="cover-title-group">
+      <h1 class="cover-main-title">COLLEGE OS</h1>
+      <div class="cover-subtitle">AI-Powered Digital Campus Platform</div>
+      <div class="cover-doc-type">
+        PROJECT PLANNING &amp; SOURCE OF TRUTH BLUEPRINT
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-metadata-card">
+    <div class="metadata-grid">
+      <div class="metadata-item">
+        <div class="metadata-label">Lead Student / Author</div>
+        <div class="metadata-value">Hamid Rza</div>
+      </div>
+      <div class="metadata-item">
+        <div class="metadata-label">Group Members</div>
+        <div class="metadata-value">Abhishek Bind, Anurag Mishra</div>
+      </div>
+      <div class="metadata-item">
+        <div class="metadata-label">Program &amp; Semester</div>
+        <div class="metadata-value">B.Tech (CSE) &bull; 7th Semester</div>
+      </div>
+      <div class="metadata-item">
+        <div class="metadata-label">Department &amp; Institution</div>
+        <div class="metadata-value">Dept. of Computer Science &amp; Engineering &bull; CSMU</div>
+      </div>
+      <div class="metadata-item">
+        <div class="metadata-label">Project Guide</div>
+        <div class="metadata-value">[Project Guide Name]</div>
+      </div>
+      <div class="metadata-item">
+        <div class="metadata-label">Document Version &amp; Status</div>
+        <div class="metadata-value">Version 1.0 &bull; Step 1 Foundation Locked</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div>Chhatrapati Shivaji Maharaj University (CSMU) &bull; Major Project Documentation</div>
+    <div class="cover-status-tag">🔒 LOCKED — SOURCE OF TRUTH</div>
+  </div>
+</div>
+
+<!-- PAGE 2: SOT POLICY + TABLE OF CONTENTS -->
+<div class="doc-wrapper">
+  
+  <!-- SOURCE OF TRUTH POLICY -->
+  <div class="callout-sot" style="margin-top: 6pt;">
+    <div class="callout-title">
+      <span>🔒 SOURCE OF TRUTH POLICY &amp; GOVERNANCE DIRECTIVE</span>
+    </div>
+    <p style="margin: 2pt 0; font-size: 8.5pt;">
+      <strong>Purpose &amp; Authority:</strong> This document establishes the authoritative, finalized planning decisions for <strong>College OS</strong>. All sections marked with <strong>🔒 LOCKED — SOURCE OF TRUTH</strong> are permanently binding across all development phases, backend architectures, MongoDB schemas, Next.js frontend modules, and Campus AI retrieval pipelines.
+    </p>
+    <ul style="margin: 3pt 0 0 0; font-size: 8pt;">
+      <li><strong>Authoritative Rule:</strong> Engineering execution must strictly implement these locked decisions without arbitrary deviations.</li>
+      <li><strong>Change Control:</strong> Any modification requires explicit justification against the 4-Question Evaluation Gate and formal increment of document versioning.</li>
+      <li><strong>Scope Discipline:</strong> Adheres rigorously to <em>Core First &rarr; Stabilize &rarr; Expand</em>. MVP delivery shall not be delayed by experimental ideas.</li>
+    </ul>
+  </div>
+
+  <!-- TABLE OF CONTENTS (2-COLUMN COMPACT) -->
+  <div class="toc-box">
+    <div style="font-weight: 800; font-size: 10pt; color: #0f172a; margin-bottom: 6pt; text-transform: uppercase; letter-spacing: 0.5px;">
+      Document Outline &bull; Table of Contents
+    </div>
+    
+    <div class="toc-grid">
+      <div>
+        <div class="toc-item">
+          <span class="toc-text">1. Project Identity &amp; Status</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">2. Project Vision &amp; Core Pillars</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">3. Problem Statement &amp; Fragmentation</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">4. Existing ERP &amp; MyCamu Gap Analysis</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">5. Student Identity &amp; Profile Hierarchy</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">6. Student Project Discovery &amp; Likes</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">7. Opportunity Discovery Problem</span>
+          <span class="toc-tag">PHASE 2</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">8. Campus Utility Problem (Lost &amp; Found)</span>
+          <span class="toc-tag">PHASE 2</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">9. Proposed Solution &bull; System Architecture</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">10. Core User Types &bull; Initial Scope</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">11. College Institutional Identity</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">12. College Profile vs. Admin Account</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">13. Role &amp; Governance Hierarchy</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="toc-item">
+          <span class="toc-text">14. Core Functionality (11 Modules)</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">15. Campus AI Principles &amp; Grounding</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">16. Optional / Phase 2 Ecosystem</span>
+          <span class="toc-tag">PLANNED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">17. Problem-to-Solution Matrix</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">18. Core MVP vs. Phase 2 Boundary</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">19. What College OS Is NOT</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">20. Project Scope Philosophy</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">21. Master Product Taxonomy Tree</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">22. Master Registry of Locked Decisions</span>
+          <span class="toc-tag">LOCKED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">23. Deferred Decisions Roadmap</span>
+          <span class="toc-tag">DEFERRED</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">24. Source-of-Truth Validation Rule</span>
+          <span class="toc-tag">POLICY</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-text">25. Final Step 1 Summary &amp; Sign-Off</span>
+          <span class="toc-tag">READY S2</span>
+        </div>
+      </div>
+    </div>
+    
+    <div style="margin-top: 8pt; padding-top: 6pt; border-top: 1px solid #e2e8f0; font-size: 7.5pt; color: #64748b; display: flex; justify-content: space-between;">
+      <span><strong>Appendix A:</strong> Campus AI / RAG Architecture</span>
+      <span><strong>Appendix B:</strong> MongoDB Database Schemas</span>
+      <span><strong>Appendix C:</strong> RBAC Matrix &amp; Sign-off</span>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- STEP 1 HEADER -->
+  <h1 class="step-title">
+    STEP 1 &bull; PROJECT FOUNDATION &amp; SCOPE
+    <div style="font-size: 9pt; font-weight: 500; color: #475569; margin-top: 3px;">
+      Source of Truth — Version 1.0 &bull; Baseline Architectural Planning
+    </div>
+  </h1>
+
+  <div class="callout" style="margin-top: 4pt;">
+    <div class="callout-title">Document Purpose &amp; Scope Boundary</div>
+    This section defines the fundamental identity, problem landscape, core objectives, user categorizations, scope boundaries, and functional modules of the College OS project. All downstream engineering artifacts—user journeys, RBAC permission tables, database schemas, API routes, user interfaces, AI pipelines, and roadmap milestones—are strictly derived from this baseline.
+  </div>
+
+  <!-- 1. PROJECT IDENTITY -->
+  <h2>1. Project Identity <span class="locked-pill">🔒 Locked</span></h2>
+  <h3>1.1 Working Project Name</h3>
+  <p><strong>College OS</strong></p>
+  <h3>1.2 Naming Status</h3>
+  <div class="callout-warning">
+    <strong>Working Name — NOT FINAL:</strong> The permanent product or brand name will be selected prior to public launch. For all current architectural planning, system design, academic documentation, and repository tracking, the name <strong>College OS</strong> is the authoritative working designation.
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 2. PROJECT VISION -->
+  <h2>2. Project Vision <span class="locked-pill">🔒 Locked</span></h2>
+  <p>
+    <strong>College OS</strong> is engineered as a <strong>centralized digital campus ecosystem</strong> that unifies academic management, institutional communication, student identity, peer discovery, and context-aware intelligence into a single modern platform.
+  </p>
+  <p>
+    Crucially, College OS is <strong>not intended to be just another college ERP</strong>. While traditional academic ERPs treat students strictly as records in an administrative database, College OS builds a holistic digital environment where:
+  </p>
+  <ul>
+    <li>Students manage and monitor their real-time academic status (attendance, timetables, marks, assignments).</li>
+    <li>Students build and maintain a professional, verified campus identity and portfolio.</li>
+    <li>Students discover peers, explore student-built projects, and collaborate across departments.</li>
+    <li>Faculty members manage their assigned classes and evaluate academics within strictly bounded permissions.</li>
+    <li>The institution maintains an authentic, centralized digital presence for official communications.</li>
+    <li>All critical campus information is accessible from a unified, single source of truth.</li>
+    <li>Students interact with campus resources through an AI-powered, context-aware Campus Assistant.</li>
+    <li>Future campus utilities (internships, hackathons, lost &amp; found) can be integrated modularly without fragmenting into external apps.</li>
+  </ul>
+
+  <div class="callout-sot">
+    <div class="callout-title">Core Vision Statement</div>
+    <em>"One connected digital campus for academics, institutional information, student identity, interaction and intelligent information access."</em>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 3. PROBLEM STATEMENT -->
+  <h2>3. Problem Statement &amp; Campus Fragmentation <span class="locked-pill">🔒 Locked</span></h2>
+  
+  <h3>3.1 The Primary Fragmentation Problem</h3>
+  <p>
+    In contemporary higher education ecosystems, academic data, institutional updates, and student activities are distributed across chaotic, uncoordinated channels. A student is forced to navigate:
+  </p>
+  
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Channel</th>
+        <th style="width: 40%;">Information Handled</th>
+        <th style="width: 35%;">Critical Failure Point</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>College ERP / MyCamu</strong></td>
+        <td>Attendance records, basic fee status, exam registration</td>
+        <td>Rigid, clunky UX; lacks modern student-facing identity and collaboration tools</td>
+      </tr>
+      <tr>
+        <td><strong>WhatsApp Groups</strong></td>
+        <td>Assignments, unofficial notices, schedules, links</td>
+        <td>No searchability, spam-heavy, unverified messages, zero data persistence</td>
+      </tr>
+      <tr>
+        <td><strong>Physical Notice Boards / PDFs</strong></td>
+        <td>Circulars, timetable changes, exam timetables</td>
+        <td>Outdated quickly, easily missed, zero notification mechanics</td>
+      </tr>
+      <tr>
+        <td><strong>College Web Portals</strong></td>
+        <td>General institutional information, admissions</td>
+        <td>Static, disconnected from daily student academic activities</td>
+      </tr>
+      <tr>
+        <td><strong>Faculty Direct Messages</strong></td>
+        <td>Subject assignments, submission guidelines, deadlines</td>
+        <td>Scattered across personal chat apps with zero central tracking</td>
+      </tr>
+      <tr>
+        <td><strong>External Job &amp; Event Portals</strong></td>
+        <td>Internships, hackathons, competitions</td>
+        <td>Generic platforms lacking college relevance or peer team-formation context</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Academic Information Fragmentation</h3>
+  <p>
+    Core academic assets—daily schedules, real-time attendance percentages, evaluation marks, assignments, and exam dates—exist in disparate silos. Students have no single, reliable dashboard to answer: <em>"Where do I need to be next? What assignment is due? What is my current attendance buffer?"</em>
+  </p>
+
+  <h3>3.3 Limited Student Identity &amp; Discoverability Deficit</h3>
+  <p>
+    Conventional college systems treat students solely as administrative rows (Roll Number, Fee Status). There is no professional platform for students to showcase verified technical skills, GitHub profiles, personal websites, and technical projects. Simultaneously, students have no mechanism to discover what their peers are building, identify collaborators, or review past student work. This creates a severe structural gap between <strong>academic compliance</strong> and <strong>campus community innovation</strong>.
+  </p>
+
+  <hr class="divider" />
+
+  <!-- 4. MYCAMU / EXISTING ERP GAP -->
+  <h2>4. Existing ERP &amp; MyCamu Gap Analysis <span class="locked-pill">🔒 Locked</span></h2>
+  <p>
+    It is vital to establish that this project does <strong>not</strong> define its objective as "MyCamu is bad."
+  </p>
+  <div class="callout">
+    <div class="callout-title">Architectural Positioning: Extension, Not Mere Replacement</div>
+    <p style="margin: 0;">
+      Existing ERP systems effectively solve a significant segment of institutional record-keeping and administrative management. However, they fail to provide a complete student-centric campus platform that bridges academic administration with student portfolio identity, project exploration, institutional broadcasting, and natural-language AI assistance.
+    </p>
+  </div>
+  <p>
+    Therefore, <strong>College OS is not simply an ERP replacement</strong>; it expands the boundaries of campus software to encompass the full student lifecycle.
+  </p>
+
+  <hr class="divider" />
+
+  <!-- 5. STUDENT INTERACTION PROBLEM -->
+  <h2>5. Student Interaction &amp; Campus Profile Architecture <span class="locked-pill">🔒 Locked</span></h2>
+  <p>
+    College OS establishes a dedicated student identity model that lives natively within the institutional software environment:
+  </p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Student Profile Identity Architecture</div>
+    <div class="flow-row">
+      <div class="flow-node primary">Student Account</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight">Verified Campus Profile</div>
+    </div>
+    <div class="flow-arrow-down">&darr;</div>
+    <div class="flow-row">
+      <div class="flow-node secondary">About / Bio</div>
+      <div class="flow-node secondary">Technical Skills</div>
+      <div class="flow-node secondary">GitHub Profile</div>
+      <div class="flow-node secondary">Personal Website</div>
+      <div class="flow-node secondary">Project Showcase</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 6. STUDENT PROJECT DISCOVERY -->
+  <h2>6. Student Project Discovery &amp; Interaction <span class="locked-pill">🔒 Locked</span></h2>
+  <p>
+    Project showcasing is a locked, core pillar of College OS. Students can publish projects directly to their profiles, detailing technical specifications, live URLs, code repositories, and media previews.
+  </p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Student Profile &bull; Project Showcase Hierarchy</div>
+    <div class="flow-row">
+      <div class="flow-node">Student Profile</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">Projects Section</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight">Project A</div>
+      <div class="flow-node highlight">Project B</div>
+      <div class="flow-node highlight">Project C</div>
+    </div>
+  </div>
+
+  <p>
+    The platform incorporates a centralized <strong>Explore Students / Student Projects</strong> directory where campus members can discover other students, view profiles, inspect project code repositories, and interact with projects via <strong>Project Likes</strong>.
+  </p>
+
+  <div class="callout-warning">
+    <div class="callout-title">Locked Scope Boundary Regarding Social Interactions</div>
+    The detailed social interaction paradigm (e.g., bidirectional follower graphs, direct real-time messaging, public comments) is <strong>intentionally NOT finalized in Step 1</strong>. The locked core direction is strictly: <strong>Student Profiles + Project Showcasing + Student/Project Discovery + Project Likes</strong>.
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 7 & 8. PHASE 2 PROBLEMS -->
+  <div class="two-col">
+    <div class="panel-box">
+      <div class="panel-header">7. Opportunity Discovery Gap <span class="phase-pill">Phase 2</span></div>
+      <p style="font-size: 8pt; margin: 2pt 0;">
+        Students miss critical career accelerators (internships, hackathons, research grants, competitions) because listings are scattered across private WhatsApp chats and external boards. College OS will centralize curated campus opportunities in Phase 2.
+      </p>
+    </div>
+    <div class="panel-box">
+      <div class="panel-header">8. Campus Utility Workflows <span class="phase-pill">Phase 2</span></div>
+      <p style="font-size: 8pt; margin: 2pt 0;">
+        Everyday campus operational friction lacks digital structure. For example, <strong>Lost &amp; Found</strong> currently relies on broadcast spam in classroom WhatsApp groups. College OS plans a dedicated, verified Lost &amp; Found tracking workflow in Phase 2.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 9. PROPOSED SOLUTION & ARCHITECTURE -->
+  <h2>9. Proposed Solution &bull; High-Level Architecture <span class="locked-pill">🔒 Locked</span></h2>
+  <div class="callout-sot">
+    <div class="callout-title">High-Level Solution Definition</div>
+    <em>"College OS will provide a centralized digital campus platform that combines academic information, student identity, student/project discovery, institutional communication and AI-assisted access to college-specific information, bounded by strict role-based authority."</em>
+  </div>
+
+  <div class="diagram-container">
+    <div class="diagram-title">College OS &bull; 4-Tier System Architecture Blueprint</div>
+    <div class="flow-row">
+      <div class="flow-node primary" style="width: 100%;">
+        <strong>Tier 1: Presentation Tier</strong><br />
+        <span style="font-size: 7pt; font-weight: normal;">Next.js 14 &bull; React &bull; Tailwind CSS &bull; Responsive Client UI (Student, Faculty, Admin Dashboards)</span>
+      </div>
+    </div>
+    <div class="flow-arrow-down">&darr;</div>
+    <div class="flow-row">
+      <div class="flow-node highlight" style="width: 100%;">
+        <strong>Tier 2: Application / API Tier</strong><br />
+        <span style="font-size: 7pt; font-weight: normal;">Node.js &bull; Express REST APIs &bull; JWT Authentication &bull; RBAC Middleware &bull; Business Logic Validation</span>
+      </div>
+    </div>
+    <div class="flow-arrow-down">&darr;</div>
+    <div class="flow-row" style="gap: 12px;">
+      <div class="flow-node secondary" style="flex: 1;">
+        <strong>Tier 3: Database Tier</strong><br />
+        <span style="font-size: 7pt; font-weight: normal;">MongoDB Atlas Operational Store &bull; Transactional Collections &bull; Mongoose ODM</span>
+      </div>
+      <div class="flow-node secondary" style="flex: 1; border-color: #059669;">
+        <strong>Tier 4: Campus AI Tier</strong><br />
+        <span style="font-size: 7pt; font-weight: normal;">MongoDB Vector Search &bull; RAG Knowledge Pipeline &bull; LLM Synthesis Engine</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 10. CORE USER TYPES -->
+  <h2>10. Core User Types &bull; Initial Scope Definition <span class="locked-pill">🔒 Locked</span></h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 20%;">User Role</th>
+        <th style="width: 35%;">Functional Scope &amp; Access</th>
+        <th style="width: 45%;">Key Capabilities</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Student</strong></td>
+        <td>Primary platform end users; restricted strictly to own academic records and public campus directories.</td>
+        <td>Personal dashboard, timetable, own attendance, own marks, assignments submission, campus notices, events, Campus AI assistant, personal profile, project showcase, explore directory, project likes.</td>
+      </tr>
+      <tr>
+        <td><strong>Faculty</strong></td>
+        <td>Academic managers; granted elevated, strictly scoped permissions based on admin course assignments.</td>
+        <td>Faculty dashboard, view assigned classes/subjects only, record attendance for assigned classes, create/evaluate assignments, enter academic marks, publish class/departmental notices.</td>
+      </tr>
+      <tr>
+        <td><strong>College / Institution</strong></td>
+        <td>Official institutional entity represented on the platform.</td>
+        <td>Official institution profile, publish college-wide verified notices, post campus events, broadcast administrative updates (managed by authorized administrative personnel).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Note on Granular Permissions:</strong> The precise RBAC matrix governing specific roles (Assistant Professor, HOD, Principal, Dean, Super Admin) is formally finalized in Step 2.
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 11 & 12. INSTITUTIONAL IDENTITY -->
+  <h2>11. College Institutional Identity Architecture <span class="locked-pill">🔒 Locked</span></h2>
+  <p>
+    College OS provides an official <strong>College Profile</strong> entity. This profile represents the institution itself rather than an individual person. It functions as the authenticated campus broadcast station:
+  </p>
+  <ul>
+    <li>Official institutional identity, accreditation, and campus details.</li>
+    <li>Verified institutional circulars and mandatory academic notices.</li>
+    <li>Official college events, annual symposiums, and administrative updates.</li>
+  </ul>
+
+  <h2>12. College Profile vs. Admin Account Separation <span class="locked-pill">🔒 Locked</span></h2>
+  <p>
+    A vital architectural distinction is enforced between the <strong>Institution</strong> and <strong>Administrative Personnel</strong>:
+  </p>
+  <div class="diagram-container">
+    <div class="diagram-title">Institutional Governance Hierarchy</div>
+    <div class="flow-row">
+      <div class="flow-node primary">COLLEGE / INSTITUTION (Entity)</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight">Official Institutional Profile (Public Face)</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node secondary">Managed by Authorized Personnel (Admins)</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 13. ROLE HIERARCHY -->
+  <h2>13. Role &amp; Governance Hierarchy <span class="locked-pill">🔒 Locked</span></h2>
+  <div class="tree-node">
+                      COLLEGE (Institution)
+                               │
+                      Official Presence
+                               │
+                     Authorized Personnel
+                               │
+         ┌─────────────────────┼─────────────────────┐
+         │                     │                     │
+      Faculty                 HOD           Principal / Admin
+(Class-Level Authority) (Dept-Level Authority) (Campus-Wide Authority)
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 14. CORE FUNCTIONALITY SPECIFICATION -->
+  <h2>14. Core Functionality Specification (The 11 MVP Modules) <span class="locked-pill">🔒 Locked</span></h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 5%;">#</th>
+        <th style="width: 25%;">Module Name</th>
+        <th style="width: 45%;">Functional Scope &amp; Responsibilities</th>
+        <th style="width: 25%;">Primary Users</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Authentication &amp; RBAC</strong></td>
+        <td>Secure registration, credential authentication, JWT session lifecycle, role identification, and granular route authorization.</td>
+        <td>All Users</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Student Profile</strong></td>
+        <td>Personalized campus profile displaying bio, verified skills, GitHub repository links, personal website, and student metadata.</td>
+        <td>Students, Peers</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Student Projects</strong></td>
+        <td>Showcase technical projects with titles, markdown descriptions, tech stacks, GitHub URLs, live deployment links, and image screenshots.</td>
+        <td>Students, Faculty</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Explore Directory</strong></td>
+        <td>Searchable directory to discover student profiles and peer projects; includes project liking and engagement analytics.</td>
+        <td>Students, Faculty</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Timetable Management</strong></td>
+        <td>Digital schedules for students; customized daily lecture timetables for faculty mapped strictly to assigned subjects.</td>
+        <td>Students, Faculty</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Attendance Tracking</strong></td>
+        <td>Real-time attendance percentage tracking for students; dynamic roll-call marking interface for authorized faculty.</td>
+        <td>Students, Faculty</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Marks &amp; Performance</strong></td>
+        <td>Semester-wise marks, assessment breakdown, and GPA views for students; secure grade entry workflows for faculty.</td>
+        <td>Students, Faculty</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Assignments Workflow</strong></td>
+        <td>Assignment publication, deadline tracking, and file submissions; faculty assignment creation, updates, and grading.</td>
+        <td>Students, Faculty</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>Notices &amp; Bulletins</strong></td>
+        <td>Centralized broadcast hub for college-wide, departmental, and class-level notices with priority flags and attachment downloads.</td>
+        <td>Campus Community</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Campus Events</strong></td>
+        <td>Directory of technical symposiums, workshops, seminars, and cultural activities with registration links and scheduling details.</td>
+        <td>Campus Community</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>Campus AI Assistant</strong></td>
+        <td>Intelligent natural-language conversational assistant answering queries about attendance, timetables, assignments, and college rules.</td>
+        <td>Students, Faculty</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="divider" />
+
+  <!-- 15. AI PRINCIPLES -->
+  <h2>15. Campus AI Principles &amp; Anti-Hallucination Grounding <span class="locked-pill">🔒 Locked</span></h2>
+  <p>
+    The Campus AI Assistant is <strong>not an unrestricted, generic chatbot</strong> (such as an open ChatGPT wrapper). It is engineered as a domain-bounded, context-grounded college intelligence system:
+  </p>
+  <ul>
+    <li><strong>College OS is the Primary Source of Truth:</strong> The assistant's reasoning is anchored strictly in authoritative College OS databases and institutional documents.</li>
+    <li><strong>Absolute Anti-Hallucination Mandate:</strong> If a student asks a college-related question whose answers are not found in the verified dataset, the assistant will explicitly respond: <em>"This information is currently unavailable in official college records"</em>, rather than synthesizing speculative content.</li>
+    <li><strong>Contextual Privacy &amp; RBAC:</strong> The AI respects strict user authority boundaries. A student cannot query another student's marks or sensitive administrative audit trails.</li>
+    <li><strong>Sensitive Credential Exclusion:</strong> Passwords, OTPs, session tokens, and security secrets are cryptographically barred from ever entering AI prompt contexts.</li>
+  </ul>
+
+  <hr class="divider" />
+
+  <!-- 16 & 17. PHASE 2 FEATURES -->
+  <h2>16. Optional / Phase 2 Features (Planned Expansion) <span class="phase-pill">Phase 2 Planned</span></h2>
+  <p>
+    To guarantee on-time completion and architectural stability of the core MVP, the following four modules are classified as <strong>Phase 2</strong>:
+  </p>
+
+  <div class="tree-node">
+PHASE 2 EXPANSION ROADMAP
+  ├── 1. Internships Ecosystem (Curated listings, application tracking, student referrals)
+  ├── 2. Hackathons & Competitions (Team formation, event discovery, project submissions)
+  ├── 3. Campus Community Feed (Campus-wide discussions, announcements, peer interactions)
+  └── 4. Lost & Found Module (Item reporting, verification workflow, resolution tracking)
+  </div>
+
+  <h2>17. Problem-to-Solution Mapping Matrix <span class="locked-pill">🔒 Locked</span></h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 35%;">Identified Campus Friction</th>
+        <th style="width: 25%;">Planned Module</th>
+        <th style="width: 40%;">Lifecycle Phase &amp; Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Scattered internship notifications across WhatsApp groups</td>
+        <td><strong>Internships Module</strong></td>
+        <td><span class="phase-pill">Phase 2</span> &bull; Extends student identity directly into hiring channels.</td>
+      </tr>
+      <tr>
+        <td>Scattered hackathon announcements; difficulty finding team members</td>
+        <td><strong>Hackathons Module</strong></td>
+        <td><span class="phase-pill">Phase 2</span> &bull; Leverages student skills directory for team matching.</td>
+      </tr>
+      <tr>
+        <td>Lack of open, moderated campus discussion forums</td>
+        <td><strong>Campus Community Feed</strong></td>
+        <td><span class="phase-pill">Phase 2</span> &bull; Provides an authenticated campus-wide public square.</td>
+      </tr>
+      <tr>
+        <td>Chaotic lost item recovery relying on WhatsApp spam and word-of-mouth</td>
+        <td><strong>Lost &amp; Found</strong></td>
+        <td><span class="phase-pill">Phase 2</span> &bull; Structured claim, verification, and audit trail.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="divider" />
+
+  <!-- 18. CORE VS PHASE 2 BOUNDARY -->
+  <h2>18. Core MVP vs. Phase 2 Scope Boundaries <span class="locked-pill">🔒 Locked</span></h2>
+  
+  <div class="callout-sot">
+    <div class="callout-title">The Fundamental Scope Boundary Rule</div>
+    <strong>Build Core First &rarr; Stabilize &amp; Test &rarr; Expand to Phase 2.</strong><br />
+    Under no circumstances shall Phase 2 modules be developed prematurely if they distract from or delay the delivery of the 11 Core MVP modules.
+  </div>
+
+  <div class="two-col">
+    <div class="panel-box" style="border-top: 3px solid #2563eb;">
+      <div class="panel-header" style="color: #2563eb;">Core MVP Scope (Current Focus)</div>
+      <ul style="font-size: 8pt; margin: 2pt 0 0 0; padding-left: 14px;">
+        <li>Authentication &amp; RBAC</li>
+        <li>Student Profile &amp; Showcase</li>
+        <li>Student Projects Showcase</li>
+        <li>Explore Students &amp; Projects</li>
+        <li>Project Likes System</li>
+        <li>Academic Timetable</li>
+        <li>Attendance Management</li>
+        <li>Marks &amp; Academic Grades</li>
+        <li>Assignments Lifecycle</li>
+        <li>Notices &amp; Announcements</li>
+        <li>Campus Events Directory</li>
+        <li>Campus AI Assistant</li>
+        <li>Official College Profile</li>
+      </ul>
+    </div>
+    
+    <div class="panel-box" style="border-top: 3px solid #64748b;">
+      <div class="panel-header" style="color: #64748b;">Phase 2 Scope (Subsequent Expansion)</div>
+      <ul style="font-size: 8pt; margin: 2pt 0 0 0; padding-left: 14px;">
+        <li>Curated Internships Portal</li>
+        <li>Hackathon &amp; Team Matching</li>
+        <li>Campus Community Social Feed</li>
+        <li>Digital Lost &amp; Found Workflow</li>
+        <li>Direct Student Messaging</li>
+        <li>Complex Social Followers Model</li>
+        <li>Automated Fee Payment Gateway</li>
+        <li>Library Physical Book Barcode Scan</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 19. WHAT COLLEGE OS IS NOT -->
+  <h2>19. What College OS Is NOT (Explicit Non-Goals) <span class="locked-pill">🔒 Locked</span></h2>
+  <p>
+    To protect engineering resources and prevent fatal scope creep, College OS explicitly defines what it is <strong>NOT</strong>:
+  </p>
+  <ul>
+    <li><strong>NOT a complete 100% replacement for institutional legacy systems:</strong> It integrates with or sits alongside complex backend administration without attempting to rebuild financial accounting engines.</li>
+    <li><strong>NOT a generic, open social network:</strong> It is not Instagram, Facebook, or Twitter; all interactions are academically and professionally focused.</li>
+    <li><strong>NOT a generic ChatGPT clone:</strong> The AI is an anchored institutional tool, not an open-ended conversational gimmick.</li>
+    <li><strong>NOT a commercial job portal:</strong> It does not aim to replace LinkedIn, Indeed, or Naukri.com.</li>
+    <li><strong>NOT an e-commerce platform:</strong> It does not facilitate commercial buying/selling.</li>
+    <li><strong>NOT a real-time messaging-first chat app:</strong> It does not attempt to replicate WhatsApp or Telegram instant messaging in the MVP.</li>
+    <li><strong>NOT an unmanageable collection of every possible campus utility:</strong> Features without rigorous justification are rejected.</li>
+  </ul>
+
+  <hr class="divider" />
+
+  <!-- 20. PROJECT SCOPE PHILOSOPHY -->
+  <h2>20. Project Scope Philosophy <span class="locked-pill">🔒 Locked</span></h2>
+  <div class="diagram-container">
+    <div class="diagram-title">"Core First, Expansion Later" Execution Lifecycle</div>
+    <div class="flow-row">
+      <div class="flow-node primary">COLLEGE OS PROJECT INITIATIVE</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight">PHASE 1: CORE MVP (11 Modules)</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight">Testing &amp; Stabilization</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node secondary">PHASE 2: EXPANSION</div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 21. PRODUCT TAXONOMY TREE -->
+  <h2>21. Master Product Taxonomy Tree <span class="locked-pill">🔒 Locked</span></h2>
+  <div class="tree-node">
+COLLEGE OS PLATFORM
+│
+├── 1. AUTHENTICATION & SECURITY
+│   ├── User Registration & Login (Email/Password)
+│   ├── Role Identification (Student, Faculty, Admin)
+│   └── Session Security (JWT, HttpOnly Cookies, RBAC Guard)
+│
+├── 2. STUDENT ECOSYSTEM
+│   ├── Verified Campus Profile (Bio, Skills, GitHub, Portfolio)
+│   ├── Student Project Showcase (Details, Links, Tech Stack)
+│   └── Explore Directory & Peer Project Discovery (Likes)
+│
+├── 3. ACADEMIC MANAGEMENT
+│   ├── Timetable Schedule (Student & Faculty Views)
+│   ├── Attendance Tracking & Roll-Call Marking
+│   ├── Marks & Grade Book Evaluation
+│   └── Assignments Publication & Submissions
+│
+├── 4. INSTITUTIONAL COMMUNICATION
+│   ├── Official College Profile
+│   ├── Broadcast Notices & Bulletins
+│   └── Campus Events Directory
+│
+├── 5. CAMPUS AI ENGINE
+│   ├── Natural Language Campus Query Assistant
+│   ├── MongoDB Structured Data Router
+│   ├── Vector Search / RAG Policy Retriever
+│   └── Anti-Hallucination Fallback Engine
+│
+└── 6. PHASE 2 EXPANSION (PLANNED)
+    ├── Curated Internships Portal
+    ├── Hackathons & Team Matcher
+    ├── Campus Community Discussion Feed
+    └── Lost & Found Digital Recovery System
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 22. MASTER REGISTRY OF LOCKED DECISIONS -->
+  <h2>22. Master Registry of Locked Decisions in Step 1 <span class="locked-pill">🔒 Locked</span></h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Decision Area</th>
+        <th style="width: 15%;">Status</th>
+        <th style="width: 60%;">Formal Baseline Determination</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Project Identity</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Working name established as <strong>College OS</strong>; final branding deferred.</td>
+      </tr>
+      <tr>
+        <td><strong>Core Vision</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Centralized digital campus ecosystem integrating academics, identity, discovery, and AI assistance.</td>
+      </tr>
+      <tr>
+        <td><strong>Problem Definition</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Information fragmentation across ERPs, WhatsApp, PDFs, and notices; lack of student identity.</td>
+      </tr>
+      <tr>
+        <td><strong>Student Identity</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Students maintain verified campus profiles showcasing bio, skills, GitHub, website, and projects.</td>
+      </tr>
+      <tr>
+        <td><strong>Project Discovery</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Centralized Explore directory to discover peers and projects; includes project liking.</td>
+      </tr>
+      <tr>
+        <td><strong>Faculty Capability</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Elevated permissions strictly bounded by admin-assigned classes and subjects.</td>
+      </tr>
+      <tr>
+        <td><strong>Institutional Presence</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Dedicated Official College Profile distinct from personal accounts; managed by authorized admins.</td>
+      </tr>
+      <tr>
+        <td><strong>Core MVP Scope</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>11 foundational modules strictly defined; scope boundary protected from creep.</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2 Modules</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Internships, Hackathons, Campus Feed, and Lost &amp; Found validated as Phase 2 additions.</td>
+      </tr>
+      <tr>
+        <td><strong>AI Campus Assistant</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td>Context-grounded assistant; college data is primary truth; zero speculative hallucinations.</td>
+      </tr>
+      <tr>
+        <td><strong>Scope Philosophy</strong></td>
+        <td><span class="locked-pill">LOCKED</span></td>
+        <td><em>Core First &rarr; Stabilize &rarr; Expand</em> lifecycle execution.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="divider" />
+
+  <!-- 23. DEFERRED DECISIONS -->
+  <h2>23. Decisions Intentionally Left for Subsequent Steps <span class="deferred-pill">Deferred Roadmap</span></h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 15%;">Step #</th>
+        <th style="width: 30%;">Roadmap Stage</th>
+        <th style="width: 55%;">Scope of Decisions to Be Formally Locked</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Step 2</strong></td>
+        <td>User Types &amp; Permission Matrix</td>
+        <td>Granular CRUD access control, role hierarchy (HOD, Faculty, Admin, Student), assigned-class access logic.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 3</strong></td>
+        <td>Complete User Flows &amp; Wireframes</td>
+        <td>Step-by-step UX interaction journeys, dashboard layout structures, state transitions.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 4</strong></td>
+        <td>Feature &amp; Module Breakdown</td>
+        <td>Detailed feature functional specifications, input validation rules, operational edges.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 5</strong></td>
+        <td>AI + RAG Architecture</td>
+        <td>Embedding model selection, vector indexing, chunking strategies, prompt templates, fallback mechanics.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 6</strong></td>
+        <td>Database &amp; System Architecture</td>
+        <td>Formal MongoDB schemas, indexing strategies, API route specifications, caching layers.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 7</strong></td>
+        <td>Technology Stack Finalization</td>
+        <td>Locking Next.js 14, Tailwind CSS, Node.js, Express, MongoDB Atlas, Mongoose, and LLM provider.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 8</strong></td>
+        <td>Development Roadmap</td>
+        <td>Sprint plans, milestone deliverables, task assignments, test suite schedules.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 9</strong></td>
+        <td>Technical Documentation</td>
+        <td>Software Requirements Specification (SRS), System Design Document (SDD), API docs.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 10</strong></td>
+        <td>Project Presentation (PPT)</td>
+        <td>Executive slide decks, architecture diagrams, faculty defense presentations.</td>
+      </tr>
+      <tr>
+        <td><strong>Step 11</strong></td>
+        <td>Viva &amp; FAQ Preparation</td>
+        <td>Defense questions, architectural justification, performance trade-off analysis.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="divider" />
+
+  <!-- 24. SOURCE-OF-TRUTH RULE -->
+  <h2>24. The Source-of-Truth Feature Evaluation Rule <span class="locked-pill">🔒 Locked Governance</span></h2>
+  <div class="callout-warning">
+    <div class="callout-title">The 4-Question Feature Validation Gate</div>
+    Before any new feature, field, or capability is introduced into the College OS codebase, it must affirmatively satisfy at least one of these four criteria:
+    <ol style="margin: 3pt 0 0 0; padding-left: 18px;">
+      <li><strong>Does it directly resolve an identified, validated campus problem?</strong></li>
+      <li><strong>Does it reinforce the core vision of a unified, student-centric digital campus?</strong></li>
+      <li><strong>Does it deliver demonstrable, tangible value to a defined user role?</strong></li>
+      <li><strong>Does it strictly belong in the current development phase (Core MVP)?</strong></li>
+    </ol>
+    If the answer to all four is negative, the feature is immediately rejected or archived in the Phase 2 backlog.
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 25. FINAL SUMMARY -->
+  <h2>25. Final Step 1 Summary &amp; Sign-Off Status <span class="locked-pill">🔒 Locked</span></h2>
+  <div class="callout-sot">
+    <div class="callout-title">Step 1 Foundation Sign-Off Summary</div>
+    <ul style="margin: 3pt 0 0 0; padding-left: 18px;">
+      <li><strong>Platform Identity:</strong> College OS — Centralized Digital Campus Platform.</li>
+      <li><strong>Core User Roles:</strong> Student, Faculty, Official Institution / Admin.</li>
+      <li><strong>Core MVP Foundation:</strong> 11 fully validated, interlinked modules.</li>
+      <li><strong>Future Horizons:</strong> 4 planned expansion modules reserved for Phase 2.</li>
+      <li><strong>Governing Philosophy:</strong> <em>Core First &rarr; Stabilize &rarr; Expand</em>.</li>
+      <li><strong>Milestone Status:</strong> 🟢 <strong>FOUNDATION DEFINED &bull; READY FOR STEP 2 (USER TYPES &amp; PERMISSION MATRIX)</strong>.</li>
+    </ul>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- APPENDIX A: CAMPUS AI & RAG ARCHITECTURE -->
+  <h1 class="step-title" style="margin-top: 0;">
+    APPENDIX A &bull; CAMPUS AI &amp; RAG ARCHITECTURAL SPECIFICATION
+    <div style="font-size: 8.5pt; font-weight: 500; color: #475569; margin-top: 3px;">
+      Intelligent Campus Knowledge Engine &bull; Architectural Blueprint
+    </div>
+  </h1>
+
+  <div class="callout-sot">
+    <div class="callout-title">Core AI Architectural Principles</div>
+    <ul style="margin: 2pt 0 0 0; padding-left: 16px; font-size: 8pt;">
+      <li><strong>Not Generic ChatGPT:</strong> Grounded strictly in authenticated college data.</li>
+      <li><strong>College OS is the Primary Source of Truth:</strong> Operates under strict domain boundaries.</li>
+      <li><strong>Structured Data &rarr; MongoDB Query Engine:</strong> Real-time attendance, timetables, and marks are queried directly via deterministic database queries.</li>
+      <li><strong>Unstructured Policies &rarr; RAG Vector Retrieval:</strong> Institutional circulars, examination rules, and syllabi are retrieved via semantic vector search.</li>
+      <li><strong>Hybrid Queries &rarr; MongoDB + RAG:</strong> Complex inquiries combine both data streams into a synthesized context prompt.</li>
+      <li><strong>Zero Hallucination Guarantee:</strong> When required institutional records are absent, the engine returns an explicit "Information unavailable" response.</li>
+      <li><strong>Cryptographic Security &amp; Authorization:</strong> Passwords, OTPs, session tokens, and secrets are strictly excluded from AI prompts; queries strictly enforce role authorization boundaries (RBAC).</li>
+      <li><strong>Least-Privilege Context Assembly:</strong> Only the absolute minimum necessary fields are retrieved and injected into the LLM context.</li>
+      <li><strong>Vector/RAG is a Retrieval Layer:</strong> MongoDB remains the permanent operational store; Vector Search (MongoDB Atlas Vector Search) acts as an indexing index.</li>
+    </ul>
+  </div>
+
+  <h3>A.1 Campus AI Query Processing Flow Pipeline</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">End-to-End Query Understanding, Routing &amp; Response Pipeline</div>
+    
+    <div class="flow-row">
+      <div class="flow-node primary">1. User Query (Student / Faculty)</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight">2. Intent Parser</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node secondary">3. RBAC Check</div>
+    </div>
+    
+    <div class="flow-arrow-down">&darr;</div>
+    
+    <div class="flow-row">
+      <div class="flow-node">4. Intelligent Query Router</div>
+    </div>
+    
+    <div class="flow-row" style="margin-top: 8px;">
+      <div style="display: flex; flex-direction: column; align-items: center; width: 31%;">
+        <div class="flow-node" style="border-color: #2563eb; width: 100%;">Structured Query</div>
+        <div class="flow-arrow-down">&darr;</div>
+        <div class="flow-node secondary" style="width: 100%;">MongoDB Query Engine</div>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; align-items: center; width: 31%;">
+        <div class="flow-node" style="border-color: #059669; width: 100%;">Policy / Document Query</div>
+        <div class="flow-arrow-down">&darr;</div>
+        <div class="flow-node secondary" style="width: 100%;">Vector Search &amp; RAG</div>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; align-items: center; width: 31%;">
+        <div class="flow-node" style="border-color: #7c3aed; width: 100%;">Hybrid Query</div>
+        <div class="flow-arrow-down">&darr;</div>
+        <div class="flow-node secondary" style="width: 100%;">MongoDB + RAG Combined</div>
+      </div>
+    </div>
+    
+    <div class="flow-arrow-down" style="margin-top: 8px;">&darr;</div>
+    
+    <div class="flow-row">
+      <div class="flow-node highlight">5. Grounded Prompt Assembly (Least Privilege)</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node primary">6. LLM Synthesis</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight" style="background: #0f172a; color: white;">7. Verified Answer</div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- APPENDIX B: DATABASE ARCHITECTURE -->
+  <h1 class="step-title" style="margin-top: 0;">
+    APPENDIX B &bull; MONGODB DATABASE ARCHITECTURE &amp; SCHEMAS
+    <div style="font-size: 8.5pt; font-weight: 500; color: #475569; margin-top: 3px;">
+      Primary Operational Data Store &bull; Production BSON Schemas
+    </div>
+  </h1>
+
+  <div class="callout">
+    <strong>Storage Paradigm:</strong> MongoDB Atlas serves as the authoritative, transactional source of truth. Monospace schema representations below depict the exact field keys, BSON types, and relational foreign references across the 11 Core MVP modules.
+  </div>
+
+  <!-- COLLECTION 1 & 2 -->
+  <div class="two-col">
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: users</span>
+        <span class="schema-ref">Ref by: Profiles, Notices</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  email: String,          // Unique institutional email
+  passwordHash: String,   // Bcrypt hashed credential
+  role: String,           // "student"|"faculty"|"admin"
+  isActive: Boolean,
+  lastLoginAt: Date,
+  createdAt: Date,
+  updatedAt: Date
+}</div>
+    </div>
+
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: studentProfiles</span>
+        <span class="schema-ref">Ref: users._id, projects</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  userId: ObjectId,       // Reference -> users._id
+  studentId: String,      // College Roll Number / PRN
+  fullName: String,
+  department: String,     // e.g., "CSE"
+  semester: Number,       // e.g., 7
+  section: String,        // e.g., "A"
+  bio: String,
+  skills: [String],       // e.g., ["React", "MongoDB"]
+  githubUrl: String,
+  websiteUrl: String,
+  avatarUrl: String,
+  createdAt: Date,
+  updatedAt: Date
+}</div>
+    </div>
+  </div>
+
+  <!-- COLLECTION 3 & 4 -->
+  <div class="two-col">
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: facultyProfiles</span>
+        <span class="schema-ref">Ref: users._id, assignments</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  userId: ObjectId,       // Reference -> users._id
+  facultyId: String,      // Employee ID
+  fullName: String,
+  department: String,
+  designation: String,    // "Assistant Professor"
+  assignedClassIds: [String], // Dynamically scoped
+  assignedSubjectIds: [String],
+  cabinLocation: String,
+  createdAt: Date,
+  updatedAt: Date
+}</div>
+    </div>
+
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: collegeProfile</span>
+        <span class="schema-ref">Singleton / Institutional</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  institutionName: String, // "CSMU"
+  institutionCode: String,
+  establishedYear: Number,
+  address: String,
+  contactEmail: String,
+  websiteUrl: String,
+  authorizedAdminIds: [ObjectId], // Admins authorized
+  institutionalBio: String,
+  updatedAt: Date
+}</div>
+    </div>
+  </div>
+
+  <!-- COLLECTION 5 & 6 -->
+  <div class="two-col">
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: projects</span>
+        <span class="schema-ref">Ref: studentProfiles._id</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  studentId: ObjectId,    // -> studentProfiles._id
+  title: String,          // e.g., "College OS"
+  tagline: String,
+  description: String,    // Markdown overview
+  techStack: [String],    // ["Next.js", "MongoDB"]
+  githubUrl: String,
+  liveDemoUrl: String,
+  screenshotUrls: [String],
+  likesCount: Number,     // Counter cache
+  createdAt: Date,
+  updatedAt: Date
+}</div>
+    </div>
+
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: projectLikes</span>
+        <span class="schema-ref">Unique: { projectId, studentId }</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  projectId: ObjectId,    // -> projects._id
+  studentId: ObjectId,    // -> studentProfiles._id
+  createdAt: Date
+}</div>
+    </div>
+  </div>
+
+  <!-- COLLECTION 7 & 8 -->
+  <div class="two-col">
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: timetables</span>
+        <span class="schema-ref">Ref: facultyProfiles._id</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  department: String,
+  semester: Number,
+  section: String,
+  academicYear: String,   // "2025-2026"
+  dayOfWeek: String,      // "Monday" ... "Friday"
+  slots: [
+    {
+      startTime: String,  // "09:00 AM"
+      endTime: String,    // "10:00 AM"
+      subjectCode: String,
+      subjectName: String,
+      facultyId: ObjectId,// -> facultyProfiles._id
+      classroom: String
+    }
+  ],
+  updatedAt: Date
+}</div>
+    </div>
+
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: attendance</span>
+        <span class="schema-ref">Ref: studentProfiles, facultyProfiles</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  studentId: ObjectId,    // -> studentProfiles._id
+  classId: String,        // e.g., "CSE-7A"
+  subjectId: String,      // e.g., "CS-701"
+  date: Date,
+  status: String,         // "present"|"absent"|"late"
+  markedByFacultyId: ObjectId, // -> facultyProfiles
+  remarks: String,
+  createdAt: Date
+}</div>
+    </div>
+  </div>
+
+  <!-- COLLECTION 9 & 10 -->
+  <div class="two-col">
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: marks</span>
+        <span class="schema-ref">Ref: studentProfiles, facultyProfiles</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  studentId: ObjectId,    // -> studentProfiles._id
+  subjectId: String,
+  semester: Number,
+  examType: String,       // "internal_1" | "final"
+  maxMarks: Number,
+  marksObtained: Number,
+  enteredByFacultyId: ObjectId, // -> facultyProfiles
+  verifiedStatus: Boolean,
+  updatedAt: Date
+}</div>
+    </div>
+
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: assignments</span>
+        <span class="schema-ref">Ref: facultyProfiles, studentProfiles</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  title: String,
+  description: String,
+  subjectId: String,
+  classId: String,
+  assignedByFacultyId: ObjectId, // -> facultyProfiles
+  dueDate: Date,
+  maxScore: Number,
+  attachmentUrls: [String],
+  submissions: [
+    {
+      studentId: ObjectId,
+      submittedAt: Date,
+      fileUrl: String,
+      score: Number
+    }
+  ],
+  createdAt: Date
+}</div>
+    </div>
+  </div>
+
+  <!-- COLLECTION 11 & 12 -->
+  <div class="two-col">
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: notices</span>
+        <span class="schema-ref">Ref: users._id, collegeProfile</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  title: String,
+  content: String,        // Markdown content
+  publishedByRole: String,// "college"|"hod"|"faculty"
+  authorId: ObjectId,     // -> users._id
+  targetAudience: String, // "all"|"students"|"faculty"
+  department: String,
+  priority: String,       // "normal"|"urgent"
+  attachmentUrls: [String],
+  createdAt: Date
+}</div>
+    </div>
+
+    <div class="schema-box">
+      <div class="schema-header">
+        <span class="schema-title">Collection: events</span>
+        <span class="schema-ref">Campus Events &amp; Symposiums</span>
+      </div>
+      <div class="schema-body">{
+  _id: ObjectId,
+  title: String,
+  description: String,
+  eventType: String,      // "academic"|"technical"
+  organizer: String,
+  venue: String,
+  startDateTime: Date,
+  endDateTime: Date,
+  registrationUrl: String,
+  bannerImageUrl: String,
+  createdAt: Date
+}</div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- APPENDIX C: ROLE-BASED PERMISSION MATRIX -->
+  <h1 class="step-title" style="margin-top: 0;">
+    APPENDIX C &bull; ROLE-BASED ACCESS CONTROL (RBAC) MATRIX
+    <div style="font-size: 8.5pt; font-weight: 500; color: #475569; margin-top: 3px;">
+      Granular CRUD Authorization &bull; Dynamic Class Assignment Logic
+    </div>
+  </h1>
+
+  <div class="callout-sot" style="margin-top: 4pt;">
+    <div class="callout-title">Dynamic Faculty Scoping Rule</div>
+    A faculty member's authorization boundaries are dynamically bounded: they can ONLY inspect and manipulate academic data (attendance, marks, assignments) for classes and subjects explicitly assigned to them by administrative authority. They possess ZERO access to unrelated departments or classes.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 20%;">Platform Module</th>
+        <th style="width: 25%;">Student Permissions</th>
+        <th style="width: 30%;">Faculty Permissions</th>
+        <th style="width: 25%;">Admin Permissions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Authentication</strong></td>
+        <td>Login, Profile Password Update</td>
+        <td>Login, Profile Password Update</td>
+        <td>Create Users, Revoke Access, Assign Roles</td>
+      </tr>
+      <tr>
+        <td><strong>Student Profiles</strong></td>
+        <td>Create, Read All, Update Own</td>
+        <td>Read All Students in Assigned Classes</td>
+        <td>Read All, Administrative Edit / Suspend</td>
+      </tr>
+      <tr>
+        <td><strong>Projects &amp; Likes</strong></td>
+        <td>Create, Update Own, Delete Own, Like</td>
+        <td>Read All Projects, Inspect Details</td>
+        <td>Read All, Moderate / Remove Violations</td>
+      </tr>
+      <tr>
+        <td><strong>Timetable</strong></td>
+        <td>Read Personal Class Timetable</td>
+        <td>Read Assigned Teaching Schedule</td>
+        <td>Create, Update, Delete All Timetables</td>
+      </tr>
+      <tr>
+        <td><strong>Attendance</strong></td>
+        <td>Read Own Attendance Records Only</td>
+        <td>Create, Update Attendance for Assigned Classes</td>
+        <td>Read All, Audit, System Overrides</td>
+      </tr>
+      <tr>
+        <td><strong>Marks</strong></td>
+        <td>Read Own Academic Marks Only</td>
+        <td>Create, Update Marks for Assigned Subjects</td>
+        <td>Read All, Departmental Audit, Grade Locks</td>
+      </tr>
+      <tr>
+        <td><strong>Assignments</strong></td>
+        <td>Read Assigned, Submit Own Files</td>
+        <td>Create, Update, Delete for Assigned Classes; Grade</td>
+        <td>Read All, Administrative Auditing</td>
+      </tr>
+      <tr>
+        <td><strong>Notices</strong></td>
+        <td>Read Permitted Notices</td>
+        <td>Create Class/Dept Notices; Read All</td>
+        <td>Publish College-Wide Notices; Delete Any</td>
+      </tr>
+      <tr>
+        <td><strong>Events</strong></td>
+        <td>Read Events, Register</td>
+        <td>Read Events, Post Dept Events (if authorized)</td>
+        <td>Create, Update, Delete All Events</td>
+      </tr>
+      <tr>
+        <td><strong>Campus AI</strong></td>
+        <td>Natural Language Query (Scoped to Own Data)</td>
+        <td>Natural Language Query (Scoped to Assigned Data)</td>
+        <td>System Metrics, Retrieval Audits</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SIGN-OFF BOX (FITS ON SAME PAGE) -->
+  <div style="margin-top: 14pt; padding: 10pt 14pt; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; page-break-inside: avoid;">
+    <div style="font-size: 9pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.8px;">
+      Official Source of Truth Document Sign-Off
+    </div>
+    <div style="font-size: 8pt; color: #475569; margin: 2px 0 10px 0;">
+      College OS &bull; Final-Year Major Project &bull; Department of Computer Science &amp; Engineering &bull; CSMU
+    </div>
+    
+    <div style="display: flex; justify-content: space-around; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
+      <div style="text-align: center;">
+        <div style="font-size: 7.5pt; font-weight: 700; color: #64748b;">PREPARED BY</div>
+        <div style="font-size: 8.5pt; font-weight: 700; color: #0f172a; margin-top: 1px;">Hamid Rza &amp; Team</div>
+        <div style="font-size: 7pt; color: #94a3b8;">Lead Developer / 7th Sem</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 7.5pt; font-weight: 700; color: #64748b;">REVIEWED BY</div>
+        <div style="font-size: 8.5pt; font-weight: 700; color: #0f172a; margin-top: 1px;">[Project Guide Name]</div>
+        <div style="font-size: 7pt; color: #94a3b8;">Faculty Project Guide</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 7.5pt; font-weight: 700; color: #64748b;">STATUS</div>
+        <div style="font-size: 8.5pt; font-weight: 700; color: #047857; margin-top: 1px;">🟢 BASELINE LOCKED</div>
+        <div style="font-size: 7pt; color: #94a3b8;">Source of Truth v1.0</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
