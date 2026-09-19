@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { Search, Bell, Sun, Moon, ChevronDown, Menu } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
+import { STUDENT_USER } from "./navConfig";
 
-export default function Navbar({ onMenuToggle }) {
+export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
   const { isDark, toggleTheme } = useTheme();
 
   return (
@@ -76,8 +77,8 @@ export default function Navbar({ onMenuToggle }) {
         <div className="flex items-center gap-2.5 pl-1 py-1 rounded-xl hover:bg-[#F1F8F5] dark:hover:bg-[#082A24] cursor-pointer transition-colors group">
           <div className="relative w-9 h-9 rounded-full overflow-hidden border border-[#D8E8E2] dark:border-[#16463D] shrink-0">
             <Image
-              src="/assets/layout/profile-avatar.jpg"
-              alt="Hamid Rza"
+              src={user.avatar || "/assets/layout/profile-avatar.jpg"}
+              alt={user.name || "User Avatar"}
               width={36}
               height={36}
               className="object-cover"
@@ -86,10 +87,10 @@ export default function Navbar({ onMenuToggle }) {
           </div>
           <div className="hidden sm:flex flex-col text-left">
             <span className="text-[13px] font-semibold text-[#0B3024] dark:text-[#F1FAF6] leading-tight group-hover:text-[#159B72] dark:group-hover:text-[#20D39B] transition-colors">
-              Hamid Rza
+              {user.name}
             </span>
             <span className="text-[11px] text-[#658278] dark:text-[#789991] leading-tight mt-0.5">
-              B.Tech &bull; 7th Sem
+              {user.subtitle}
             </span>
           </div>
           <ChevronDown

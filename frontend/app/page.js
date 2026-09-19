@@ -1,10 +1,5 @@
-import Dashboard from "@/components/dashboard/Dashboard";
-
-export const metadata = {
-  title: "Dashboard - College OS",
-  description: "Student Academic and Campus Dashboard",
-};
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <Dashboard />;
+  redirect("/student");
 }

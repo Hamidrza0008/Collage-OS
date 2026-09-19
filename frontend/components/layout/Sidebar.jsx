@@ -1,41 +1,27 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
-  Home,
-  User,
-  Layers,
-  ClipboardCheck,
-  Bell,
-  Calendar,
-  LayoutGrid,
-  Briefcase,
-  ShieldCheck,
-  MessageSquare,
-  Sparkles,
   Settings,
   Leaf,
   X,
 } from "lucide-react";
 import NavItem from "./NavItem";
 import { useTheme } from "../providers/ThemeProvider";
+import { STUDENT_NAV_ITEMS, STUDENT_QUOTE } from "./navConfig";
 
-const NAV_ITEMS = [
-  { label: "Home", icon: Home, href: "/", isActive: true },
-  { label: "My Profile", icon: User, href: "/profile" },
-  { label: "Academics", icon: Layers, href: "/academics", hasSubmenu: true },
-  { label: "Assignments", icon: ClipboardCheck, href: "/assignments" },
-  { label: "Notices & Announcements", icon: Bell, href: "/notices" },
-  { label: "Events", icon: Calendar, href: "/events" },
-  { label: "Projects", icon: LayoutGrid, href: "/projects" },
-  { label: "Internships & Hackathons", icon: Briefcase, href: "/internships" },
-  { label: "Lost & Found", icon: ShieldCheck, href: "/lost-and-found" },
-  { label: "Campus Feed", icon: MessageSquare, href: "/feed" },
-  { label: "Campus AI", icon: Sparkles, href: "/campus-ai", badge: "New" },
-];
-
-export default function Sidebar({ isOpen, onClose }) {
+export default function Sidebar({
+  isOpen,
+  onClose,
+  navItems = STUDENT_NAV_ITEMS,
+  brandQuote = STUDENT_QUOTE,
+}) {
   const { isDark } = useTheme();
+  const pathname = usePathname();
+
+  const isFaculty = pathname?.startsWith("/faculty");
+  const settingsHref = isFaculty ? "/faculty/settings" : "/student/settings";
 
   return (
     <>
@@ -92,25 +78,29 @@ export default function Sidebar({ isOpen, onClose }) {
 
           {/* Navigation Links: Slim and compact */}
           <nav className="px-3 py-1 space-y-0.5" aria-label="Main Navigation">
-            {NAV_ITEMS.map((item) => (
-              <NavItem
-                key={item.label}
-                icon={item.icon}
-                label={item.label}
-                href={item.href}
-                isActive={item.isActive}
-                hasSubmenu={item.hasSubmenu}
-                badge={item.badge}
-                onClick={onClose}
-              />
-            ))}
+            {navItems.map((item) => {
+              const isActive = item.isActive !== undefined ? item.isActive : pathname === item.href;
+              return (
+                <NavItem
+                  key={item.label}
+                  icon={item.icon}
+                  label={item.label}
+                  href={item.href}
+                  isActive={isActive}
+                  hasSubmenu={item.hasSubmenu}
+                  badge={item.badge}
+                  onClick={onClose}
+                />
+              );
+            })}
 
-            {/* Settings Item: Grouped directly below Campus AI */}
+            {/* Settings Item: Grouped directly below navigation items */}
             <div className="pt-1 mt-1 border-t border-[#E8F1ED] dark:border-[#10372F]">
               <NavItem
                 icon={Settings}
                 label="Settings"
-                href="/settings"
+                href={settingsHref}
+                isActive={pathname === settingsHref}
                 onClick={onClose}
               />
             </div>
@@ -133,10 +123,10 @@ export default function Sidebar({ isOpen, onClose }) {
           {/* Dynamic Quote & Leaf Icon Overlay */}
           <div className="absolute bottom-4 left-4 z-10 flex flex-col items-start space-y-0.5 pointer-events-none">
             <span className="text-xs font-semibold text-emerald-950 dark:text-[#F1FAF6] tracking-tight drop-shadow-xs">
-              Better Students
+              {brandQuote?.line1 || "Better Students"}
             </span>
             <span className="text-xs font-semibold text-emerald-950 dark:text-[#B5CCC5] tracking-tight drop-shadow-xs">
-              Better Tomorrow
+              {brandQuote?.line2 || "Better Tomorrow"}
             </span>
             <div className="mt-1 w-5 h-5 rounded bg-emerald-700 dark:bg-[#20D39B] flex items-center justify-center shadow-xs">
               <Leaf className="w-3.5 h-3.5 text-white dark:text-[#021512]" strokeWidth={2.2} />
@@ -147,3 +137,4 @@ export default function Sidebar({ isOpen, onClose }) {
     </>
   );
 }
+
