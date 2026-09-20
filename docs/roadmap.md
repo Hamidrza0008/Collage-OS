@@ -15,7 +15,8 @@
   - Student "My Profile" (`/student/profile`) with 2-column layout matching Image 2 reference (Profile Hero, Profile Completion gauge, interactive section tabs with smooth scrolling and scroll spy, responsive unclipped About Me with quote card, Quick Info, Stats, Featured Projects, Assignments, Activity, Badges, Skills, Social Links, Interests, and Campus AI Promo Card).
   - Student Academics (`/student/academics`) matching Image 3 reference (Academics Header with subtle campus background & semester selector, 6 functional tabs with smooth scrolling and scroll spy, Academic Overview with circular CGPA gauge & 2x2 metric cards, Performance Trend responsive SVG line chart, 6 Current Semester Subjects with progress bars & grade badges, Semester Grades table, Results & Grade Card with downloadable cards, Upcoming Exams with motivational banner, Semester Calendar with day picker & legend, Quick Actions, Notices & Announcements, Study Reminder, and Campus AI).
   - Student Assignments (`/student/assignments`) matching reference image (2/3 Main Content + 1/3 Right Sidebar top-aligned desktop layout, compact hero banner with visible campus architecture, reactive tabs & counts [All: 16, Pending: 3, Submitted: 13, Overdue: 2], live search & subject dropdown, horizontal assignment cards with marks, due dates, urgency badges, tags & 3-dot menus, View Details & submission modal, Upload Assignment modal, Upcoming Deadlines, circular 81% Submission Stats, compact August 2025 Calendar, and Quick Actions).
-- **Next High-Priority Target**: Student Notices & Announcements / Events based on College OS design system and roadmap.
+  - Student Notices & Announcements (`/student/notices`) matching reference image (2/3 Main Content + 1/3 Right Sidebar top-aligned desktop layout, compact hero banner with visible campus architecture & script styling, functional Notices vs Announcements tabs, Department and Category dropdowns, live search, 18 realistic notices & announcements with category-specific icons and pills, pinned badge, 6-card pagination with range indicator, Latest Updates, interactive Category chips, Quick Actions, Stay Informed CTA with custom foliage artwork, and interactive modals for details, notification preferences, and contact admin).
+- **Next High-Priority Target**: Student Events / Projects / Internships based on College OS design system and roadmap.
 
 ---
 
@@ -64,10 +65,10 @@ Build and finalize the Student experience.
 - [x] Profile
 - [x] Academics
 - [x] Attendance (Integrated in Academic Overview & Quick Actions navigation)
-- [x] Assignments
-  > *Progress: Full Assignments dashboard (`/student/assignments`) implemented matching reference image with 2/3 + 1/3 top-aligned desktop layout, compact hero banner with visible campus artwork, reactive tabs & counts (All: 16, Pending: 3, Submitted: 13, Overdue: 2), live search & subject dropdown, client-side pagination displaying exactly 6 cards per page with range indicator and automatic page-reset on filter changes, full card set with due urgency badges & 3-dot menus, View Details & submit modal, Upload Assignment modal, Upcoming Deadlines, circular 81% Submission Stats, August 2025 Calendar, and functional Quick Actions.*
-- [ ] Notices
-- [ ] Announcements
+- [x] Notices
+  > *Progress: Full Notices & Announcements dashboard (`/student/notices`) implemented matching reference image with 2/3 + 1/3 top-aligned desktop layout, visible campus hero banner, Notices vs Announcements tabs, Department and Category dropdowns, live search, 18 realistic notices with category icons, metadata & attachments, 6-card pagination with auto-reset, Latest Updates, interactive Categories chips, Quick Actions, Stay Informed CTA, and complete modal suite.*
+- [x] Announcements
+  > *Progress: Integrated within `/student/notices` via the dedicated Announcements tab, filtering college-wide milestone notices and university addresses.*
 - [ ] Events
 - [ ] Internships
 - [ ] Explore Students

@@ -1,0 +1,43 @@
+"use client";
+
+import NoticeCard from "./NoticeCard";
+import { BellOff } from "lucide-react";
+
+export default function NoticeList({
+  notices,
+  onViewDetails,
+  onDownloadAttachments,
+  onMarkAsRead,
+  onShare,
+}) {
+  if (notices.length === 0) {
+    return (
+      <div className="w-full bg-[#FFFFFF] dark:bg-[#021512] border border-[#D8E8E2] dark:border-[#10372F] rounded-2xl shadow-xs p-10 flex flex-col items-center justify-center text-center">
+        <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-3">
+          <BellOff className="w-6 h-6" />
+        </div>
+        <h3 className="text-sm font-bold text-[#0B3024] dark:text-[#F1FAF6]">
+          No notices found
+        </h3>
+        <p className="text-xs text-[#5C786E] dark:text-[#8AA89F] mt-1 max-w-sm">
+          No notices match your current search, department, or category filter. Try clearing filters or selecting another category.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3.5">
+      {notices.map((notice) => (
+        <NoticeCard
+          key={notice.id}
+          notice={notice}
+          onViewDetails={onViewDetails}
+          onDownloadAttachments={onDownloadAttachments}
+          onMarkAsRead={onMarkAsRead}
+          onShare={onShare}
+        />
+      ))}
+    </div>
+  );
+}

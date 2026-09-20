@@ -1,0 +1,483 @@
+export const ALL_NOTICES = [
+  {
+    id: "not-1",
+    title: "College Reopens for Odd Semester 2025",
+    description:
+      "The college will reopen for the Odd Semester 2025 from 18th August 2025. All students are requested to follow the academic calendar and be present on time.",
+    fullContent:
+      "Dear Students, Faculty, and Staff,\n\nThis is to officially inform you that College OS Campus will reopen for the Odd Semester (Academic Year 2025-2026) starting Monday, 18th August 2025.\n\nKey Guidelines:\n1. Regular classes will resume as per the semester timetable published on the academic portal.\n2. Attendance on the first week is strictly mandatory for orientation and lab allocations.\n3. Hostel residents must report by Sunday, 17th August 2025, 6:00 PM.\n4. Students must carry valid College ID cards at all entrance gates.\n\nWe wish you a fruitful and productive semester ahead.\n\nOffice of the Principal\nCollege OS University",
+    department: "Principal Office",
+    date: "18 Aug 2025",
+    filesCount: 2,
+    files: [
+      { name: "Academic_Calendar_Odd_Sem_2025.pdf", size: "2.4 MB" },
+      { name: "Orientation_Schedule_Notice.pdf", size: "1.1 MB" },
+    ],
+    category: "Important",
+    categoryType: "important",
+    pinned: true,
+    type: "notice",
+    unread: true,
+  },
+  {
+    id: "not-2",
+    title: "Mid-Sem Examination Schedule Released",
+    description:
+      "The mid-sem examination schedule for Sem 5 & 7 has been published. Kindly check your respective department pages for detailed timetable and instructions.",
+    fullContent:
+      "Attention B.Tech Semesters 5 & 7 Students:\n\nThe official Mid-Semester Examination timetable for the Autumn 2025 session has been approved and released by the Examination Cell.\n\nImportant Exam Instructions:\n- Exams will commence on 15th September 2025.\n- Duration: 2 Hours per subject (50 Marks).\n- Entry to examination halls closes 15 minutes before exam commencement.\n- Programmable calculators, smartwatches, and phones are strictly prohibited.\n- Admit cards must be downloaded from the student portal prior to the first examination day.\n\nExamination Cell Controller",
+    department: "Examination Cell",
+    date: "16 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "MidSem_Exam_Timetable_Sem5_Sem7.pdf", size: "1.8 MB" }],
+    category: "Exam",
+    categoryType: "exam",
+    pinned: false,
+    type: "notice",
+    unread: true,
+  },
+  {
+    id: "not-3",
+    title: "Placement Drive – TCS (Digital)",
+    description:
+      "TCS is conducting a recruitment drive for B.Tech 2026 batch. Interested students can register via the placement portal by 20th August 2025.",
+    fullContent:
+      "Dear 2026 Graduating Batch,\n\nTata Consultancy Services (TCS) is inviting applications for the TCS Digital & Prime engineering recruitment tracks.\n\nEligibility Criteria:\n- B.Tech in CSE, IT, ECE with minimum 7.0 CGPA throughout.\n- No active backlogs.\n\nRegistration Process:\n1. Complete candidate registration on TCS NextStep portal.\n2. Submit your College OS Placement Token ID before 20th August 2025, 11:59 PM.\n3. National Qualifier Test (NQT) dates will be communicated directly via email.\n\nTraining & Placement Cell",
+    department: "Training & Placement Cell",
+    date: "14 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "TCS_Digital_Job_Description_2026.pdf", size: "850 KB" }],
+    category: "Placement",
+    categoryType: "placement",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-4",
+    title: "Tech Talk – “Building Real World Startups”",
+    description:
+      "An interactive session with Mr. Rohan Mehta (Founder, DevSummit) on 22nd August 2025 at 10:00 AM in Seminar Hall. All students are welcome.",
+    fullContent:
+      "E-Cell & Department of Computer Science present a keynote session on entrepreneurship and venture building:\n\nGuest Speaker: Mr. Rohan Mehta (Founder & CEO, DevSummit; Y-Combinator Alum)\nTopic: Building Scalable Real-World Software Startups: From Hackathon to Series-A\nDate: 22nd August 2025, 10:00 AM – 12:30 PM\nVenue: Main Auditorium / Seminar Hall A\n\nCertificates will be provided to all attendees. Pre-registration is recommended as seating is limited.",
+    department: "Events Cell",
+    date: "12 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "TechTalk_Poster_DevSummit.jpg", size: "3.2 MB" }],
+    category: "Event",
+    categoryType: "event",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-5",
+    title: "Hostel Mess Menu Update",
+    description:
+      "The updated mess menu for this week has been uploaded. Please check the notice board and official portal for details.",
+    fullContent:
+      "Hostel Residents Notice:\n\nFollowing feedback from the Student Mess Committee, the breakfast, lunch, and dinner menus across Boys and Girls hostels have been revised starting Monday, 11th August 2025.\n\nKey additions include nutritious organic salads, increased milk options, and a weekend special menu.\n\nHostel Warden Office",
+    department: "Hostel Warden",
+    date: "11 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "Weekly_Mess_Menu_August_2025.pdf", size: "620 KB" }],
+    category: "General",
+    categoryType: "general",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-6",
+    title: "Library Timings Extended During Exam Days",
+    description:
+      "The library will remain open from 8:00 AM to 10:00 PM during the examination period (18 Aug – 30 Aug 2025).",
+    fullContent:
+      "Central Library Announcement:\n\nTo facilitate students preparing for mid-term tests and competitive examinations, the Central University Library reading rooms and digital catalog resources will operate with extended hours:\n\n- Mon to Sat: 8:00 AM to 10:00 PM\n- Sunday: 9:00 AM to 6:00 PM\n- Wi-Fi and printing kiosks will remain active throughout operating hours.\n\nChief Librarian",
+    department: "Library",
+    date: "10 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "Library_Extended_Hours_Notification.pdf", size: "450 KB" }],
+    category: "Information",
+    categoryType: "information",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-7",
+    title: "Annual Tech Fest 'Innovate 2025' Dates Announced",
+    description:
+      "College OS flagship technical symposium 'Innovate 2025' will take place from October 12-14. Theme: AI for Sustainable Communities.",
+    fullContent:
+      "Get ready for the biggest technical festival of the year! 'Innovate 2025' features hackathons, robotics challenges, coding sprints, paper presentations, and venture pitch decks.\n\nCash prizes worth ₹5,00,000 to be won. Student committee callout open till 25th August 2025.",
+    department: "Events Cell",
+    date: "09 Aug 2025",
+    filesCount: 2,
+    files: [
+      { name: "Innovate2025_Brochure.pdf", size: "4.5 MB" },
+      { name: "Organizing_Committee_Form.pdf", size: "520 KB" },
+    ],
+    category: "Event",
+    categoryType: "event",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-8",
+    title: "Scholarship Application Deadline for Meritorious Students",
+    description:
+      "Applications for the University Merit Scholarship (Odd Semester) close on 25th August 2025. Verify eligibility and submit necessary documents.",
+    fullContent:
+      "Merit-based financial aid and tuition fee waivers are available for students securing top 5% SGPA in the preceding academic year.\n\nSubmit your certified marksheets and bank details via the Finance & Accounts office.",
+    department: "Administration",
+    date: "08 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "Merit_Scholarship_Application_2025.pdf", size: "1.2 MB" }],
+    category: "Important",
+    categoryType: "important",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-9",
+    title: "Microsoft Azure Cloud Certification Workshop",
+    description:
+      "Free 3-day hands-on cloud computing workshop with complimentary AZ-900 exam voucher sponsored by the CSE department.",
+    fullContent:
+      "The Department of Computer Science & Engineering is organizing a comprehensive Cloud Practitioner bootcamp in partnership with Microsoft Azure Learn.\n\nSeats are capped at 120 students across 3rd and 4th years on a first-come, first-served basis.",
+    department: "Computer Science & Engineering",
+    date: "06 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "Azure_Bootcamp_Syllabus.pdf", size: "1.5 MB" }],
+    category: "Placement",
+    categoryType: "placement",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-10",
+    title: "End-Semester Lab Exam Guidelines & Rubrics",
+    description:
+      "Standard operating procedures and evaluation rubrics for practical laboratory viva examinations released by the Controller of Exams.",
+    fullContent:
+      "All engineering departments must adhere to the standardized 5-tier evaluation rubric for internal and external lab practical examinations.\n\nStudents must maintain updated and certified record notebooks signed by their faculty mentors.",
+    department: "Examination Cell",
+    date: "05 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "Lab_Exam_Evaluation_Rubric_2025.pdf", size: "980 KB" }],
+    category: "Exam",
+    categoryType: "exam",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-11",
+    title: "Sports Complex & Gymnasium Timing Revision",
+    description:
+      "Indoor sports courts and fitness center timings updated for students and faculty. New badminton court synthetic flooring ready.",
+    fullContent:
+      "The University Sports Council announces the reopening of the renovated sports complex with professional synthetic flooring and upgraded fitness gear.\n\nOperating hours: 6:00 AM – 8:30 AM & 4:30 PM – 8:00 PM.",
+    department: "Administration",
+    date: "04 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "Sports_Complex_Guidelines.pdf", size: "380 KB" }],
+    category: "General",
+    categoryType: "general",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-12",
+    title: "Campus Wi-Fi Maintenance Window Notice",
+    description:
+      "Routine core network router upgrade scheduled on Saturday, 16th August between 11:00 PM and 3:00 AM. Internet access will be temporarily intermittent.",
+    fullContent:
+      "IT Infrastructure Cell is performing scheduled hardware maintenance and security patch deployment on core gateway switches.\n\nHostel and campus Wi-Fi services will experience short intermittent outages during the maintenance window.",
+    department: "Information Technology",
+    date: "03 Aug 2025",
+    filesCount: 0,
+    files: [],
+    category: "Information",
+    categoryType: "information",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-13",
+    title: "Cybersecurity Awareness Seminar by CERT-In",
+    description:
+      "Special interactive workshop on ethical hacking, bug bounty hunting and digital privacy protection protocols.",
+    fullContent:
+      "National cyber defense experts from CERT-In and industry practitioners will demonstrate live penetration testing and web application defense strategies.",
+    department: "Information Technology",
+    date: "02 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "CyberSecurity_Seminar_Brochure.pdf", size: "2.1 MB" }],
+    category: "Event",
+    categoryType: "event",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-14",
+    title: "Summer Internship Project Submission Deadline",
+    description:
+      "Final submission of completed summer internship reports and mentor evaluation letters due by 30th August 2025.",
+    fullContent:
+      "Students returning from summer training in tech companies and research labs must upload their finalized 30-page report and mentor appraisal form.",
+    department: "Training & Placement Cell",
+    date: "01 Aug 2025",
+    filesCount: 2,
+    files: [
+      { name: "Internship_Report_Template.docx", size: "250 KB" },
+      { name: "Industry_Mentor_Appraisal_Form.pdf", size: "420 KB" },
+    ],
+    category: "Placement",
+    categoryType: "placement",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-15",
+    title: "Identity Card Re-issue Procedure Update",
+    description:
+      "Students with damaged or misplaced RFID smart campus cards can submit replacement requests online through the student portal.",
+    fullContent:
+      "Avoid standing in queues! Replacement smart RFID identity cards can now be requested directly with digital fee payment. Cards are delivered within 48 hours.",
+    department: "Administration",
+    date: "30 Jul 2025",
+    filesCount: 1,
+    files: [{ name: "Smart_Card_Replacement_Process.pdf", size: "510 KB" }],
+    category: "General",
+    categoryType: "general",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-16",
+    title: "Pre-Placement Training on DSA & Aptitude",
+    description:
+      "6-week intensive coding and aptitude bootcamp beginning next week for pre-final year engineering students.",
+    fullContent:
+      "Master competitive programming, dynamic programming, system design fundamentals, and corporate quantitative aptitude under top industry coaches.",
+    department: "Training & Placement Cell",
+    date: "28 Jul 2025",
+    filesCount: 1,
+    files: [{ name: "Placement_Bootcamp_Curriculum.pdf", size: "1.7 MB" }],
+    category: "Placement",
+    categoryType: "placement",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-17",
+    title: "Transportation & Bus Route Timings for Odd Sem",
+    description:
+      "Revised university bus fleet routes and morning/evening pickup times across city zones published.",
+    fullContent:
+      "All 12 university transit routes have been optimized for timely commute. Check route map and register for quarterly bus pass.",
+    department: "Administration",
+    date: "26 Jul 2025",
+    filesCount: 1,
+    files: [{ name: "Bus_Routes_Schedule_2025.pdf", size: "1.4 MB" }],
+    category: "Information",
+    categoryType: "information",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+  {
+    id: "not-18",
+    title: "National Conference on Sustainable Engineering",
+    description:
+      "Call for research papers on green IoT, clean energy grids, and eco-friendly structural design. Accepted papers indexed in Scopus.",
+    fullContent:
+      "The Faculty of Engineering invites original research submissions from students and academicians for the 4th National Conference on Sustainable Engineering.",
+    department: "Mechanical Engineering",
+    date: "24 Jul 2025",
+    filesCount: 2,
+    files: [
+      { name: "Call_for_Papers_NCSE_2025.pdf", size: "2.8 MB" },
+      { name: "IEEE_Paper_Formatting_Guidelines.docx", size: "120 KB" },
+    ],
+    category: "Event",
+    categoryType: "event",
+    pinned: false,
+    type: "notice",
+    unread: false,
+  },
+];
+
+export const ALL_ANNOUNCEMENTS = [
+  {
+    id: "ann-1",
+    title: "Independence Day Flag Hoisting & Celebrations",
+    description:
+      "Join us on 15th August 2025 at 8:30 AM in the Central Campus Ground for the annual flag hoisting ceremony, cultural parade, and refreshments.",
+    fullContent:
+      "The University cordially invites all students, faculty members, and campus families to celebrate India's 79th Independence Day.\n\nSchedule:\n- 8:30 AM: Assembly at Administrative Lawn\n- 8:45 AM: Flag Hoisting by the Hon'ble Vice Chancellor\n- 9:00 AM: Patriotic song performance by the College Music Club\n- 9:30 AM: High Tea and Refreshments at Central Food Court\n\nDress Code: Traditional / Formal",
+    department: "Administration",
+    date: "13 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "Independence_Day_Program_Schedule.pdf", size: "1.2 MB" }],
+    category: "Event",
+    categoryType: "event",
+    pinned: true,
+    type: "announcement",
+    unread: true,
+  },
+  {
+    id: "ann-2",
+    title: "College OS Innovation Grant Winners Announced",
+    description:
+      "Congratulations to the 5 student startup teams selected for the University Incubation Seed Grant of ₹1,00,000 each!",
+    fullContent:
+      "The Innovation & Entrepreneurship Cell (IEDC) is proud to announce the winners of the 2025 Campus Startup Grant.\n\nWinning Teams:\n1. EcoCharge - Smart EV Fleet Management\n2. NeuroMed - AI Diagnostic Assist for Clinics\n3. AgriDrone - Autonomous Precision Spraying\n4. EduSync - Peer-to-Peer Academic Knowledge Graph\n5. CleanWater AI - Real-time River Effluent Tracker\n\nTeams will receive dedicated incubation lab space and mentoring.",
+    department: "Principal Office",
+    date: "11 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "Incubation_Grant_Winners_List.pdf", size: "890 KB" }],
+    category: "Important",
+    categoryType: "important",
+    pinned: false,
+    type: "announcement",
+    unread: false,
+  },
+  {
+    id: "ann-3",
+    title: "Google Summer of Code (GSoC) Mentorship Track",
+    description:
+      "College OS Open Source Club announces special mentorship sessions for students preparing for GSoC 2026 contributions.",
+    fullContent:
+      "Want to contribute to top open-source organizations like Linux Foundation, Mozilla, or Apache? Attend weekly hands-on code reviews led by previous GSoC scholars.",
+    department: "Computer Science & Engineering",
+    date: "09 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "OpenSource_Mentorship_Guide.pdf", size: "1.1 MB" }],
+    category: "Placement",
+    categoryType: "placement",
+    pinned: false,
+    type: "announcement",
+    unread: false,
+  },
+  {
+    id: "ann-4",
+    title: "IEEE Student Branch Executive Committee Elections",
+    description:
+      "Nominations are invited for Chair, Vice-Chair, Secretary, and Treasurer positions for the IEEE Student Branch (2025-2026).",
+    fullContent:
+      "Active student members of IEEE with good academic standing are invited to file their nominations before 20th August 2025.",
+    department: "Electronics & Telecommunication",
+    date: "07 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "IEEE_Election_Charter_2025.pdf", size: "750 KB" }],
+    category: "General",
+    categoryType: "general",
+    pinned: false,
+    type: "announcement",
+    unread: false,
+  },
+  {
+    id: "ann-5",
+    title: "National Hackathon 'CodeStorm' Registration Open",
+    description:
+      "36-hour non-stop hackathon with problem statements from top tech companies. Free food, swag kits, and mentorship provided.",
+    fullContent:
+      "Form teams of 2-4 and build innovative web, mobile, AI, and blockchain applications. Top teams get direct interview fast-tracks.",
+    department: "Information Technology",
+    date: "05 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "CodeStorm_Hackathon_Rules.pdf", size: "2.3 MB" }],
+    category: "Event",
+    categoryType: "event",
+    pinned: false,
+    type: "announcement",
+    unread: false,
+  },
+  {
+    id: "ann-6",
+    title: "Vice Chancellor's Welcome Address for New Academic Year",
+    description:
+      "Live streaming link and transcript of the Vice Chancellor's speech outlining university research milestones and student roadmap.",
+    fullContent:
+      "The Vice Chancellor shared the college vision for NIRF ranking enhancement, world-class laboratory additions, and collaborative degree programs.",
+    department: "Principal Office",
+    date: "01 Aug 2025",
+    filesCount: 1,
+    files: [{ name: "VC_Address_Transcript_2025.pdf", size: "640 KB" }],
+    category: "Information",
+    categoryType: "information",
+    pinned: false,
+    type: "announcement",
+    unread: false,
+  },
+];
+
+export const LATEST_UPDATES = [
+  {
+    id: "up-1",
+    title: "College Reopens for Odd Semester...",
+    date: "18 Aug 2025",
+    categoryType: "important",
+  },
+  {
+    id: "up-2",
+    title: "Mid-Sem Examination Schedule Released",
+    date: "16 Aug 2025",
+    categoryType: "exam",
+  },
+  {
+    id: "up-3",
+    title: "TCS Placement Drive – Registration Open",
+    date: "14 Aug 2025",
+    categoryType: "placement",
+  },
+  {
+    id: "up-4",
+    title: "Tech Talk – Building Real World Startups",
+    date: "12 Aug 2025",
+    categoryType: "event",
+  },
+  {
+    id: "up-5",
+    title: "Hostel Mess Menu Update",
+    date: "11 Aug 2025",
+    categoryType: "general",
+  },
+];
+
+export const DEPARTMENTS_LIST = [
+  "All Departments",
+  "Principal Office",
+  "Examination Cell",
+  "Training & Placement Cell",
+  "Events Cell",
+  "Computer Science & Engineering",
+  "Information Technology",
+  "Electronics & Telecommunication",
+  "Mechanical Engineering",
+  "Administration",
+  "Library",
+  "Hostel Warden",
+];
+
+export const CATEGORIES_LIST = [
+  "All Categories",
+  "Important",
+  "Exam",
+  "Event",
+  "Placement",
+  "General",
+  "Information",
+];
