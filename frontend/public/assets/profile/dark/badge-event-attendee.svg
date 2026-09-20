@@ -1,0 +1,20 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="attendeeGrad" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <filter id="glowAttendee" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#F59E0B" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <path d="M32 4L54.5 17V43L32 56L9.5 43V17L32 4Z" fill="url(#attendeeGrad)" stroke="#FEF3C7" stroke-width="1.5" stroke-linejoin="round" filter="url(#glowAttendee)"/>
+  <path d="M32 9L50 19.4V40.6L32 51L14 40.6V19.4L32 9Z" fill="none" stroke="white" stroke-width="0.8" stroke-opacity="0.35" stroke-linejoin="round"/>
+  <!-- Trophy / Star Ribbon Emblem -->
+  <path d="M26 21H38V27C38 30.3 35.3 33 32 33C28.7 33 26 30.3 26 27V21Z" fill="white" fill-opacity="0.95"/>
+  <path d="M26 23H23C21.9 23 21 23.9 21 25C21 27.2 22.8 29 25 29H26V23Z" fill="white" fill-opacity="0.75"/>
+  <path d="M38 23H41C42.1 23 43 23.9 43 25C43 27.2 41.2 29 39 29H38V23Z" fill="white" fill-opacity="0.75"/>
+  <path d="M30 33H34V38H30V33Z" fill="white" fill-opacity="0.85"/>
+  <path d="M27 38H37V41H27V38Z" rx="1.5" fill="white" fill-opacity="0.95"/>
+</svg>

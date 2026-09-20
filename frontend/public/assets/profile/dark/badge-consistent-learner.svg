@@ -1,0 +1,17 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="learnerGrad" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="50%" stop-color="#159B72"/>
+      <stop offset="100%" stop-color="#087A5B"/>
+    </linearGradient>
+    <filter id="glowLearner" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#159B72" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <path d="M32 4L54.5 17V43L32 56L9.5 43V17L32 4Z" fill="url(#learnerGrad)" stroke="#A7F3D0" stroke-width="1.5" stroke-linejoin="round" filter="url(#glowLearner)"/>
+  <path d="M32 9L50 19.4V40.6L32 51L14 40.6V19.4L32 9Z" fill="none" stroke="white" stroke-width="0.8" stroke-opacity="0.35" stroke-linejoin="round"/>
+  <!-- Central Sparkle / Star Emblem -->
+  <path d="M32 18L34.8 28.2L45 31L34.8 33.8L32 44L29.2 33.8L19 31L29.2 28.2L32 18Z" fill="white" fill-opacity="0.95"/>
+  <circle cx="32" cy="31" r="3" fill="#DDF4EB"/>
+</svg>

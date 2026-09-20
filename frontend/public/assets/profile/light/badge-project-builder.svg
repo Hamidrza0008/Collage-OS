@@ -1,0 +1,18 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="builderGrad" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#6D28D9"/>
+    </linearGradient>
+    <filter id="glowBuilder" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#8B5CF6" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <path d="M32 4L54.5 17V43L32 56L9.5 43V17L32 4Z" fill="url(#builderGrad)" stroke="#DDD6FE" stroke-width="1.5" stroke-linejoin="round" filter="url(#glowBuilder)"/>
+  <path d="M32 9L50 19.4V40.6L32 51L14 40.6V19.4L32 9Z" fill="none" stroke="white" stroke-width="0.8" stroke-opacity="0.35" stroke-linejoin="round"/>
+  <!-- Isometric 3D Cube / Layers Emblem -->
+  <path d="M32 20L42 25.8L32 31.6L22 25.8L32 20Z" fill="white" fill-opacity="0.95"/>
+  <path d="M22 27.5L31 32.7V42.5L22 37.3V27.5Z" fill="white" fill-opacity="0.75"/>
+  <path d="M33 32.7L42 27.5V37.3L33 42.5V32.7Z" fill="white" fill-opacity="0.85"/>
+</svg>
