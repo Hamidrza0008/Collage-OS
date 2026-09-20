@@ -255,6 +255,143 @@ After completing a task:
 
 ---
 
+## Attached UI Reference Images — Asset Generation & Theme Rules
+
+Whenever a UI/reference image is attached for designing or implementing a page, carefully inspect the complete image before creating the UI.
+
+### 1. Recreate Reference Images as Project Assets
+- Identify every meaningful image/visual asset used inside the attached reference UI.
+- This includes:
+  - Hero/banner images
+  - Illustrations
+  - Background visuals
+  - Avatars/profile images
+  - Project thumbnails
+  - Event/notice images
+  - Decorative visual elements
+  - Any other actual image used as part of the UI
+- Recreate/generate these visual assets as closely as possible to the reference image.
+- Do not replace important reference visuals with random placeholder images, unrelated stock images, or generic gradients when an actual visual is shown in the reference.
+- The generated assets should visually match the reference in terms of subject, composition, style, proportions, and overall appearance.
+
+### 2. Generate Both Light & Dark Versions
+For every image/visual that needs a different appearance between themes:
+- Generate a Light Theme version.
+- Generate a Dark Theme version.
+- Both versions should represent the same visual/content and should feel like theme variants of the same asset.
+- Do not simply invert colors. Adapt the asset properly for the dark UI when required.
+
+### 3. Save Assets Page-Wise
+All generated/recreated assets must be stored inside the project's assets/public asset structure in a page-wise manner.
+
+Example:
+
+```text
+public/
+  assets/
+    home/
+      light/
+      dark/
+    academics/
+      light/
+      dark/
+    assignments/
+      light/
+      dark/
+    notices/
+      light/
+      dark/
+    announcements/
+      light/
+      dark/
+```
+
+Use the existing project asset structure if one already exists. Do not create unnecessary duplicate folders if an equivalent structure is already present.
+
+Use clear, descriptive filenames, for example:
+
+```text
+hero-light.png
+hero-dark.png
+student-card-light.png
+student-card-dark.png
+event-banner-light.png
+event-banner-dark.png
+```
+
+### 4. Actually Use the Generated Assets in the UI
+Generating assets is NOT enough.
+
+After generating and saving the assets:
+- Build the UI according to the reference image.
+- Identify every place where the reference image uses an actual visual asset.
+- Use the corresponding generated project asset at that exact UI location.
+- Do not leave placeholder images where a generated asset is available.
+- Do not generate assets that are never used.
+- Keep the asset-to-UI mapping clean and intentional.
+
+### 5. Light/Dark Theme Must Work Throughout the UI
+Every page being implemented must support both Light and Dark themes, consistent with the existing project theme system.
+
+The existing UI already supports a Light/Dark theme approach, so:
+- Preserve the existing theme architecture.
+- Do not create a separate unrelated theme system.
+- Do not break the existing theme toggle.
+- The same page/layout should work correctly in both themes.
+- Theme-dependent assets must automatically switch between their Light and Dark versions when the theme changes.
+
+For example:
+
+```jsx
+// Conceptual example
+light asset → /assets/home/light/hero.png
+dark asset  → /assets/home/dark/hero.png
+```
+
+When the user switches the application theme:
+- Light UI → use Light assets.
+- Dark UI → use Dark assets.
+
+### 6. Reference Image ≠ Screenshot to Copy as One Image
+Never use the entire attached UI screenshot as a single background/image to fake the page.
+
+The reference image is a DESIGN REFERENCE.
+
+Rebuild the actual UI using:
+- React/JSX components
+- Tailwind CSS
+- Existing project components
+- Generated/recreated visual assets
+- Existing theme system
+
+The final page must be a real, functional UI rather than a screenshot placed inside the page.
+
+### 7. Preserve Visual Consistency
+When implementing multiple pages:
+- Keep the same design language across all pages.
+- Maintain consistent spacing, typography, border radius, shadows, cards, navigation, sidebar, buttons, and theme behavior.
+- Light and Dark versions should feel like the same College OS design system.
+- Do not randomly change the visual language from one page to another unless the reference specifically requires it.
+
+### 8. Before Finishing Any Page
+Before considering a page complete, verify:
+
+- [ ] All important reference images/visuals have been identified.
+- [ ] Required assets have been generated/recreated.
+- [ ] Light and Dark asset variants exist where needed.
+- [ ] Assets are saved in the correct page-wise asset folder.
+- [ ] Generated assets are actually used in the UI.
+- [ ] No unnecessary placeholder images remain.
+- [ ] Light theme is visually correct.
+- [ ] Dark theme is visually correct.
+- [ ] Theme toggle correctly switches theme-dependent assets.
+- [ ] Existing project theme architecture has not been broken.
+- [ ] The final implementation is a real UI, not a screenshot/background workaround.
+
+These rules apply to every future page implemented from an attached UI/reference image.
+
+---
+
 ## Important Final Rule
 
 The existing College OS architecture should be respected.
