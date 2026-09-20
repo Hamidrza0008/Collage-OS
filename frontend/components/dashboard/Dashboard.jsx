@@ -17,8 +17,13 @@ import CampusAICard from "./CampusAICard";
 import QuickActions from "./QuickActions";
 import RecentActivity from "./RecentActivity";
 import CollegeJourneyCard from "./CollegeJourneyCard";
+import DashboardSkeleton from "./DashboardSkeleton";
 
-export default function Dashboard() {
+export default function Dashboard({ isLoading = false }) {
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <div className="flex flex-col xl:flex-row items-start gap-3.5 2xl:gap-4 w-full max-w-[1720px] mx-auto pb-6">
       {/* ========================================================================= */}

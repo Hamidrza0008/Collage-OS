@@ -13,10 +13,11 @@ import AssignmentDetailsModal from "./AssignmentDetailsModal";
 import UploadAssignmentModal from "./UploadAssignmentModal";
 import { ALL_ASSIGNMENTS, SUBJECTS_LIST } from "./assignmentsData";
 import { CheckCircle2 } from "lucide-react";
+import AssignmentsSkeleton from "./AssignmentsSkeleton";
 
 const ITEMS_PER_PAGE = 6;
 
-export default function Assignments() {
+export default function Assignments({ isLoading = false }) {
   const [assignments, setAssignments] = useState(ALL_ASSIGNMENTS);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -183,6 +184,10 @@ export default function Assignments() {
     setCurrentPage(1);
     showToast(`"${data.title}" submitted successfully!`);
   };
+
+  if (isLoading) {
+    return <AssignmentsSkeleton />;
+  }
 
   return (
     <div className="w-full min-h-screen pb-12 transition-colors">

@@ -14,9 +14,10 @@ import QuickActionsCard from "./QuickActionsCard";
 import AcademicNoticesCard from "./AcademicNoticesCard";
 import StudyReminderCard from "./StudyReminderCard";
 import CampusAICard from "./CampusAICard";
+import AcademicsSkeleton from "./AcademicsSkeleton";
 import { CheckCircle2, X } from "lucide-react";
 
-export default function Academics() {
+export default function Academics({ isLoading = false }) {
   const [currentSemester, setCurrentSemester] = useState(7);
   const [activeTab, setActiveTab] = useState("overview");
   const [toastMessage, setToastMessage] = useState(null);
@@ -98,6 +99,10 @@ export default function Academics() {
 
     return () => observer.disconnect();
   }, []);
+
+  if (isLoading) {
+    return <AcademicsSkeleton />;
+  }
 
   return (
     <div className="w-full min-h-screen pb-12 transition-colors">

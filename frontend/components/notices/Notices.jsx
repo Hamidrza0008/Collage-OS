@@ -14,10 +14,11 @@ import NotificationSettingsModal from "./NotificationSettingsModal";
 import ContactAdminModal from "./ContactAdminModal";
 import { ALL_NOTICES, ALL_ANNOUNCEMENTS } from "./noticesData";
 import { CheckCircle2 } from "lucide-react";
+import NoticesSkeleton from "./NoticesSkeleton";
 
 const ITEMS_PER_PAGE = 6;
 
-export default function Notices() {
+export default function Notices({ isLoading = false }) {
   const [notices, setNotices] = useState(ALL_NOTICES);
   const [announcements, setAnnouncements] = useState(ALL_ANNOUNCEMENTS);
   const [activeTab, setActiveTab] = useState("notices"); // 'notices' | 'announcements'
@@ -172,6 +173,10 @@ export default function Notices() {
         break;
     }
   };
+
+  if (isLoading) {
+    return <NoticesSkeleton />;
+  }
 
   return (
     <div className="w-full min-h-screen pb-12 transition-colors">

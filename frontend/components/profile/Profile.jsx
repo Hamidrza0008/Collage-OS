@@ -16,6 +16,7 @@ import SocialLinksCard from "./SocialLinksCard";
 import PersonalInterestsCard from "./PersonalInterestsCard";
 import CampusAIPromoCard from "./CampusAIPromoCard";
 import { PROFILE_DATA } from "./profileData";
+import ProfileSkeleton from "./ProfileSkeleton";
 
 const TAB_TO_ID = {
   Overview: "profile-overview",
@@ -26,7 +27,7 @@ const TAB_TO_ID = {
   Activity: "profile-activity",
 };
 
-export default function Profile() {
+export default function Profile({ isLoading = false }) {
   const [activeTab, setActiveTab] = useState("Overview");
   const isProgrammaticScroll = useRef(false);
   const scrollTimeout = useRef(null);
@@ -98,6 +99,10 @@ export default function Profile() {
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
     };
   }, []);
+
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
 
   return (
     <div id="profile-overview" className="w-full max-w-[1440px] mx-auto pb-10 scroll-mt-24">
