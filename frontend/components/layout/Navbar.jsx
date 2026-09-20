@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Search, Bell, Sun, Moon, ChevronDown, Menu } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
+import FontSwitcherDropdown from "./FontSwitcherDropdown";
 import { STUDENT_USER } from "./navConfig";
 
 export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
@@ -59,7 +60,7 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
         <button
           type="button"
           onClick={toggleTheme}
-          className="p-2 rounded-xl text-[#36594C] dark:text-[#20D39B] hover:bg-[#DDF3EB]/60 dark:hover:bg-[#075A43]/50 hover:text-[#0B3024] dark:hover:text-[#F1FAF6] transition-all active:scale-95"
+          className="p-2 rounded-xl text-[#36594C] dark:text-[#20D39B] hover:bg-[#DDF3EB]/60 dark:hover:bg-[#075A43]/50 hover:text-[#0B3024] dark:hover:text-[#F1FAF6] transition-all active:scale-95 cursor-pointer"
           title={isDark ? "Switch to Light theme" : "Switch to Dark theme"}
           aria-label="Toggle theme"
         >
@@ -69,6 +70,9 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
             <Moon className="w-[19px] h-[19px] text-[#36594C]" strokeWidth={1.9} />
           )}
         </button>
+
+        {/* Global Live Font Switcher Dropdown */}
+        <FontSwitcherDropdown variant="navbar" />
 
         {/* Divider */}
         <div className="h-6 w-[1px] bg-[#D8E8E2] dark:bg-[#16463D] mx-1 hidden sm:block" />
