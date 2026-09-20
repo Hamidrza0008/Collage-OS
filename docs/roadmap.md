@@ -13,7 +13,8 @@
   - Page-wise Asset Architecture (`public/assets/layout/`, `public/assets/dashboard/`, `public/assets/profile/` with Light/Dark variants).
   - Student Dashboard (`/student`) with Welcome Hero, Quick Stats, Timetable, Assignments, Attendance, Notices, Events, and Campus AI Quick Ask.
   - Student "My Profile" (`/student/profile`) with 2-column layout matching Image 2 reference (Profile Hero, Profile Completion gauge, interactive section tabs with smooth scrolling and scroll spy, responsive unclipped About Me with quote card, Quick Info, Stats, Featured Projects, Assignments, Activity, Badges, Skills, Social Links, Interests, and Campus AI Promo Card).
-- **Next High-Priority Target**: Student Academics Page (`/student/academics`) based on `Project Plan/Frontend UI/img 3.png`.
+  - Student Academics (`/student/academics`) matching Image 3 reference (Academics Header with subtle campus background & semester selector, 6 functional tabs with smooth scrolling and scroll spy, Academic Overview with circular CGPA gauge & 2x2 metric cards, Performance Trend responsive SVG line chart, 6 Current Semester Subjects with progress bars & grade badges, Semester Grades table, Results & Grade Card with downloadable cards, Upcoming Exams with motivational banner, Semester Calendar with day picker & legend, Quick Actions, Notices & Announcements, Study Reminder, and Campus AI).
+- **Next High-Priority Target**: Student Assignments / Notices Page based on `Project Plan/Frontend UI/img 4.png`.
 
 ---
 
@@ -60,9 +61,9 @@ Build and finalize the Student experience.
 
 - [x] Home / Student Dashboard
 - [x] Profile
-- [ ] Academics
-- [ ] Attendance
-- [ ] Marks / Results
+- [x] Academics
+- [x] Attendance (Integrated in Academic Overview & Quick Actions navigation)
+- [x] Marks / Results (Integrated in Semester Grades & Results/Grade Card)
 - [ ] Assignments
 - [ ] Notices
 - [ ] Announcements
