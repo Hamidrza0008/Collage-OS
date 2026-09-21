@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
@@ -9,40 +10,16 @@ const FontContext = createContext({
   lockedFont: null,
   lockFont: () => {},
   fonts: FONT_OPTIONS,
+  mounted: false,
 });
 
 const STORAGE_KEY = "college_os_active_font";
 const LOCKED_KEY = "college_os_locked_font";
 
 export function FontProvider({ children }) {
-  // Lazy state initializers (read synchronously on mount)
-  const [selectedFont, setSelectedFont] = useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          const found = FONT_OPTIONS.find(
-            (f) => f.name.toLowerCase() === saved.toLowerCase() || f.id === saved
-          );
-          if (found) return found;
-        }
-      } catch {
-        // ignore localStorage access errors
-      }
-    }
-    return FONT_OPTIONS[0];
-  });
-
-  const [lockedFont, setLockedFont] = useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        return localStorage.getItem(LOCKED_KEY) || null;
-      } catch {
-        // ignore localStorage access errors
-      }
-    }
-    return null;
-  });
+  const [selectedFont, setSelectedFont] = useState(FONT_OPTIONS[0]);
+  const [lockedFont, setLockedFont] = useState(null);
+  const [mounted, setMounted] = useState(false);
 
   // Apply font family globally to document
   const applyFontToDOM = (font) => {
@@ -62,8 +39,32 @@ export function FontProvider({ children }) {
     `;
   };
 
+  // 1. Initial client-side load from localStorage after hydration
   useEffect(() => {
-    // 1. Inject Google Fonts stylesheet link if missing
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const found = FONT_OPTIONS.find(
+          (f) => f.name.toLowerCase() === saved.toLowerCase() || f.id === saved
+        );
+        if (found) {
+          setSelectedFont(found);
+        }
+      }
+      const savedLocked = localStorage.getItem(LOCKED_KEY);
+      if (savedLocked) {
+        setLockedFont(savedLocked);
+      }
+    } catch {
+      // ignore localStorage access errors
+    }
+    setMounted(true);
+  }, []);
+
+  // 2. Ensure Google Fonts stylesheet link is present & apply font changes
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
     if (!document.getElementById("college-os-google-fonts")) {
       const link = document.createElement("link");
       link.id = "college-os-google-fonts";
@@ -73,7 +74,6 @@ export function FontProvider({ children }) {
       document.head.appendChild(link);
     }
 
-    // 2. Apply current font to DOM
     applyFontToDOM(selectedFont);
   }, [selectedFont]);
 
@@ -113,6 +113,7 @@ export function FontProvider({ children }) {
         lockedFont,
         lockFont,
         fonts: FONT_OPTIONS,
+        mounted,
       }}
     >
       {children}

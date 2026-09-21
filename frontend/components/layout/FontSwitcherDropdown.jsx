@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export default function FontSwitcherDropdown() {
-  const { selectedFont, setFont, lockedFont, lockFont, fonts } = useFont();
+  const { selectedFont, setFont, lockedFont, lockFont, fonts, mounted } = useFont();
   const [isOpen, setIsOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const dropdownRef = useRef(null);
@@ -56,7 +56,10 @@ export default function FontSwitcherDropdown() {
         <span className="text-[11px] text-[#5C786E] dark:text-[#8AA89F] hidden md:inline">
           Font:
         </span>
-        <span className="font-bold text-emerald-700 dark:text-emerald-400 max-w-[95px] truncate">
+        <span
+          suppressHydrationWarning
+          className="font-bold text-emerald-700 dark:text-emerald-400 max-w-[95px] truncate"
+        >
           {selectedFont.name}
         </span>
         <ChevronDown
