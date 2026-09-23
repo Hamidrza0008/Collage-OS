@@ -1241,10 +1241,10 @@
     The Campus AI Assistant is <strong>not an unrestricted, generic chatbot</strong> (such as an open ChatGPT wrapper). It is engineered as a domain-bounded, context-grounded college intelligence system:
   </p>
   <ul>
-    <li><strong>College OS is the Primary Source of Truth:</strong> The assistant's reasoning is anchored strictly in authoritative College OS databases and institutional documents.</li>
-    <li><strong>Absolute Anti-Hallucination Mandate:</strong> If a student asks a college-related question whose answers are not found in the verified dataset, the assistant will explicitly respond: <em>"This information is currently unavailable in official college records"</em>, rather than synthesizing speculative content.</li>
-    <li><strong>Contextual Privacy &amp; RBAC:</strong> The AI respects strict user authority boundaries. A student cannot query another student's marks or sensitive administrative audit trails.</li>
-    <li><strong>Sensitive Credential Exclusion:</strong> Passwords, OTPs, session tokens, and security secrets are cryptographically barred from ever entering AI prompt contexts.</li>
+    <li><strong>College OS is the Primary Source of Truth:</strong> The assistant's reasoning is anchored strictly in authoritative College OS databases (MongoDB operational store) and verified institutional documents (RAG vector store).</li>
+    <li><strong>One Common Engine with Role-Aware Context:</strong> Student AI and Faculty AI share ONE common Campus AI engine. The authenticated user's role and RBAC permissions govern accessible context, permitted data, RAG document scope, suggested prompts, and actions.</li>
+    <li><strong>Absolute Anti-Hallucination Mandate:</strong> If an authenticated student or faculty member asks a college question not found in verified records, the assistant explicitly responds: <em>"This information is currently unavailable in official college records"</em>, rather than speculating.</li>
+    <li><strong>Contextual Privacy, Least-Privilege &amp; Credential Exclusion:</strong> Queries strictly enforce RBAC (students: own records; faculty: assigned classes/students). The AI never exposes unauthorized peer data, another faculty's records, or credentials.</li>
   </ul>
 
   <hr class="divider" />
@@ -1603,6 +1603,7 @@ COLLEGE OS PLATFORM
     <ul style="margin: 2pt 0 0 0; padding-left: 16px; font-size: 8pt;">
       <li><strong>Not Generic ChatGPT:</strong> Grounded strictly in authenticated college data.</li>
       <li><strong>College OS is the Primary Source of Truth:</strong> Operates under strict domain boundaries.</li>
+      <li><strong>One Common Campus AI Engine Across Roles:</strong> Student AI and Faculty AI are not separate engines. One common intelligence engine operates across the institution; the authenticated user's role and RBAC permissions govern accessible context, MongoDB operational datasets, RAG document scope, suggested prompts, and available actions.</li>
       <li><strong>Structured Data &rarr; MongoDB Query Engine:</strong> Real-time attendance, timetables, and marks are queried directly via deterministic database queries.</li>
       <li><strong>Unstructured Policies &rarr; RAG Vector Retrieval:</strong> Institutional circulars, examination rules, and syllabi are retrieved via semantic vector search.</li>
       <li><strong>Hybrid Queries &rarr; MongoDB + RAG:</strong> Complex inquiries combine both data streams into a synthesized context prompt.</li>
@@ -1660,6 +1661,119 @@ COLLEGE OS PLATFORM
       <div class="flow-arrow">&rarr;</div>
       <div class="flow-node highlight" style="background: #0f172a; color: white;">7. Verified Answer</div>
     </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- A.2 ROLE-AWARE CAMPUS AI: FACULTY & STUDENT SCOPES -->
+  <h3 style="margin-top: 0;">A.2 Role-Aware Context, Authorization &amp; Faculty-Specific AI Experience</h3>
+  <p style="font-size: 8pt; margin: 2pt 0 4pt 0;">
+    Campus AI is engineered around an essential architectural foundation: <strong>Student AI and Faculty AI are NOT two separate AI engines</strong>. There is <strong>ONE common Campus AI engine</strong> powering the entire institution. The authenticated user's role and RBAC permissions dynamically determine accessible context, data retrieval, suggested prompts, and actionable capabilities.
+  </p>
+
+  <!-- Conceptual Architecture Flow Container -->
+  <div style="display: flex; gap: 8px; margin: 3pt 0 5pt 0;">
+    <div class="diagram-container" style="flex: 1; padding: 6px 10px; margin: 0; background: #090e17; border-color: #1e293b; color: #f8fafc; text-align: left;">
+      <div class="diagram-title" style="color: #60a5fa; margin-bottom: 3px; font-size: 7.2pt; text-align: left;">COMMON CAMPUS AI ENGINE &bull; CONCEPTUAL PIPELINE</div>
+      <pre style="margin: 0; background: transparent; border: none; padding: 0; color: #e2e8f0; font-size: 6.8pt; line-height: 1.25; font-family: 'JetBrains Mono', Consolas, monospace;">Campus AI Engine
+    &darr;
+Authentication (JWT Session Validation)
+    &darr;
+RBAC / Permission Check (Role &amp; Dynamic Assignment Scoping)
+    &darr;
+Role-Specific Context
+    ├── Student Context (Personal Scoped: Own Attendance, Timetable, Marks, Assignments)
+    └── Faculty Context (Assigned Scoped: Assigned Classes, Subjects, Students, Grading)
+    &darr;
+Query Router
+    ├── MongoDB (Deterministic Operational Records)
+    ├── RAG / Vector Retrieval (Institutional Policies, Guidelines, Syllabi)
+    └── MongoDB + RAG Combined (Synthesized Context)
+    &darr;
+Grounded AI Response (Least Privilege &bull; Zero Hallucination)</pre>
+    </div>
+  </div>
+
+  <table style="margin: 3pt 0 5pt 0; font-size: 7.2pt;">
+    <thead>
+      <tr>
+        <th style="width: 16%; padding: 4px 6px;">Context Dimension</th>
+        <th style="width: 42%; padding: 4px 6px;">Student AI Context (Personal Scope)</th>
+        <th style="width: 42%; padding: 4px 6px;">Faculty AI Context (Assigned Scope)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 4px 6px;"><strong>Authorized Information Scope</strong></td>
+        <td style="padding: 4px 6px;">
+          Students interact with Campus AI for information they are authorized to access:
+          <ul style="margin: 1pt 0 0 0; padding-left: 12px; font-size: 7pt;">
+            <li>Their attendance records</li>
+            <li>Their timetable (class/section schedule)</li>
+            <li>Their assignments, deadlines, and submissions</li>
+            <li>Their academic information, marks, and CGPA</li>
+            <li>Relevant notices and campus events</li>
+            <li>College policies and academic guidelines</li>
+            <li>Other permitted college and directory information</li>
+          </ul>
+        </td>
+        <td style="padding: 4px 6px;">
+          Faculty interact with the same Campus AI using a faculty-specific authorized context:
+          <ul style="margin: 1pt 0 0 0; padding-left: 12px; font-size: 7pt;">
+            <li>Assigned classes and assigned subjects</li>
+            <li>Assigned students in those classes/subjects</li>
+            <li>Attendance of assigned classes and students</li>
+            <li>Assignments and submissions for assigned classes</li>
+            <li>Marks and assessment results they are authorized to access</li>
+            <li>Faculty timetable and teaching schedules</li>
+            <li>Relevant notices and departmental announcements</li>
+            <li>Teaching resources and documents available to them</li>
+            <li>Relevant college policies and examination guidelines</li>
+            <li>Faculty-related tasks and academic workflows</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 6px;"><strong>Query Resolution Examples</strong></td>
+        <td style="padding: 4px 6px;">
+          <code>"Show my attendance."</code><br />
+          &rarr; <em>Retrieves only that authenticated student's attendance records.</em>
+        </td>
+        <td style="padding: 4px 6px;">
+          <code>"Show students below 75% attendance in my assigned CSE-302 class."</code><br />
+          &rarr; <em>Retrieves attendance records strictly for students in classes assigned to that faculty member.</em>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 6px;"><strong>Unauthorized Request Enforcement</strong></td>
+        <td style="padding: 4px 6px;">
+          <code>"Show marks of Roll No. 42."</code><br />
+          &rarr; <strong>Denied:</strong> System rejects inquiry; unauthorized peer records are never exposed.
+        </td>
+        <td style="padding: 4px 6px;">
+          <code>"Show me private records of another faculty member."</code><br />
+          &rarr; <strong>Denied:</strong> System denies request; returns an appropriate unavailable-or-unauthorized response.
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 6px;"><strong>UI / Route Presentation</strong></td>
+        <td style="padding: 4px 6px;">
+          Campus AI prompt widget on the Student Dashboard and dedicated assistant interface with student-centric quick prompts.
+        </td>
+        <td style="padding: 4px 6px;">
+          Role-tailored Campus AI interface within the faculty portal (e.g., <code>/faculty/ai</code> or faculty dashboard assistant) with faculty-specific prompts and action scopes.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout-sot" style="margin-top: 3pt; padding: 5px 10px;">
+    <div class="callout-title" style="font-size: 7.6pt;">Strict RBAC, Least-Privilege &amp; Grounding Guardrails</div>
+    <ul style="margin: 1pt 0 0 0; padding-left: 14px; font-size: 7pt;">
+      <li><strong>Least-Privilege Context Assembly:</strong> Every AI query must respect RBAC and least-privilege access. The AI must <strong>NEVER expose</strong>: unauthorized student data, other faculty's restricted data, private administrative information, passwords, credentials, session tokens, or any data the authenticated user does not have explicit permission to access.</li>
+      <li><strong>MongoDB &amp; RAG Division of Responsibility:</strong> MongoDB Atlas remains the application source of truth for structured transactional data. RAG / Vector Retrieval remains dedicated to policies, guidelines, circulars, and handbooks. Hybrid queries execute MongoDB + RAG in tandem. Role-based authorization must always apply <em>before</em> returning retrieved information.</li>
+      <li><strong>Zero Hallucination Mandate:</strong> If authorized college information is unavailable in verified records, the AI must clearly state that the information is unavailable instead of hallucinating. Genuinely general, non-college queries may utilize general AI knowledge only in accordance with existing SOT rules.</li>
+    </ul>
   </div>
 
   <div class="page-break"></div>
