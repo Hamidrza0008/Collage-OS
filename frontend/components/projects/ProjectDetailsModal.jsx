@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   X,
   Heart,
@@ -14,6 +15,7 @@ import {
   MessageSquare,
   Sparkles,
   CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 import { CATEGORY_THEMES } from "./projectsData";
 
@@ -253,6 +255,15 @@ export default function ProjectDetailsModal({
                 <span>Live Demo</span>
               </a>
             )}
+
+            <Link
+              href={`/student/projects/${project.id}`}
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-xs font-bold transition-all shadow-xs"
+            >
+              <span>Full Showcase</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
           {/* Comments Section */}

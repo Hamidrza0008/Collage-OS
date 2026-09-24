@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import ProfileHero from "./ProfileHero";
 import ProfileTabs from "./ProfileTabs";
 import AboutMeCard from "./AboutMeCard";
@@ -32,6 +33,7 @@ const TAB_TO_ID = {
 };
 
 export default function Profile({ isLoading = false }) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Overview");
   const [userProfile, setUserProfile] = useState(PROFILE_DATA.user);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -192,7 +194,7 @@ export default function Profile({ isLoading = false }) {
             <ProfileProjectsCard
               projects={data.projects}
               onProjectClick={(proj) => {
-                showToast(`Project details for "${proj.title}" will open here in Phase 1.`);
+                router.push(`/student/projects/${proj.id}`);
               }}
             />
           </div>
