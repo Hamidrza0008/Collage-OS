@@ -41,7 +41,7 @@ export default function RecentQueries({ queries, onSelectQuery, onViewAll }) {
         </div>
       ) : (
         <div className="divide-y divide-[#D8E8E2]/60 dark:divide-[#16463D]/60 pt-1">
-          {queries.map((item) => (
+          {queries.slice(0, 4).map((item) => (
             <button
               key={item.id}
               type="button"

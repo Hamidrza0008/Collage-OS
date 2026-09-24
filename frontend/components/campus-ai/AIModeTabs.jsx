@@ -10,6 +10,7 @@ export default function AIModeTabs({
   onAssistantModeChange,
   contextScope,
   onContextScopeChange,
+  onNewChat,
 }) {
   const [isModeOpen, setIsModeOpen] = useState(false);
   const [isScopeOpen, setIsScopeOpen] = useState(false);
@@ -52,7 +53,7 @@ export default function AIModeTabs({
   ];
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-0.5 shrink-0">
       {/* Left: Mode Tabs Pills */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
         {TABS.map((tab) => {
@@ -61,7 +62,7 @@ export default function AIModeTabs({
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all shrink-0 select-none ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all shrink-0 select-none cursor-pointer ${
                 isActive
                   ? "bg-[#159B72] text-white shadow-xs font-semibold"
                   : "bg-transparent text-[#36594C] dark:text-[#B5CCC5] hover:bg-emerald-500/10 hover:text-[#0B3024] dark:hover:text-[#F1FAF6] border border-transparent hover:border-[#D8E8E2] dark:hover:border-[#16463D]"
@@ -73,8 +74,19 @@ export default function AIModeTabs({
         })}
       </div>
 
-      {/* Right: Functional Dropdowns */}
+      {/* Right: Functional Dropdowns + New Chat Button */}
       <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+        {onNewChat && (
+          <button
+            type="button"
+            onClick={onNewChat}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-all shadow-2xs cursor-pointer active:scale-95"
+            title="Start a fresh conversation"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span className="hidden sm:inline">New Chat</span>
+          </button>
+        )}
         {/* Assistant Mode Dropdown */}
         <div className="relative" ref={modeRef}>
           <button

@@ -27,34 +27,34 @@ export default function CampusAIHero() {
       </div>
 
       {/* Content Layer: Compact & Information Dense inside 2/3 column */}
-      <div className="relative z-10 py-4 px-5 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-h-[96px]">
+      <div className="relative z-10 py-2.5 px-4 sm:px-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 min-h-[64px] sm:min-h-[68px]">
         {/* Left: AI Robot Icon + Title + Subtitle */}
-        <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-emerald-500/25 border border-emerald-400/40 flex items-center justify-center shrink-0 text-emerald-300 shadow-xs">
-            <Bot className="w-6 h-6 text-emerald-300" />
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 sm:w-9.5 sm:h-9.5 rounded-xl bg-emerald-500/25 border border-emerald-400/40 flex items-center justify-center shrink-0 text-emerald-300 shadow-xs">
+            <Bot className="w-5 h-5 text-emerald-300" />
           </div>
 
-          <div className="flex flex-col">
-            <h1 className="text-2xl sm:text-[25px] font-bold text-white tracking-tight leading-tight flex items-center gap-2">
+          <div className="flex flex-col min-w-0">
+            <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-tight flex items-center gap-1.5">
               Campus AI
-              <span className="text-emerald-300 text-lg sm:text-xl font-normal select-none">✦</span>
+              <span className="text-emerald-300 text-sm sm:text-base font-normal select-none">✦</span>
             </h1>
-            <p className="text-xs sm:text-[13px] text-emerald-100/90 mt-0.5 font-normal max-w-lg leading-snug">
-              Your college-specific AI assistant. Get accurate answers from your college data, policies, guidelines, and more — powered by MongoDB + RAG.
+            <p className="text-xs text-emerald-100/90 font-normal leading-tight truncate sm:whitespace-normal">
+              Your college-specific AI assistant. Accurate answers from campus records, policies &amp; guidelines.
             </p>
           </div>
         </div>
 
         {/* Right: Motivational Script Badge (Ask Learn Grow) */}
         <div className="shrink-0 self-start sm:self-center hidden sm:block">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-black/35 border border-emerald-500/25 backdrop-blur-xs text-right">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-black/35 border border-emerald-500/25 backdrop-blur-xs text-right">
             <div className="flex flex-col text-right">
-              <span className="text-[13px] italic font-semibold text-emerald-200/90 tracking-wide font-serif leading-tight">
+              <span className="text-[11px] italic font-semibold text-emerald-200/90 tracking-wide font-serif leading-none">
                 Ask. Learn.
               </span>
-              <span className="text-[14px] italic font-bold text-emerald-300 tracking-wide font-serif leading-tight flex items-center justify-end gap-1.5">
+              <span className="text-[12px] italic font-bold text-emerald-300 tracking-wide font-serif leading-none mt-0.5 flex items-center justify-end gap-1">
                 Grow
-                <Leaf className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/40 inline not-italic" />
+                <Leaf className="w-3 h-3 text-emerald-400 fill-emerald-400/40 inline not-italic" />
               </span>
             </div>
           </div>

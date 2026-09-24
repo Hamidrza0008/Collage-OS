@@ -82,7 +82,7 @@ export default function KnowledgePanel({ activeTab, onAskAboutItem }) {
   const allTags = ["All", ...new Set(COLLEGE_KNOWLEDGE_ITEMS.flatMap((item) => item.tags))];
 
   return (
-    <div className="space-y-4">
+    <div className="h-full overflow-y-auto space-y-4 p-3.5 sm:p-4 scrollbar-thin">
       {/* Header Banner */}
       <div className="rounded-2xl border border-[#D8E8E2] dark:border-[#16463D] bg-white dark:bg-[#06241F] p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>

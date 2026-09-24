@@ -8,7 +8,7 @@ export default function CampusAICta({ onStartChat }) {
   const { isDark } = useTheme();
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-emerald-700/40 bg-gradient-to-br from-[#06382B] via-[#042A20] to-[#021813] p-4 text-white shadow-xs">
+    <div className="shrink-0 relative rounded-2xl overflow-hidden border border-emerald-700/40 bg-gradient-to-br from-[#06382B] via-[#042A20] to-[#021813] p-4 text-white shadow-xs">
       {/* Background soft ambient radial glow */}
       <div className="absolute -top-12 -right-12 w-40 h-40 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none" />
 
