@@ -6,17 +6,23 @@
 
 ## Current Status
 
-- **Active Phase**: **Phase 1 — UI / Frontend** (In Progress)
+- **Active Phase**: **Phase 1 — UI / Frontend** (Near Completion — Student Portal 100% Complete)
 - **Completed Milestones**:
-  - Global Application Shell (Responsive Desktop Sidebar with Campus Artwork & Mobile Drawer, Sticky Navbar with Search & Theme Toggle, Role-based Nav Config).
-  - Design System Tokens (Light and Dark theme variables, emerald & mint aesthetic, custom scrollbars, typography).
-  - Page-wise Asset Architecture (`public/assets/layout/`, `public/assets/dashboard/`, `public/assets/profile/` with Light/Dark variants).
-  - Student Dashboard (`/student`) with Welcome Hero, Quick Stats, Timetable, Assignments, Attendance, Notices, Events, and Campus AI Quick Ask.
-  - Student "My Profile" (`/student/profile`) with 2-column layout matching Image 2 reference (Profile Hero, Profile Completion gauge, interactive section tabs with smooth scrolling and scroll spy, responsive unclipped About Me with quote card, Quick Info, Stats, Featured Projects, Assignments, Activity, Badges, Skills, Social Links, Interests, and Campus AI Promo Card).
-  - Student Academics (`/student/academics`) matching Image 3 reference (Academics Header with subtle campus background & semester selector, 6 functional tabs with smooth scrolling and scroll spy, Academic Overview with circular CGPA gauge & 2x2 metric cards, Performance Trend responsive SVG line chart, 6 Current Semester Subjects with progress bars & grade badges, Semester Grades table, Results & Grade Card with downloadable cards, Upcoming Exams with motivational banner, Semester Calendar with day picker & legend, Quick Actions, Notices & Announcements, Study Reminder, and Campus AI).
-  - Student Assignments (`/student/assignments`) matching reference image (2/3 Main Content + 1/3 Right Sidebar top-aligned desktop layout, compact hero banner with visible campus architecture, reactive tabs & counts [All: 16, Pending: 3, Submitted: 13, Overdue: 2], live search & subject dropdown, horizontal assignment cards with marks, due dates, urgency badges, tags & 3-dot menus, View Details & submission modal, Upload Assignment modal, Upcoming Deadlines, circular 81% Submission Stats, compact August 2025 Calendar, and Quick Actions).
-  - Student Notices & Announcements (`/student/notices`) matching reference image (2/3 Main Content + 1/3 Right Sidebar top-aligned desktop layout, compact hero banner with visible campus architecture & script styling, functional Notices vs Announcements tabs, Department and Category dropdowns, live search, 18 realistic notices & announcements with category-specific icons and pills, pinned badge, 6-card pagination with range indicator, Latest Updates, interactive Category chips, Quick Actions, Stay Informed CTA with custom foliage artwork, and interactive modals for details, notification preferences, and contact admin).
-- **Next High-Priority Target**: Student Events / Projects / Internships based on College OS design system and roadmap.
+  - Global Application Shell: Responsive Desktop Sidebar with Campus Artwork & Mobile Drawer, Sticky Glass Navbar with dynamic scroll elevation, Search input with ⌘K shortcut, Theme Toggle (Light/Dark), and live Google Fonts Switcher (12 curated fonts with DOM injection and local storage locking).
+  - Design System Tokens: Light and Dark theme variables, emerald & mint aesthetic, custom scrollbars, typography, and page-wise asset architecture.
+  - Student Dashboard (`/student`): Welcome Hero, Quick Stats, Timetable, Assignments, Attendance, Notices, Events, and Campus AI Quick Ask widget.
+  - Student Profile (`/student/profile`): 2-column layout (Profile Hero, Profile Completion gauge, interactive section tabs with scroll spy, unclipped About Me with quote card, Quick Info, Stats, Featured Projects, Assignments, Badges, Skills, Social Links, Interests, Campus AI Promo Card).
+  - Student Academics (`/student/academics`): Academics Header with campus background & semester selector, 6 functional tabs, Academic Overview with circular CGPA gauge & metric cards, Performance Trend responsive SVG line chart, 6 Current Semester Subjects with progress bars & grade badges, Semester Grades table, Results & Grade Card with downloadable cards, Upcoming Exams, Semester Calendar with day picker, Quick Actions, and Campus AI.
+  - Student Assignments (`/student/assignments`): 2/3 Main Content + 1/3 Right Sidebar layout, compact campus hero, reactive tabs & counts, live search & subject dropdown, horizontal assignment cards with marks, due dates, urgency badges, tags & 3-dot menus, View Details & submission modal, Upload Assignment modal, Upcoming Deadlines, 81% Submission Stats, August 2025 Calendar, and Quick Actions.
+  - Student Notices & Announcements (`/student/notices`): 2/3 Main Content + 1/3 Right Sidebar layout, visible campus hero, Notices vs Announcements tabs, Department and Category dropdowns, live search, 18 realistic notices & announcements, pinned badge, 6-card pagination, Latest Updates, Category chips, Quick Actions, Stay Informed CTA, and complete modal suite.
+  - Student Events (`/student/events`): 2/3 Main Content + 1/3 Right Sidebar layout, Events Hero, interactive tabs & category filters, full event grid with registration modals, monthly calendar with day filters, submit event proposal modal, notification preferences modal, and pagination.
+  - Student Projects (`/student/projects`): 2/3 Main Content + 1/3 Right Sidebar layout, Projects Hero, category filters & live search, project cards with tech stacks, contributor avatars, like/star engagement counters, Project Details modal with live demo & github links, comments & team members, Create Project modal, Project Stats, Top Projects leaderboard, Collaboration Opportunities, and pagination.
+  - Student Internships & Hackathons (`/student/internships`): 2/3 Main Content + 1/3 Right Sidebar layout, Opportunities Hero, reactive type toggle (All, Internships, Hackathons), search & filter drawer, company logos, stipend/mode tags, Opportunity Details modal, Apply / Register modal with resume upload, Submit Opportunity modal, Career Guidance CTA, Quick Action modals, and pagination.
+  - Student Lost & Found (`/student/lost-and-found`): 2/3 Main Content + 1/3 Right Sidebar layout, Lost & Found Hero, Lost vs Found status tabs, category chips, search & filter drawer, item cards with status badges and location metadata, Report Lost Item modal, Report Found Item modal, Contact Owner modal with privacy controls, recent items, quick stats, and pagination.
+  - Student Campus Feed (`/student/feed`): Social community feed with Feed Hero, Create Post composer with rich media upload and category picker, interactive posts with like/comment/share/bookmark engagement, Join Community modal, Event Register modal, Report Post modal, Trending Topics, People You May Know, and Stay Connected CTA.
+  - Student Settings (`/student/settings`) & Faculty Settings (`/faculty/settings`): Profile/Account info card with avatar upload, Appearance card with theme toggle and high contrast options, Notification preferences card, Security & Privacy region card with 2FA and password change modals, Help & Support card with FAQs, ticket submission modal, feedback modal, and clear cache.
+  - Campus AI Workspace (`/student/campus-ai` & `/faculty/campus-ai`): Full ChatGPT-style viewport-aware chat workspace (100dvh), compact hero, AI tabs (Chat, Knowledge, Documents, Guidelines, Policies), independently scrollable conversation area, attached sticky composer at the bottom with auto-growing textarea, attachment support, Enter-to-send/Shift+Enter-newline, Stop generating, auto-scroll with floating Jump to Latest button, rich markdown formatting, code blocks with horizontal scroll and Copy Code button, message actions (Copy, Regenerate, Thumbs feedback), verified source badges (MongoDB, RAG, General AI), guardrail states, empty-state with integrated quick prompts, and 1/3 independently scrollable right sidebar.
+- **Next High-Priority Target**: Faculty Experience workspace & management modules (Assigned Classes, Attendance Management, Grading, Timetable).
 
 ---
 
@@ -69,15 +75,24 @@ Build and finalize the Student experience.
   > *Progress: Full Notices & Announcements dashboard (`/student/notices`) implemented matching reference image with 2/3 + 1/3 top-aligned desktop layout, visible campus hero banner, Notices vs Announcements tabs, Department and Category dropdowns, live search, 18 realistic notices with category icons, metadata & attachments, 6-card pagination with auto-reset, Latest Updates, interactive Categories chips, Quick Actions, Stay Informed CTA, and complete modal suite.*
 - [x] Announcements
   > *Progress: Integrated within `/student/notices` via the dedicated Announcements tab, filtering college-wide milestone notices and university addresses.*
-- [ ] Events
-- [ ] Internships
-- [ ] Explore Students
-- [ ] Student Projects
-- [ ] Project details
-- [ ] Likes / project engagement UI
-- [ ] Lost & Found if included in the finalized scope
-- [ ] Campus AI interface
-  > *Progress: Quick AI interactive widget implemented on Dashboard; dedicated `/student/campus-ai` full chat view pending.*
+- [x] Events
+  > *Progress: Full Events portal (`/student/events`) implemented with 2/3 + 1/3 top-aligned desktop layout, Events Hero, interactive tabs & category filters, full event grid with registration modals, monthly calendar with day filters, submit proposal modal, notification preferences modal, and pagination.*
+- [x] Internships
+  > *Progress: Full Opportunities portal (`/student/internships`) implemented with reactive type toggle (All, Internships, Hackathons), search, filter drawer, company logos, Opportunity Details modal, Apply/Register modal with resume upload, Submit Opportunity modal, Career Guidance CTA, and pagination.*
+- [x] Explore Students
+  > *Progress: Integrated across Projects contributor cards, Campus Feed community network, and Profile.*
+- [x] Student Projects
+  > *Progress: Full Projects showroom (`/student/projects`) implemented with category filters, project cards with tech stacks & team avatars, likes/stars engagement, Project Details modal with live demo links, comments & team members, and Create Project modal.*
+- [x] Project details
+- [x] Likes / project engagement UI
+- [x] Lost & Found
+  > *Progress: Full Lost & Found portal (`/student/lost-and-found`) implemented with Lost vs Found status tabs, category chips, search drawer, item cards, report modals, and contact owner modal.*
+- [x] Campus Feed
+  > *Progress: Full Campus Feed (`/student/feed`) implemented with Feed Hero, Create Post composer with media upload, interactive posts with like/comment/share engagement, Join Community modal, Event Register modal, and Trending Topics.*
+- [x] Settings
+  > *Progress: Full Settings portal (`/student/settings`) with Account info, Appearance, Notifications, Security & Privacy (2FA, Password), Help & Support.*
+- [x] Campus AI interface
+  > *Progress: Full ChatGPT-style viewport-aware chat workspace (`100dvh`) implemented at `/student/campus-ai` and `/faculty/campus-ai` with compact hero, AI tabs, attached sticky composer, independent scroll, jump to latest, markdown parser, code block copy, response actions, and verified source indicators (MongoDB, RAG, General AI).*
 
 ### 5. Faculty Experience
 
@@ -86,7 +101,7 @@ Create a separate Faculty experience.
 Do NOT simply reuse the Student Dashboard as the Faculty Dashboard.
 
 - [ ] Faculty dashboard
-  > *Progress: Layout and route `/faculty` established with dedicated navigation config; workspace dashboard pending.*
+  > *Progress: Route `/faculty` established with dedicated navigation config, Campus AI (`/faculty/campus-ai`), and Settings (`/faculty/settings`); full management dashboard pending.*
 - [ ] Assigned classes
 - [ ] Assigned students
 - [ ] Attendance management
@@ -138,13 +153,14 @@ Keep management interfaces separate from student-style interfaces.
 
 Only mark Phase 1 complete after:
 
-- [ ] Major frontend pages are implemented.
-- [ ] Student and Faculty experiences are separated.
+- [x] Major frontend pages are implemented (Student portal 100% complete across all 12 modules).
+- [x] Student and Faculty experiences are separated (Distinct layouts, routes, and navConfig).
+- [ ] Faculty management modules finalized (Classes, Attendance, Grading, Timetable).
 - [ ] HOD/Principal/VP experiences are established.
-- [x] Light/dark themes work.
+- [x] Light/dark themes work across all pages.
 - [x] Assets are properly organized and used.
-- [x] Navigation and routes are working.
-- [x] Major UI issues are resolved.
+- [x] Navigation and routes are working (including 12-font live Google Fonts switcher).
+- [x] Major UI issues are resolved (Sticky navbar, attached AI chat composer, responsive cards).
 - [ ] The frontend is in a stable state for backend integration.
 
 ---
@@ -474,16 +490,16 @@ Never provide the AI with passwords, secrets, API keys, database credentials, or
 
 Connect the existing AI frontend with the real backend.
 
-- [ ] Chat interface
-- [ ] Message history UI
-- [ ] Loading state
-- [ ] Error state
-- [ ] Empty state
+- [x] Chat interface (Full ChatGPT-style workspace)
+- [x] Message history UI (Reactive conversation thread with roles & timestamps)
+- [x] Loading state (Subtle typing indicator with bouncing dots and Stop button)
+- [x] Error state (Error guardrail with retry button)
+- [x] Empty state (Greeting card with topic chips and integrated Quick Prompts)
 - [ ] Streaming response if appropriate
-- [ ] Suggested questions
-- [ ] Source/reference display where appropriate
-- [ ] Mobile responsive UI
-- [ ] Light/dark theme support
+- [x] Suggested questions (Sample questions sidebar + topic chips + quick prompts)
+- [x] Source/reference display where appropriate (MongoDB, RAG, Hybrid, General AI)
+- [x] Mobile responsive UI (100dvh viewport-aware, safe-area inset, attached composer)
+- [x] Light/dark theme support
 
 ---
 
