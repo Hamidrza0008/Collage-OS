@@ -3,7 +3,10 @@
 import { Code2, Globe, Database, FlaskConical, Laptop, Star, ArrowUpRight } from "lucide-react";
 import { CURRENT_SEMESTER_SUBJECTS } from "./academicsData";
 
-export default function CurrentSemesterSubjectsCard() {
+export default function CurrentSemesterSubjectsCard({
+  onViewAllSubjects,
+  onSubjectClick,
+}) {
   const getIcon = (type) => {
     switch (type) {
       case "code":
@@ -56,6 +59,7 @@ export default function CurrentSemesterSubjectsCard() {
 
         <button
           type="button"
+          onClick={onViewAllSubjects}
           className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span>View All Subjects</span>
@@ -68,7 +72,16 @@ export default function CurrentSemesterSubjectsCard() {
         {CURRENT_SEMESTER_SUBJECTS.map((sub) => (
           <div
             key={sub.id}
-            className="p-3.5 rounded-xl border border-gray-100 dark:border-[#10372F] bg-gray-50/60 dark:bg-[#041D18]/60 hover:bg-gray-50 dark:hover:bg-[#041D18] transition-all flex flex-col justify-between"
+            onClick={() => onSubjectClick && onSubjectClick(sub)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onSubjectClick && onSubjectClick(sub);
+              }
+            }}
+            className="p-3.5 rounded-xl border border-gray-100 dark:border-[#10372F] bg-gray-50/60 dark:bg-[#041D18]/60 hover:bg-gray-100/80 dark:hover:bg-[#041D18] hover:border-emerald-500/40 transition-all flex flex-col justify-between cursor-pointer group text-left"
           >
             {/* Top row: icon + name + grade badge */}
             <div className="flex items-start justify-between gap-2">

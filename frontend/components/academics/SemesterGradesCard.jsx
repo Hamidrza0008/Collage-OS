@@ -3,7 +3,7 @@
 import { CheckCircle2, ArrowUpRight } from "lucide-react";
 import { SEMESTER_GRADES } from "./academicsData";
 
-export default function SemesterGradesCard() {
+export default function SemesterGradesCard({ onViewAllMarks }) {
   const getGradeBadge = (grade) => {
     if (grade === "A" || grade === "A-") {
       return (
@@ -37,6 +37,7 @@ export default function SemesterGradesCard() {
 
         <button
           type="button"
+          onClick={onViewAllMarks}
           className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span>View All Marks</span>

@@ -56,7 +56,7 @@ export default function StudentProfileCard() {
         <div className="flex items-center justify-between text-[10.5px] text-[#658278] dark:text-[#789991] pt-0.5">
           <span className="truncate">Complete profile to unlock features</span>
           <Link
-            href="/profile"
+            href="/student/profile"
             className="font-semibold text-[#159B72] dark:text-[#20D39B] hover:underline shrink-0 ml-1"
           >
             Edit

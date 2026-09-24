@@ -62,7 +62,7 @@ export default function StudentProjects() {
           </div>
 
           <Link
-            href="/projects"
+            href="/student/projects"
             className="group inline-flex items-center gap-1 text-[11px] font-semibold text-[#159B72] dark:text-[#20D39B] hover:text-[#087A5B] dark:hover:text-[#4AE3B5] transition-colors"
           >
             <span>Explore All</span>

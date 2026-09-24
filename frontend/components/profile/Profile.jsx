@@ -15,8 +15,12 @@ import ProfileCompletionCard from "./ProfileCompletionCard";
 import SocialLinksCard from "./SocialLinksCard";
 import PersonalInterestsCard from "./PersonalInterestsCard";
 import CampusAIPromoCard from "./CampusAIPromoCard";
+import { CheckCircle2 } from "lucide-react";
 import { PROFILE_DATA } from "./profileData";
 import ProfileSkeleton from "./ProfileSkeleton";
+import EditQuoteModal from "./EditQuoteModal";
+import FollowersModal from "./FollowersModal";
+import { EditProfileModal } from "../settings/SettingsModals";
 
 const TAB_TO_ID = {
   Overview: "profile-overview",
@@ -29,9 +33,43 @@ const TAB_TO_ID = {
 
 export default function Profile({ isLoading = false }) {
   const [activeTab, setActiveTab] = useState("Overview");
+  const [userProfile, setUserProfile] = useState(PROFILE_DATA.user);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [isEditQuoteOpen, setIsEditQuoteOpen] = useState(false);
+  const [followersModal, setFollowersModal] = useState({ isOpen: false, type: "followers" });
+  const [toastMessage, setToastMessage] = useState(null);
+
   const isProgrammaticScroll = useRef(false);
   const scrollTimeout = useRef(null);
   const data = PROFILE_DATA;
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
+
+  const handleAvatarChange = (newAvatarUrl) => {
+    setUserProfile((prev) => ({ ...prev, avatar: newAvatarUrl }));
+    showToast("Profile avatar updated successfully!");
+  };
+
+  const handleSaveQuote = (newQuote) => {
+    setUserProfile((prev) => ({ ...prev, quote: newQuote }));
+    showToast("Profile quote updated successfully!");
+  };
+
+  const handleSaveProfile = (updatedData) => {
+    setUserProfile((prev) => ({
+      ...prev,
+      name: updatedData.name,
+      branch: updatedData.branch,
+      semester: updatedData.semester,
+      phone: updatedData.phone,
+    }));
+    showToast("Profile details updated successfully!");
+  };
 
   const handleSelectTab = (tab) => {
     setActiveTab(tab);
@@ -113,7 +151,14 @@ export default function Profile({ isLoading = false }) {
         {/* ======================================================== */}
         <div className="lg:col-span-8 space-y-4 sm:space-y-4.5">
           {/* 1. Profile Hero (starts at the exact same top position as ProfileCompletion) */}
-          <ProfileHero user={data.user} />
+          <ProfileHero
+            user={userProfile}
+            onAvatarChange={handleAvatarChange}
+            onEditQuote={() => setIsEditQuoteOpen(true)}
+            onEditProfile={() => setIsEditProfileOpen(true)}
+            onOpenFollowers={(type) => setFollowersModal({ isOpen: true, type })}
+            onSelectTab={handleSelectTab}
+          />
 
           {/* 2. Horizontal Profile Tabs (Overview, About, Skills, Projects, Achievements, Activity) */}
           <ProfileTabs
@@ -144,7 +189,12 @@ export default function Profile({ isLoading = false }) {
 
           {/* 5. Projects Section (Scroll target for Projects tab) */}
           <div id="profile-projects" className="scroll-mt-24">
-            <ProfileProjectsCard projects={data.projects} />
+            <ProfileProjectsCard
+              projects={data.projects}
+              onProjectClick={(proj) => {
+                showToast(`Project details for "${proj.title}" will open here in Phase 1.`);
+              }}
+            />
           </div>
 
           {/* 6. Lower Row: Recent Activity (left, target for Activity) + Badges (target for Achievements) & Skills (target for Skills) */}
@@ -181,6 +231,42 @@ export default function Profile({ isLoading = false }) {
           <CampusAIPromoCard promo={data.campusAiPromo} />
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+        profile={{
+          name: userProfile.name,
+          branch: userProfile.branch,
+          semester: userProfile.semester,
+          phone: userProfile.phone || "+91 98765 43210",
+        }}
+        onSave={handleSaveProfile}
+      />
+
+      {/* Edit Quote Modal */}
+      <EditQuoteModal
+        isOpen={isEditQuoteOpen}
+        currentQuote={userProfile.quote}
+        onClose={() => setIsEditQuoteOpen(false)}
+        onSave={handleSaveQuote}
+      />
+
+      {/* Followers & Following Modal */}
+      <FollowersModal
+        isOpen={followersModal.isOpen}
+        type={followersModal.type}
+        onClose={() => setFollowersModal({ isOpen: false, type: "followers" })}
+      />
+
+      {/* Floating Feedback Toast */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl bg-[#06241F] text-white dark:bg-[#20D39B] dark:text-[#06241F] text-xs font-semibold shadow-xl border border-white/10 dark:border-black/10 animate-fade-in pointer-events-none">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 dark:text-[#06241F] shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }

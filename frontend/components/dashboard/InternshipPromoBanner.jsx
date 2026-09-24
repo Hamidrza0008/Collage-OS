@@ -27,7 +27,7 @@ export default function InternshipPromoBanner() {
         </div>
 
         <Link
-          href="/internships"
+          href="/student/internships"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#159B72] hover:bg-[#087A5B] dark:bg-[#20D39B] dark:hover:bg-[#18B887] text-white dark:text-[#021512] text-[11.5px] font-bold shadow-2xs transition-all active:scale-95 shrink-0 self-start sm:self-auto group"
         >
           <span>View Opportunities</span>

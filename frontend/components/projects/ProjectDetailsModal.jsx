@@ -30,6 +30,7 @@ export default function ProjectDetailsModal({
   onClose,
   onToggleLike,
   onToggleBookmark,
+  onMemberClick,
   isLiked = false,
   isBookmarked = false,
   onAddComment,
@@ -194,9 +195,19 @@ export default function ProjectDetailsModal({
               {project.members?.map((m, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-2.5 p-2 rounded-xl bg-[#F7FBF9] dark:bg-[#082A24] border border-[#E8F1ED] dark:border-[#10372F]"
+                  onClick={() => onMemberClick && onMemberClick(m)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onMemberClick && onMemberClick(m);
+                    }
+                  }}
+                  title={`View profile of ${m.name}`}
+                  className="flex items-center gap-2.5 p-2 rounded-xl bg-[#F7FBF9] dark:bg-[#082A24] border border-[#E8F1ED] dark:border-[#10372F] hover:border-emerald-500/40 hover:bg-emerald-50/20 dark:hover:bg-[#0a352c] transition-all cursor-pointer group"
                 >
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden bg-emerald-100">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden bg-emerald-100 group-hover:scale-105 transition-transform shrink-0">
                     <Image
                       src={m.avatar || "/assets/layout/profile-avatar.jpg"}
                       alt={m.name}
@@ -205,7 +216,7 @@ export default function ProjectDetailsModal({
                     />
                   </div>
                   <div>
-                    <h5 className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6]">
+                    <h5 className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                       {m.name}
                     </h5>
                     <p className="text-[10.5px] text-[#658278] dark:text-[#789991]">

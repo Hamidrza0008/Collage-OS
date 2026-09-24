@@ -18,6 +18,7 @@ export default function FeedList({
   onRegisterEvent,
   onVotePoll,
   onShare,
+  onAuthorClick,
 }) {
   if (posts.length === 0) {
     let emptyTitle = "No posts found";
@@ -73,6 +74,7 @@ export default function FeedList({
           onRegisterEvent={onRegisterEvent}
           onVotePoll={onVotePoll}
           onShare={onShare}
+          onAuthorClick={onAuthorClick}
         />
       ))}
     </div>

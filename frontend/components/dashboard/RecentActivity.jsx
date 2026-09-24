@@ -43,7 +43,7 @@ export default function RecentActivity() {
           Recent Activity
         </h2>
         <Link
-          href="/profile"
+          href="/student/profile"
           className="group inline-flex items-center gap-1 text-[11px] font-semibold text-[#159B72] dark:text-[#20D39B] hover:underline"
         >
           <span>View All</span>

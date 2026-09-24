@@ -19,7 +19,7 @@ export default function BadgesAchievementsCard({ achievements = [] }) {
         </div>
 
         <Link
-          href="/student/achievements"
+          href="#profile-achievements"
           className="inline-flex items-center gap-1 text-[11px] font-medium text-[#159B72] dark:text-[#20D39B] hover:underline"
         >
           <span>View All</span>

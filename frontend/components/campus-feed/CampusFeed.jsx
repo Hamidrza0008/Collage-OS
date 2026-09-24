@@ -49,6 +49,10 @@ export default function CampusFeed({ isLoading = false }) {
     }, 3200);
   };
 
+  const handleAuthorClick = (author) => {
+    showToast(`Student profile for ${author?.name || "Student"} will open here in Phase 2.`);
+  };
+
   // Filtered dataset
   const filteredPosts = useMemo(() => {
     return filterFeedPosts(posts, {
@@ -281,6 +285,7 @@ export default function CampusFeed({ isLoading = false }) {
             onRegisterEvent={handleRegisterEvent}
             onVotePoll={handleVotePoll}
             onShare={handleShare}
+            onAuthorClick={handleAuthorClick}
           />
 
           {/* 5. Pagination: Strictly max 6 posts per page */}

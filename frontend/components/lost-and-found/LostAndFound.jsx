@@ -153,6 +153,18 @@ export default function LostAndFound({ isLoading = false }) {
     showToast(`Claim/Inquiry sent regarding "${contactData.itemTitle}".`);
   };
 
+  const handleMarkResolved = (itemId) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === itemId ? { ...item, status: "Resolved" } : item
+      )
+    );
+    if (selectedItem && selectedItem.id === itemId) {
+      setSelectedItem((prev) => ({ ...prev, status: "Resolved" }));
+    }
+    showToast("Listing marked as Resolved successfully! Case closed.");
+  };
+
   const handleMyReports = () => {
     setActiveTab("all");
     setSelectedCategory("All");
@@ -275,6 +287,7 @@ export default function LostAndFound({ isLoading = false }) {
         isOpen={Boolean(selectedItem)}
         onClose={() => setSelectedItem(null)}
         onContactOwner={(item) => setItemToContact(item)}
+        onMarkResolved={handleMarkResolved}
       />
 
       {/* 2. Contact Owner / Claim Modal */}

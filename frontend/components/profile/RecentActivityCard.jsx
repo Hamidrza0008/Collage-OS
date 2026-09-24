@@ -59,7 +59,7 @@ export default function RecentActivityCard({ activities = [] }) {
         </div>
 
         <Link
-          href="/student/activity"
+          href="#profile-activity"
           className="inline-flex items-center gap-1 text-[11px] font-medium text-[#159B72] dark:text-[#20D39B] hover:underline"
         >
           <span>View All</span>

@@ -12,6 +12,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Share2,
+  CheckCircle2,
 } from "lucide-react";
 import { STATUS_STYLES } from "./lostFoundData";
 
@@ -36,6 +37,7 @@ export default function LostFoundDetailsModal({
 
   const isLost = item.status.toLowerCase() === "lost";
   const isFound = item.status.toLowerCase() === "found";
+  const isOwner = Boolean(item.isCurrentUser || item.reportedBy?.toLowerCase().includes("hamid"));
   const statusStyle = STATUS_STYLES[item.status] || STATUS_STYLES.Lost;
 
   return (
@@ -155,7 +157,22 @@ export default function LostFoundDetailsModal({
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            {item.status !== "Resolved" && (
+            {isOwner && item.status !== "Resolved" && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (onMarkResolved) {
+                    onMarkResolved(item.id);
+                  }
+                }}
+                className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold bg-[#159B72] hover:bg-[#0E825E] text-white transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Mark as Resolved</span>
+              </button>
+            )}
+
+            {!isOwner && item.status !== "Resolved" && (
               <button
                 type="button"
                 onClick={() => {
@@ -168,6 +185,14 @@ export default function LostFoundDetailsModal({
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             )}
+
+            {item.status === "Resolved" && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 text-xs font-semibold border border-sky-200/80 dark:border-sky-900/50">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Case Resolved</span>
+              </span>
+            )}
+
             <button
               type="button"
               onClick={onClose}

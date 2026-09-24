@@ -11,12 +11,12 @@ import {
 import Link from "next/link";
 
 const ACTIONS = [
-  { label: "View Timetable", icon: Calendar, href: "/academics" },
-  { label: "Mark Attendance", icon: CheckSquare, href: "/academics" },
-  { label: "Submit Assignment", icon: FileUp, href: "/assignments" },
-  { label: "Check Marks", icon: Award, href: "/academics" },
-  { label: "Explore Projects", icon: LayoutGrid, href: "/projects" },
-  { label: "Find Internships", icon: Briefcase, href: "/internships" },
+  { label: "View Timetable", icon: Calendar, href: "/student/academics" },
+  { label: "Mark Attendance", icon: CheckSquare, href: "/student/academics" },
+  { label: "Submit Assignment", icon: FileUp, href: "/student/assignments" },
+  { label: "Check Marks", icon: Award, href: "/student/academics" },
+  { label: "Explore Projects", icon: LayoutGrid, href: "/student/projects" },
+  { label: "Find Internships", icon: Briefcase, href: "/student/internships" },
 ];
 
 export default function QuickActions() {

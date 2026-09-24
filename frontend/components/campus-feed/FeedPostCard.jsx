@@ -24,6 +24,7 @@ export default function FeedPostCard({
   onRegisterEvent,
   onVotePoll,
   onShare,
+  onAuthorClick,
 }) {
   const [showComments, setShowComments] = useState(false);
   const [commentInput, setCommentInput] = useState("");
@@ -70,20 +71,29 @@ export default function FeedPostCard({
       {/* Top Header: Avatar, Name, Badge, Metadata | Right: Type Badge, 3-dot Menu */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0 border border-emerald-500/20">
+          <button
+            type="button"
+            onClick={() => onAuthorClick && onAuthorClick(post.author)}
+            title={`View profile of ${post.author?.name}`}
+            className="relative w-10 h-10 rounded-full overflow-hidden shrink-0 border border-emerald-500/20 cursor-pointer hover:ring-2 hover:ring-emerald-500/40 hover:scale-105 transition-all text-left"
+          >
             <Image
               src={post.author?.avatar || "/assets/layout/profile-avatar.jpg"}
               alt={post.author?.name || "Author"}
               fill
               className="object-cover"
             />
-          </div>
+          </button>
 
           <div className="flex flex-col">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs sm:text-[13px] font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight">
+              <button
+                type="button"
+                onClick={() => onAuthorClick && onAuthorClick(post.author)}
+                className="text-xs sm:text-[13px] font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer text-left"
+              >
                 {post.author?.name}
-              </span>
+              </button>
               {post.author?.role && (
                 <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-emerald-100/70 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
                   {post.author.role}

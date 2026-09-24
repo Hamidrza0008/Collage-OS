@@ -52,6 +52,10 @@ export default function Projects({ isLoading = false }) {
     }, 3200);
   };
 
+  const handleMemberClick = (member) => {
+    showToast(`Student profile for ${member.name} will open here in Phase 2.`);
+  };
+
   // Dynamic counts for tab badges
   const counts = useMemo(() => {
     const all = projects.length;
@@ -381,6 +385,7 @@ export default function Projects({ isLoading = false }) {
               onViewDetails={(proj) => setSelectedProject(proj)}
               onToggleLike={handleToggleLike}
               onToggleBookmark={handleToggleBookmark}
+              onMemberClick={handleMemberClick}
               likedIds={likedIds}
               bookmarkedIds={bookmarkedIds}
               onResetFilters={handleResetFilters}
@@ -460,6 +465,7 @@ export default function Projects({ isLoading = false }) {
           onClose={() => setSelectedProject(null)}
           onToggleLike={handleToggleLike}
           onToggleBookmark={handleToggleBookmark}
+          onMemberClick={handleMemberClick}
           isLiked={likedIds.has(selectedProject.id)}
           isBookmarked={bookmarkedIds.has(selectedProject.id)}
           onAddComment={handleAddComment}

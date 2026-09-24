@@ -68,6 +68,7 @@ export default function ProjectCard({
   onViewDetails,
   onToggleLike,
   onToggleBookmark,
+  onMemberClick,
   isLiked = false,
   isBookmarked = false,
 }) {
@@ -147,9 +148,15 @@ export default function ProjectCard({
           <div className="flex -space-x-1.5 overflow-hidden shrink-0">
             {project.members && project.members.length > 0 ? (
               project.members.slice(0, 3).map((m, idx) => (
-                <div
+                <button
                   key={idx}
-                  className="relative w-5 h-5 rounded-full ring-1.5 ring-white dark:ring-[#06241F] overflow-hidden bg-emerald-100 dark:bg-[#082A24]"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onMemberClick) onMemberClick(m);
+                  }}
+                  title={`View profile of ${m.name}`}
+                  className="relative w-5 h-5 rounded-full ring-1.5 ring-white dark:ring-[#06241F] overflow-hidden bg-emerald-100 dark:bg-[#082A24] cursor-pointer hover:scale-110 transition-transform focus:outline-hidden"
                 >
                   <Image
                     src={m.avatar || "/assets/layout/profile-avatar.jpg"}
@@ -157,7 +164,7 @@ export default function ProjectCard({
                     fill
                     className="object-cover"
                   />
-                </div>
+                </button>
               ))
             ) : (
               <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-600 flex items-center justify-center text-[9px] font-bold">

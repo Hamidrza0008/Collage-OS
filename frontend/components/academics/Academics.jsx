@@ -137,10 +137,29 @@ export default function Academics({ isLoading = false }) {
           {/* 4. Row 2: Current Semester Subjects & Semester Grades */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
             <div className="h-full">
-              <CurrentSemesterSubjectsCard />
+              <CurrentSemesterSubjectsCard
+                onViewAllSubjects={() => {
+                  setToastMessage(
+                    "Academic course catalog and full subject list will open here in Phase 3."
+                  );
+                  setTimeout(() => setToastMessage(null), 3500);
+                }}
+                onSubjectClick={(sub) => {
+                  setToastMessage(
+                    `Course workspace for ${sub.code} (${sub.name}) will open here in Phase 3.`
+                  );
+                  setTimeout(() => setToastMessage(null), 3500);
+                }}
+              />
             </div>
             <div className="h-full">
-              <SemesterGradesCard />
+              <SemesterGradesCard
+                onViewAllMarks={() => {
+                  handleTabClick("marks");
+                  setToastMessage("Detailed grade card portal will connect here in Phase 3.");
+                  setTimeout(() => setToastMessage(null), 3500);
+                }}
+              />
             </div>
           </div>
 

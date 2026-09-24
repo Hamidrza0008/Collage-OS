@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import {
   Camera,
@@ -10,8 +11,30 @@ import {
 } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 
-export default function ProfileHero({ user }) {
+export default function ProfileHero({
+  user,
+  onAvatarChange,
+  onEditQuote,
+  onEditProfile,
+  onOpenFollowers,
+  onSelectTab,
+}) {
   const { isDark } = useTheme();
+  const fileInputRef = useRef(null);
+
+  const handleCameraClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      if (onAvatarChange) {
+        onAvatarChange(previewUrl);
+      }
+    }
+  };
 
   return (
     <section aria-label="Profile Banner" className="relative w-full rounded-2xl md:rounded-3xl overflow-hidden shadow-card border border-[#D8E8E2]/60 dark:border-[#16463D]/60 bg-[#06241F]">
@@ -31,6 +54,16 @@ export default function ProfileHero({ user }) {
         <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-radial from-[#159B72]/20 to-transparent rounded-full pointer-events-none blur-xl" />
       </div>
 
+      {/* Hidden file input for Avatar selection */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        aria-label="Upload profile photo"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
       {/* Banner Content */}
       <div className="relative z-10 p-4 sm:p-6 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-5 md:gap-6">
         {/* Left / Upper Side: Avatar + Student Details */}
@@ -48,7 +81,8 @@ export default function ProfileHero({ user }) {
             </div>
             <button
               type="button"
-              className="absolute bottom-0 right-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#159B72] dark:bg-[#20D39B] border-2 border-white dark:border-[#021512] flex items-center justify-center text-white dark:text-[#021512] shadow-sm hover:scale-105 active:scale-95 transition-transform"
+              onClick={handleCameraClick}
+              className="absolute bottom-0 right-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#159B72] dark:bg-[#20D39B] border-2 border-white dark:border-[#021512] flex items-center justify-center text-white dark:text-[#021512] shadow-sm hover:scale-105 active:scale-95 transition-transform cursor-pointer"
               title="Change Profile Photo"
               aria-label="Change Profile Photo"
             >
@@ -89,7 +123,8 @@ export default function ProfileHero({ user }) {
               <span className="truncate max-w-[280px] sm:max-w-none">&ldquo;{user?.quote}&rdquo;</span>
               <button
                 type="button"
-                className="opacity-70 group-hover:opacity-100 hover:text-[#20D39B] transition-opacity shrink-0"
+                onClick={onEditQuote}
+                className="opacity-70 group-hover:opacity-100 hover:text-[#20D39B] transition-opacity shrink-0 cursor-pointer p-0.5"
                 title="Edit status quote"
                 aria-label="Edit status quote"
               >
@@ -104,7 +139,8 @@ export default function ProfileHero({ user }) {
           {/* Edit Profile Button */}
           <button
             type="button"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 md:py-1.5 rounded-xl bg-black/40 hover:bg-black/60 dark:bg-[#021512]/60 dark:hover:bg-[#021512]/80 border border-white/25 backdrop-blur-md text-white text-xs font-semibold shadow-xs hover:border-white/40 active:scale-95 transition-all"
+            onClick={onEditProfile}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 md:py-1.5 rounded-xl bg-black/40 hover:bg-black/60 dark:bg-[#021512]/60 dark:hover:bg-[#021512]/80 border border-white/25 backdrop-blur-md text-white text-xs font-semibold shadow-xs hover:border-white/40 active:scale-95 transition-all cursor-pointer"
           >
             <Pencil className="w-3.5 h-3.5 text-[#20D39B]" />
             <span>Edit Profile</span>
@@ -112,32 +148,47 @@ export default function ProfileHero({ user }) {
 
           {/* Stat Pills: 3-column grid on mobile, inline row on desktop */}
           <div className="grid grid-cols-3 gap-2 sm:gap-2.5 w-full md:w-auto">
-            <div className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px]">
+            <button
+              type="button"
+              onClick={() => onSelectTab && onSelectTab("Projects")}
+              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 hover:bg-black/55 dark:bg-[#021512]/50 dark:hover:bg-[#021512]/80 border border-white/15 hover:border-white/35 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px] cursor-pointer transition-all active:scale-95"
+              title="Jump to Projects"
+            >
               <span className="block text-sm sm:text-lg font-bold text-white leading-tight">
                 {user?.stats?.projects}
               </span>
               <span className="text-[10px] sm:text-[11px] font-medium text-white/75 leading-none">
                 Projects
               </span>
-            </div>
+            </button>
 
-            <div className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px]">
+            <button
+              type="button"
+              onClick={() => onOpenFollowers && onOpenFollowers("followers")}
+              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 hover:bg-black/55 dark:bg-[#021512]/50 dark:hover:bg-[#021512]/80 border border-white/15 hover:border-white/35 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px] cursor-pointer transition-all active:scale-95"
+              title="View Followers"
+            >
               <span className="block text-sm sm:text-lg font-bold text-white leading-tight">
                 {user?.stats?.followers}
               </span>
               <span className="text-[10px] sm:text-[11px] font-medium text-white/75 leading-none">
                 Followers
               </span>
-            </div>
+            </button>
 
-            <div className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px]">
+            <button
+              type="button"
+              onClick={() => onOpenFollowers && onOpenFollowers("following")}
+              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 hover:bg-black/55 dark:bg-[#021512]/50 dark:hover:bg-[#021512]/80 border border-white/15 hover:border-white/35 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px] cursor-pointer transition-all active:scale-95"
+              title="View Following"
+            >
               <span className="block text-sm sm:text-lg font-bold text-white leading-tight">
                 {user?.stats?.following}
               </span>
               <span className="text-[10px] sm:text-[11px] font-medium text-white/75 leading-none">
                 Following
               </span>
-            </div>
+            </button>
           </div>
         </div>
       </div>

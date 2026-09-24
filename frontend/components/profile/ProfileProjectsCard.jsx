@@ -18,7 +18,7 @@ function GithubIcon({ className = "w-3.5 h-3.5" }) {
   );
 }
 
-export default function ProfileProjectsCard({ projects = [] }) {
+export default function ProfileProjectsCard({ projects = [], onProjectClick }) {
   const [likes, setLikes] = useState(() =>
     projects.reduce((acc, p) => ({ ...acc, [p.id]: p.likes || 0 }), {})
   );
@@ -26,6 +26,7 @@ export default function ProfileProjectsCard({ projects = [] }) {
 
   const toggleLike = (id, e) => {
     e.preventDefault();
+    e.stopPropagation();
     setLiked((prev) => {
       const isCurrentlyLiked = !!prev[id];
       setLikes((curr) => ({
@@ -34,6 +35,12 @@ export default function ProfileProjectsCard({ projects = [] }) {
       }));
       return { ...prev, [id]: !isCurrentlyLiked };
     });
+  };
+
+  const handleCardClick = (project) => {
+    if (onProjectClick) {
+      onProjectClick(project);
+    }
   };
 
   return (
@@ -63,7 +70,16 @@ export default function ProfileProjectsCard({ projects = [] }) {
         {projects.map((project) => (
           <div
             key={project.id}
-            className="p-3 rounded-xl bg-[#F7FBF9] dark:bg-[#082A24] border border-[#E8F1ED] dark:border-[#10372F] hover:border-[#159B72]/40 dark:hover:border-[#20D39B]/40 hover:shadow-2xs transition-all flex flex-col justify-between group"
+            onClick={() => handleCardClick(project)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleCardClick(project);
+              }
+            }}
+            className="p-3 rounded-xl bg-[#F7FBF9] dark:bg-[#082A24] border border-[#E8F1ED] dark:border-[#10372F] hover:border-[#159B72]/40 dark:hover:border-[#20D39B]/40 hover:shadow-2xs transition-all flex flex-col justify-between group cursor-pointer text-left"
           >
             <div>
               <div className="flex items-start justify-between gap-1.5 mb-1">
@@ -75,6 +91,7 @@ export default function ProfileProjectsCard({ projects = [] }) {
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="text-[#658278] dark:text-[#789991] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] shrink-0"
                     title="View GitHub repository"
                   >
@@ -128,6 +145,7 @@ export default function ProfileProjectsCard({ projects = [] }) {
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
                   className="inline-flex items-center gap-1 text-[#159B72] dark:text-[#20D39B] hover:underline font-medium"
                 >
                   <span>Live</span>
