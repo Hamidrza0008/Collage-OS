@@ -36,7 +36,7 @@ export default function Sidebar({
 
       {/* Sidebar Container: w-[260px] to prevent truncation, 100vh overflow-hidden */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-[260px] shrink-0 bg-[#FFFFFF] dark:bg-[#021512] border-r border-[#D8E8E2] dark:border-[#10372F] flex flex-col justify-between overflow-hidden transition-all duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-screen w-[260px] shrink-0 bg-[#FFFFFF] dark:bg-[#021512] border-r border-[#D8E8E2] dark:border-[#10372F] flex flex-col justify-between overflow-y-auto lg:overflow-hidden transition-all duration-200 ease-in-out lg:translate-x-0 ${
           isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
       >

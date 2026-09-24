@@ -71,7 +71,7 @@ export default function AssignmentFilters({
       </div>
 
       {/* Right: Search Input + Subject Dropdown */}
-      <div className="flex items-center gap-2.5 shrink-0">
+      <div className="flex items-center gap-2.5 w-full md:w-auto">
         {/* Search Field */}
         <div className="relative flex-1 sm:w-56">
           <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#658278]" />

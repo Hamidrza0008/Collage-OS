@@ -140,9 +140,9 @@ export default function AssignmentCard({ assignment, onViewDetails, onToggleStat
       </div>
 
       {/* Middle & Right Section: Due date, Marks, Priority, 3-dot Menu, View Details CTA */}
-      <div className="flex items-center justify-between md:justify-end gap-3 sm:gap-5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-gray-100 dark:border-[#10372F]">
+      <div className="flex flex-col sm:flex-row md:items-center justify-between md:justify-end gap-3 sm:gap-5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-gray-100 dark:border-[#10372F] w-full md:w-auto">
         {/* Due Information & Marks */}
-        <div className="flex flex-col items-start md:items-end gap-1.5">
+        <div className="flex items-center sm:flex-col items-start sm:items-start md:items-end justify-between sm:justify-start gap-2 sm:gap-1.5 flex-wrap">
           {getUrgencyBadge(assignment.urgency, assignment.dueStatus)}
           <div className="flex items-center gap-1.5 text-[11px] text-[#658278] dark:text-[#789991] font-medium">
             <Calendar className="w-3.5 h-3.5 text-gray-400" />
@@ -155,8 +155,8 @@ export default function AssignmentCard({ assignment, onViewDetails, onToggleStat
         </div>
 
         {/* Priority & Actions */}
-        <div className="flex flex-col items-end gap-2.5">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:items-end gap-2.5 w-full sm:w-auto">
+          <div className="flex items-center justify-between sm:justify-end gap-2">
             {getPriorityBadge(assignment.priorityType, assignment.priority)}
 
             {/* 3-Dot Menu */}
@@ -216,7 +216,7 @@ export default function AssignmentCard({ assignment, onViewDetails, onToggleStat
           <button
             type="button"
             onClick={() => onViewDetails(assignment)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-[#10B981] dark:hover:bg-[#059669] dark:text-[#021512] text-xs font-bold transition-all shadow-xs cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-[#10B981] dark:hover:bg-[#059669] dark:text-[#021512] text-xs font-bold transition-all shadow-xs cursor-pointer"
           >
             <span>View Details</span>
             <ArrowRight className="w-3.5 h-3.5" />

@@ -32,11 +32,11 @@ export default function ProfileHero({ user }) {
       </div>
 
       {/* Banner Content */}
-      <div className="relative z-10 px-5 py-6 sm:px-7 sm:py-7 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        {/* Left Side: Avatar + Student Details */}
+      <div className="relative z-10 p-4 sm:p-6 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-5 md:gap-6">
+        {/* Left / Upper Side: Avatar + Student Details */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 md:gap-6 min-w-0">
           {/* Avatar with thick ring and camera badge */}
-          <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28">
+          <div className="relative shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 mx-auto sm:mx-0">
             <div className="relative w-full h-full rounded-full overflow-hidden border-[3.5px] border-white dark:border-[#021512] shadow-lg">
               <Image
                 src={user?.avatar || "/assets/profile/avatar.jpg"}
@@ -57,10 +57,10 @@ export default function ProfileHero({ user }) {
           </div>
 
           {/* Student Info Block */}
-          <div className="text-white space-y-1 min-w-0">
+          <div className="text-white space-y-1 min-w-0 text-center sm:text-left">
             {/* Name + Verified Badge */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl md:text-[26px] font-bold tracking-tight text-white leading-tight">
+            <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+              <h1 className="text-lg sm:text-2xl md:text-[26px] font-bold tracking-tight text-white leading-tight">
                 {user?.name}
               </h1>
               {user?.isVerified && (
@@ -79,14 +79,14 @@ export default function ProfileHero({ user }) {
             </p>
 
             {/* College Name */}
-            <div className="flex items-center gap-1.5 text-xs text-white/80 pt-0.5">
+            <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-white/80 pt-0.5">
               <Building2 className="w-3.5 h-3.5 text-[#20D39B] shrink-0" />
               <span className="truncate">{user?.college}</span>
             </div>
 
             {/* Motivational Quote */}
-            <div className="flex items-center gap-2 text-xs italic text-white/85 pt-1 group">
-              <span className="truncate">&ldquo;{user?.quote}&rdquo;</span>
+            <div className="flex items-center justify-center sm:justify-start gap-2 text-xs italic text-white/85 pt-1 group">
+              <span className="truncate max-w-[280px] sm:max-w-none">&ldquo;{user?.quote}&rdquo;</span>
               <button
                 type="button"
                 className="opacity-70 group-hover:opacity-100 hover:text-[#20D39B] transition-opacity shrink-0"
@@ -99,21 +99,21 @@ export default function ProfileHero({ user }) {
           </div>
         </div>
 
-        {/* Right Side: Edit Profile Button & Stat Pills */}
-        <div className="flex flex-row md:flex-col justify-between md:items-end gap-4 md:gap-5 shrink-0">
+        {/* Right / Lower Side: Edit Profile Button & Stat Pills */}
+        <div className="flex flex-col md:items-end gap-3 sm:gap-4 md:gap-5 shrink-0 w-full md:w-auto">
           {/* Edit Profile Button */}
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-black/40 hover:bg-black/60 dark:bg-[#021512]/60 dark:hover:bg-[#021512]/80 border border-white/25 backdrop-blur-md text-white text-xs font-medium shadow-xs hover:border-white/40 active:scale-95 transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 md:py-1.5 rounded-xl bg-black/40 hover:bg-black/60 dark:bg-[#021512]/60 dark:hover:bg-[#021512]/80 border border-white/25 backdrop-blur-md text-white text-xs font-semibold shadow-xs hover:border-white/40 active:scale-95 transition-all"
           >
             <Pencil className="w-3.5 h-3.5 text-[#20D39B]" />
             <span>Edit Profile</span>
           </button>
 
-          {/* Stat Pills */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            <div className="px-3.5 py-1.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[68px] sm:min-w-[74px]">
-              <span className="block text-base sm:text-lg font-bold text-white leading-tight">
+          {/* Stat Pills: 3-column grid on mobile, inline row on desktop */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-2.5 w-full md:w-auto">
+            <div className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px]">
+              <span className="block text-sm sm:text-lg font-bold text-white leading-tight">
                 {user?.stats?.projects}
               </span>
               <span className="text-[10px] sm:text-[11px] font-medium text-white/75 leading-none">
@@ -121,8 +121,8 @@ export default function ProfileHero({ user }) {
               </span>
             </div>
 
-            <div className="px-3.5 py-1.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[68px] sm:min-w-[74px]">
-              <span className="block text-base sm:text-lg font-bold text-white leading-tight">
+            <div className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px]">
+              <span className="block text-sm sm:text-lg font-bold text-white leading-tight">
                 {user?.stats?.followers}
               </span>
               <span className="text-[10px] sm:text-[11px] font-medium text-white/75 leading-none">
@@ -130,8 +130,8 @@ export default function ProfileHero({ user }) {
               </span>
             </div>
 
-            <div className="px-3.5 py-1.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[68px] sm:min-w-[74px]">
-              <span className="block text-base sm:text-lg font-bold text-white leading-tight">
+            <div className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-black/35 dark:bg-[#021512]/50 border border-white/15 backdrop-blur-xs text-center min-w-[64px] sm:min-w-[74px]">
+              <span className="block text-sm sm:text-lg font-bold text-white leading-tight">
                 {user?.stats?.following}
               </span>
               <span className="text-[10px] sm:text-[11px] font-medium text-white/75 leading-none">

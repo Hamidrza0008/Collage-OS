@@ -20,7 +20,7 @@ export default function LostFoundTabsAndSearch({
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
       {/* Left: Main Tabs */}
-      <div className="flex items-center gap-1 sm:gap-2 border-b border-[#D8E8E2] dark:border-[#16463D] pb-1 md:pb-0 md:border-b-0">
+      <div className="flex items-center gap-1 sm:gap-2 border-b border-[#D8E8E2] dark:border-[#16463D] pb-1 md:pb-0 md:border-b-0 overflow-x-auto scrollbar-none">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (

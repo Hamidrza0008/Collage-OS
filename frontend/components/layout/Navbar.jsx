@@ -1,46 +1,99 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { Search, Bell, Sun, Moon, ChevronDown, Menu } from "lucide-react";
+import { Search, Bell, Sun, Moon, ChevronDown, Menu, X } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 import FontSwitcherDropdown from "./FontSwitcherDropdown";
 import { STUDENT_USER } from "./navConfig";
 
 export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
   const { isDark, toggleTheme } = useTheme();
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 w-full h-[68px] px-4 md:px-6 flex items-center justify-between gap-4 bg-[#F7FBF9]/90 dark:bg-[#061F1B]/90 backdrop-blur-md border-b border-[#D8E8E2]/60 dark:border-[#16463D]/60 transition-colors duration-200">
-      {/* Left Area: Mobile Menu Toggle + Search Bar */}
-      <div className="flex items-center gap-3 flex-1 max-w-[660px]">
-        {/* Mobile Hamburger Menu */}
-        <button
-          type="button"
-          onClick={onMenuToggle}
-          className="lg:hidden p-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:bg-[#DDF3EB] dark:hover:bg-[#082A24] transition-colors shrink-0"
-          aria-label="Open sidebar menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-
-        {/* Search Input Container */}
-        <div className="relative flex-1 w-full">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-            <Search className="w-4 h-4 text-[#658278] dark:text-[#789991]" strokeWidth={2} />
+    <header className="sticky top-0 z-30 w-full h-[68px] px-3 sm:px-4 md:px-6 flex items-center justify-between gap-2 sm:gap-4 bg-[#F7FBF9]/90 dark:bg-[#061F1B]/90 backdrop-blur-md border-b border-[#D8E8E2]/60 dark:border-[#16463D]/60 transition-colors duration-200">
+      {/* Mobile Search Overlay Bar */}
+      {isMobileSearchOpen ? (
+        <div className="flex sm:hidden items-center gap-2 w-full animate-in fade-in duration-150">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="w-4 h-4 text-[#658278] dark:text-[#789991]" strokeWidth={2} />
+            </div>
+            <input
+              type="text"
+              autoFocus
+              placeholder="Search anything..."
+              className="w-full h-10 pl-9 pr-3 rounded-xl bg-[#FFFFFF] dark:bg-[#0A2A24] border border-[#159B72] dark:border-[#20D39B] text-[13px] text-[#0B3024] dark:text-[#F1FAF6] placeholder-[#658278] dark:placeholder-[#789991] focus:outline-none"
+            />
           </div>
-          <input
-            type="text"
-            placeholder="Search anything... (e.g. assignments, students, events, notices)"
-            className="w-full h-10 pl-10 pr-12 rounded-xl bg-[#FFFFFF] dark:bg-[#0A2A24] border border-[#D8E8E2] dark:border-[#16463D] text-[13px] text-[#0B3024] dark:text-[#F1FAF6] placeholder-[#658278] dark:placeholder-[#789991] shadow-[0_1px_2px_rgba(11,48,36,0.03)] dark:shadow-none focus:outline-none focus:border-[#159B72] dark:focus:border-[#20D39B] focus:ring-2 focus:ring-[#159B72]/15 dark:focus:ring-[#20D39B]/15 transition-all"
-          />
-          {/* Keyboard shortcut indicator */}
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-[#658278] dark:text-[#789991] bg-[#F1F8F5] dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] rounded-md">
-              ⌘ K
-            </kbd>
-          </div>
+          <button
+            type="button"
+            onClick={() => setIsMobileSearchOpen(false)}
+            className="p-2 rounded-xl text-[#658278] dark:text-[#789991] hover:bg-[#DDF3EB] dark:hover:bg-[#082A24]"
+            aria-label="Close search"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* Left Area: Mobile Menu Toggle + Logo (Mobile only) + Search Bar */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-[660px]">
+            {/* Mobile Hamburger Menu */}
+            <button
+              type="button"
+              onClick={onMenuToggle}
+              className="lg:hidden p-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:bg-[#DDF3EB] dark:hover:bg-[#082A24] transition-colors shrink-0"
+              aria-label="Open sidebar menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Mobile-only College OS Brand Tag */}
+            <div className="flex sm:hidden items-center gap-1.5 shrink-0">
+              <Image
+                src={isDark ? "/assets/layout/logo-dark.svg" : "/assets/layout/logo-light.svg"}
+                alt="Logo"
+                width={22}
+                height={22}
+                className="object-contain"
+              />
+              <span className="text-[13px] font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight truncate">
+                College OS
+              </span>
+            </div>
+
+            {/* Mobile Search Toggle Icon */}
+            <button
+              type="button"
+              onClick={() => setIsMobileSearchOpen(true)}
+              className="sm:hidden p-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:bg-[#DDF3EB] dark:hover:bg-[#082A24] transition-colors ml-auto"
+              aria-label="Open search"
+            >
+              <Search className="w-4 h-4 text-[#658278] dark:text-[#789991]" strokeWidth={2} />
+            </button>
+
+            {/* Desktop / Tablet Search Input Container (Unchanged) */}
+            <div className="hidden sm:block relative flex-1 w-full">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <Search className="w-4 h-4 text-[#658278] dark:text-[#789991]" strokeWidth={2} />
+              </div>
+              <input
+                type="text"
+                placeholder="Search anything... (e.g. assignments, students, events, notices)"
+                className="w-full h-10 pl-10 pr-12 rounded-xl bg-[#FFFFFF] dark:bg-[#0A2A24] border border-[#D8E8E2] dark:border-[#16463D] text-[13px] text-[#0B3024] dark:text-[#F1FAF6] placeholder-[#658278] dark:placeholder-[#789991] shadow-[0_1px_2px_rgba(11,48,36,0.03)] dark:shadow-none focus:outline-none focus:border-[#159B72] dark:focus:border-[#20D39B] focus:ring-2 focus:ring-[#159B72]/15 dark:focus:ring-[#20D39B]/15 transition-all"
+              />
+              {/* Keyboard shortcut indicator */}
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-[#658278] dark:text-[#789991] bg-[#F1F8F5] dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] rounded-md">
+                  ⌘ K
+                </kbd>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Right Area: Notification, Theme Toggle, Divider, User Profile */}
       <div className="flex items-center gap-2 md:gap-3 shrink-0">
@@ -72,7 +125,9 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
         </button>
 
         {/* Global Live Font Switcher Dropdown */}
-        <FontSwitcherDropdown variant="navbar" />
+        <div className="hidden xs:block">
+          <FontSwitcherDropdown variant="navbar" />
+        </div>
 
         {/* Divider */}
         <div className="h-6 w-[1px] bg-[#D8E8E2] dark:bg-[#16463D] mx-1 hidden sm:block" />
