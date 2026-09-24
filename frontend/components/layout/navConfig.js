@@ -18,8 +18,8 @@ import {
 
 export const STUDENT_NAV_ITEMS = [
   { label: "Home", icon: Home, href: "/student" },
-  { label: "My Profile", icon: User, href: "/student/profile" },
-  { label: "Academics", icon: Layers, href: "/student/academics", hasSubmenu: true },
+  { label: "Campus AI", icon: Sparkles, href: "/student/campus-ai", badge: "Featured" },
+  { label: "Academics", icon: Layers, href: "/student/academics" },
   { label: "Assignments", icon: ClipboardCheck, href: "/student/assignments" },
   { label: "Notices & Announcements", icon: Bell, href: "/student/notices" },
   { label: "Events", icon: Calendar, href: "/student/events" },
@@ -27,11 +27,12 @@ export const STUDENT_NAV_ITEMS = [
   { label: "Internships & Hackathons", icon: Briefcase, href: "/student/internships" },
   { label: "Lost & Found", icon: ShieldCheck, href: "/student/lost-and-found" },
   { label: "Campus Feed", icon: MessageSquare, href: "/student/feed" },
-  { label: "Campus AI", icon: Sparkles, href: "/student/campus-ai", badge: "New" },
+  { label: "My Profile", icon: User, href: "/student/profile" },
 ];
 
 export const FACULTY_NAV_ITEMS = [
   { label: "Dashboard", icon: Home, href: "/faculty" },
+  { label: "Campus AI", icon: Sparkles, href: "/faculty/campus-ai", badge: "Featured" },
   { label: "My Classes", icon: BookOpen, href: "/faculty/classes" },
   { label: "Attendance", icon: CheckSquare, href: "/faculty/attendance" },
   { label: "Assignments", icon: ClipboardCheck, href: "/faculty/assignments" },
@@ -39,7 +40,6 @@ export const FACULTY_NAV_ITEMS = [
   { label: "Timetable", icon: Calendar, href: "/faculty/timetable" },
   { label: "Notices", icon: Bell, href: "/faculty/notices" },
   { label: "Events", icon: CalendarDays, href: "/faculty/events" },
-  { label: "Campus AI", icon: Sparkles, href: "/faculty/campus-ai", badge: "New" },
 ];
 
 export const STUDENT_USER = {

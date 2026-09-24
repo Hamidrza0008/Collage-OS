@@ -38,7 +38,7 @@ export default function NavItem({
 
       <div className="flex items-center gap-1 shrink-0 ml-2">
         {badge && (
-          <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-semibold tracking-wide bg-[#159B72]/15 text-[#159B72] dark:bg-[#123F35] dark:text-[#20D39B]">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-500/20 shadow-2xs">
             {badge}
           </span>
         )}
