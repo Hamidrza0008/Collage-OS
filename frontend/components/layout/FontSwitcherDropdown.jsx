@@ -58,7 +58,7 @@ export default function FontSwitcherDropdown() {
         </span>
         <span
           suppressHydrationWarning
-          className="font-bold text-emerald-700 dark:text-emerald-400 max-w-[95px] truncate"
+          className="font-bold text-emerald-700 dark:text-emerald-400 max-w-[95px] truncate hidden sm:inline"
         >
           {selectedFont.name}
         </span>

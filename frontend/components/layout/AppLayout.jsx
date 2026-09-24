@@ -44,7 +44,7 @@ export default function AppLayout({
         <Navbar onMenuToggle={() => setIsSidebarOpen(true)} user={resolvedUser} />
 
         {/* Main Content Container (Where pages render through children) */}
-        <main className="flex-1 p-3 sm:p-5 md:p-6 overflow-y-auto max-w-full">
+        <main className="flex-1 p-3 sm:p-5 md:p-6 max-w-full">
           {children}
         </main>
       </div>

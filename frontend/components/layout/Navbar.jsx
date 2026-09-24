@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Search, Bell, Sun, Moon, ChevronDown, Menu, X } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
@@ -10,9 +10,25 @@ import { STUDENT_USER } from "./navConfig";
 export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
   const { isDark, toggleTheme } = useTheme();
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 8);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-30 w-full h-[68px] px-3 sm:px-4 md:px-6 flex items-center justify-between gap-2 sm:gap-4 bg-[#F7FBF9]/90 dark:bg-[#061F1B]/90 backdrop-blur-md border-b border-[#D8E8E2]/60 dark:border-[#16463D]/60 transition-colors duration-200">
+    <header
+      className={`sticky top-0 z-40 w-full h-[68px] px-3 sm:px-4 md:px-6 flex items-center justify-between gap-2 sm:gap-4 backdrop-blur-md transition-all duration-200 ${
+        isScrolled
+          ? "bg-[#F7FBF9]/95 dark:bg-[#061F1B]/95 border-b border-[#D8E8E2] dark:border-[#16463D] shadow-[0_2px_12px_rgba(11,48,36,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.35)]"
+          : "bg-[#F7FBF9]/85 dark:bg-[#061F1B]/85 border-b border-[#D8E8E2]/60 dark:border-[#16463D]/60 shadow-none"
+      }`}
+    >
       {/* Mobile Search Overlay Bar */}
       {isMobileSearchOpen ? (
         <div className="flex sm:hidden items-center gap-2 w-full animate-in fade-in duration-150">
@@ -125,9 +141,7 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
         </button>
 
         {/* Global Live Font Switcher Dropdown */}
-        <div className="hidden xs:block">
-          <FontSwitcherDropdown variant="navbar" />
-        </div>
+        <FontSwitcherDropdown variant="navbar" />
 
         {/* Divider */}
         <div className="h-6 w-[1px] bg-[#D8E8E2] dark:bg-[#16463D] mx-1 hidden sm:block" />
