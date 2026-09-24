@@ -234,9 +234,9 @@ export default function LostAndFound({ isLoading = false }) {
         </div>
 
         {/* ========================================================================= */}
-        {/* RIGHT 1/3 SIDEBAR: Starts at TOP level beside Hero                        */}
+        {/* RIGHT 1/3 SIDEBAR: Sticky on Desktop (Starts beside Hero, stays visible)  */}
         {/* ========================================================================= */}
-        <div className="lg:col-span-4 space-y-4">
+        <aside className="lg:col-span-4 lg:sticky lg:top-[84px] self-start space-y-4 z-10">
           {/* 1. Quick Stats Card */}
           <QuickStatsCard
             stats={stats}
@@ -262,7 +262,7 @@ export default function LostAndFound({ isLoading = false }) {
           <FoundSomethingCtaCard
             onReportFound={() => setIsReportFoundOpen(true)}
           />
-        </div>
+        </aside>
       </div>
 
       {/* ========================================================================= */}
