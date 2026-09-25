@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Package, Leaf } from "lucide-react";
+import Link from "next/link";
+import { Package, Leaf, UserCheck, ChevronRight } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 
 export default function LostFoundHero() {
@@ -44,9 +45,18 @@ export default function LostFoundHero() {
           </div>
         </div>
 
-        {/* Right: Motivational Script Badge */}
-        <div className="shrink-0 self-start sm:self-center">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-black/35 border border-emerald-500/25 backdrop-blur-xs text-right">
+        {/* Right: My Reports Link & Motivational Script Badge */}
+        <div className="shrink-0 self-start sm:self-center flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/student/lost-and-found/my-reports"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 border border-emerald-400/40 text-emerald-200 hover:text-white text-xs font-semibold backdrop-blur-xs transition-all shadow-2xs group cursor-pointer"
+          >
+            <UserCheck className="w-3.5 h-3.5 text-emerald-300" />
+            <span>My Reports &amp; Claims</span>
+            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform opacity-75" />
+          </Link>
+
+          <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-black/35 border border-emerald-500/25 backdrop-blur-xs text-right">
             <div className="flex flex-col text-right">
               <span className="text-[13px] italic font-semibold text-emerald-200/90 tracking-wide font-serif leading-tight">
                 Small things
