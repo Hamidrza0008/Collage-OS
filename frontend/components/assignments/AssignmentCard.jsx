@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import {
   Code2,
   Binary,
@@ -172,17 +173,17 @@ export default function AssignmentCard({ assignment, onViewDetails, onToggleStat
 
               {menuOpen && (
                 <div className="absolute right-0 mt-1.5 w-44 rounded-xl bg-white dark:bg-[#041D18] border border-[#D8E8E2] dark:border-[#10372F] shadow-lg py-1 z-30 animate-in fade-in zoom-in-95 duration-100">
-                  <button
-                    type="button"
+                  <Link
+                    href={`/student/assignments/${assignment.id}`}
                     onClick={() => {
-                      onViewDetails(assignment);
+                      if (onViewDetails) onViewDetails(assignment);
                       setMenuOpen(false);
                     }}
                     className="w-full text-left px-3 py-2 text-xs flex items-center gap-2 text-[#0B3024] dark:text-[#C5DCD4] hover:bg-gray-50 dark:hover:bg-[#0A3029]"
                   >
                     <Eye className="w-3.5 h-3.5 text-emerald-600" />
                     <span>View Details</span>
-                  </button>
+                  </Link>
                   <button
                     type="button"
                     onClick={() => {
@@ -213,14 +214,16 @@ export default function AssignmentCard({ assignment, onViewDetails, onToggleStat
           </div>
 
           {/* View Details Button */}
-          <button
-            type="button"
-            onClick={() => onViewDetails(assignment)}
+          <Link
+            href={`/student/assignments/${assignment.id}`}
+            onClick={() => {
+              if (onViewDetails) onViewDetails(assignment);
+            }}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-[#10B981] dark:hover:bg-[#059669] dark:text-[#021512] text-xs font-bold transition-all shadow-xs cursor-pointer"
           >
             <span>View Details</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </Link>
         </div>
       </div>
     </div>

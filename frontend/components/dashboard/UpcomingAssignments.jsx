@@ -5,6 +5,7 @@ import Link from "next/link";
 
 const ASSIGNMENTS = [
   {
+    id: "asg-1",
     title: "Web Development",
     desc: "Build a responsive portfolio website",
     dueDays: "Due in 2 days",
@@ -12,6 +13,7 @@ const ASSIGNMENTS = [
     urgent: true,
   },
   {
+    id: "asg-3",
     title: "DBMS",
     desc: "Normalization and ER diagram",
     dueDays: "Due in 4 days",
@@ -19,6 +21,7 @@ const ASSIGNMENTS = [
     urgent: false,
   },
   {
+    id: "asg-4",
     title: "Computer Networks",
     desc: "Network Topology & Protocols",
     dueDays: "Due in 6 days",
@@ -59,17 +62,18 @@ export default function UpcomingAssignments() {
         {/* Assignments List */}
         <div className="mt-2.5 space-y-1.5">
           {ASSIGNMENTS.map((item, index) => (
-            <div
+            <Link
               key={index}
-              className="py-2 px-2.5 rounded-lg bg-[#F7FBF9]/60 dark:bg-[#031A16]/40 border border-[#E8F1ED] dark:border-[#10372F] hover:border-[#D8E8E2] dark:hover:border-[#16463D] transition-all flex items-center justify-between gap-2.5"
+              href={`/student/assignments/${item.id}`}
+              className="py-2 px-2.5 rounded-lg bg-[#F7FBF9]/60 dark:bg-[#031A16]/40 border border-[#E8F1ED] dark:border-[#10372F] hover:border-emerald-300 dark:hover:border-emerald-700/60 hover:bg-emerald-50/30 transition-all flex items-center justify-between gap-2.5 group"
             >
               {/* Left icon & Info */}
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="p-1.5 rounded-md bg-[#DDF3EB] dark:bg-[#123F35] text-[#159B72] dark:text-[#20D39B] shrink-0">
+                <div className="p-1.5 rounded-md bg-[#DDF3EB] dark:bg-[#123F35] text-[#159B72] dark:text-[#20D39B] shrink-0 group-hover:scale-105 transition-transform">
                   <FileText className="w-3.5 h-3.5" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs font-semibold text-[#0B3024] dark:text-[#F1FAF6] truncate leading-tight">
+                  <h3 className="text-xs font-semibold text-[#0B3024] dark:text-[#F1FAF6] truncate leading-tight group-hover:text-emerald-700 dark:group-hover:text-[#20D39B] transition-colors">
                     {item.title}
                   </h3>
                   <p className="text-[10.5px] text-[#658278] dark:text-[#789991] truncate">
@@ -93,7 +97,7 @@ export default function UpcomingAssignments() {
                   {item.date}
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
