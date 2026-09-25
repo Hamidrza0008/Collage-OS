@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import OpportunitiesHero from "./OpportunitiesHero";
 import OpportunityTabsAndSearch from "./OpportunityTabsAndSearch";
 import OpportunityFilterDrawer from "./OpportunityFilterDrawer";
@@ -103,6 +104,7 @@ function filterOpportunities(list, { activeTab, searchQuery, selectedSkill, adva
 }
 
 export default function InternshipsHackathons({ isLoading = false }) {
+  const router = useRouter();
   // Master Datasets State
   const [internships, setInternships] = useState(INITIAL_INTERNSHIPS);
   const [hackathons, setHackathons] = useState(INITIAL_HACKATHONS);
@@ -290,7 +292,7 @@ export default function InternshipsHackathons({ isLoading = false }) {
         break;
 
       case "my-applications":
-        setActiveQuickModal("my-applications");
+        router.push("/student/internships/applications");
         break;
 
       case "saved-opportunities":
