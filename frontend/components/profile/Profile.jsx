@@ -57,6 +57,22 @@ export default function Profile({ isLoading = false }) {
     showToast("Profile avatar updated successfully!");
   };
 
+  // Sync edits saved from /student/profile/edit if present
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("collegeos_student_profile_edit");
+      if (raw) {
+        const saved = JSON.parse(raw);
+        setUserProfile((prev) => ({
+          ...prev,
+          name: saved.name || prev.name,
+          quote: saved.quote || prev.quote,
+          avatar: saved.avatar || prev.avatar,
+        }));
+      }
+    } catch {}
+  }, []);
+
   const handleSaveQuote = (newQuote) => {
     setUserProfile((prev) => ({ ...prev, quote: newQuote }));
     showToast("Profile quote updated successfully!");
@@ -157,7 +173,7 @@ export default function Profile({ isLoading = false }) {
             user={userProfile}
             onAvatarChange={handleAvatarChange}
             onEditQuote={() => setIsEditQuoteOpen(true)}
-            onEditProfile={() => setIsEditProfileOpen(true)}
+            onEditProfile={() => router.push("/student/profile/edit")}
             onOpenFollowers={(type) => setFollowersModal({ isOpen: true, type })}
             onSelectTab={handleSelectTab}
           />

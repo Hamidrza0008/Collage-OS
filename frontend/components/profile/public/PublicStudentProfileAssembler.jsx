@@ -18,10 +18,66 @@ import ConnectMessageModal from './ConnectMessageModal';
 import FollowersModal from '../FollowersModal';
 
 export default function PublicStudentProfileAssembler({ profile, relatedStudents = [] }) {
+  const [activeProfile, setActiveProfile] = useState(profile);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [activeModal, setActiveModal] = useState(null); // 'connect' | 'message' | 'followers' | 'following' | null
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Sync edits saved from /student/profile/edit for student-1
+  useEffect(() => {
+    if (!profile?.id || profile.id !== "student-1") return;
+    try {
+      const raw = localStorage.getItem("collegeos_student_profile_edit");
+      if (raw) {
+        const saved = JSON.parse(raw);
+        setActiveProfile((prev) => {
+          const links = [];
+          if (saved.socialLinks?.github) {
+            links.push({
+              platform: "GitHub",
+              handle: saved.socialLinks.github.replace(/^https?:\/\//, ""),
+              url: saved.socialLinks.github,
+              type: "github",
+            });
+          }
+          if (saved.socialLinks?.linkedin) {
+            links.push({
+              platform: "LinkedIn",
+              handle: saved.socialLinks.linkedin.replace(/^https?:\/\//, ""),
+              url: saved.socialLinks.linkedin,
+              type: "linkedin",
+            });
+          }
+          if (saved.socialLinks?.portfolio) {
+            links.push({
+              platform: "Portfolio",
+              handle: saved.socialLinks.portfolio.replace(/^https?:\/\//, ""),
+              url: saved.socialLinks.portfolio,
+              type: "portfolio",
+            });
+          }
+
+          return {
+            ...prev,
+            name: saved.name || prev.name,
+            username: saved.username || prev.username,
+            avatar: saved.avatar || prev.avatar,
+            headline: saved.headline || prev.headline,
+            quote: saved.quote || prev.quote,
+            bio: saved.bio || prev.bio,
+            careerFocus: saved.careerFocus || prev.careerFocus,
+            interests: saved.interests || prev.interests,
+            skills: saved.skills || prev.skills,
+            projects: saved.projects || prev.projects,
+            achievements: saved.achievements || prev.achievements,
+            campusContributions: saved.campusContributions || prev.campusContributions,
+            socialLinks: links.length > 0 ? links : prev.socialLinks,
+          };
+        });
+      }
+    } catch {}
+  }, [profile?.id]);
 
   // Load connection state from localStorage
   useEffect(() => {
@@ -123,7 +179,7 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
           <main className="lg:col-span-2 space-y-6">
             {/* 1. Public Profile Hero */}
             <PublicStudentProfileHero
-              profile={profile}
+              profile={activeProfile}
               isConnected={isConnected}
               isConnecting={isConnecting}
               onConnect={handleToggleConnect}
@@ -133,38 +189,38 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
             />
 
             {/* 2. About & Background */}
-            <PublicProfileAbout profile={profile} />
+            <PublicProfileAbout profile={activeProfile} />
 
             {/* 3. Skills & Technical Expertise */}
-            <PublicProfileSkills skills={profile.skills} />
+            <PublicProfileSkills skills={activeProfile.skills} />
 
             {/* 4. Projects & Portfolio */}
-            <PublicProfileProjects projects={profile.projects} />
+            <PublicProfileProjects projects={activeProfile.projects} />
 
             {/* 5. Achievements & Honors */}
-            <PublicProfileAchievements achievements={profile.achievements} />
+            <PublicProfileAchievements achievements={activeProfile.achievements} />
 
             {/* 6. Academic Identity Snapshot */}
             <PublicProfileAcademicSnapshot
-              education={profile.education}
-              department={profile.department}
-              branch={profile.branch}
-              semester={profile.semester}
-              batch={profile.batch}
-              college={profile.college}
+              education={activeProfile.education}
+              department={activeProfile.department}
+              branch={activeProfile.branch}
+              semester={activeProfile.semester}
+              batch={activeProfile.batch}
+              college={activeProfile.college}
             />
 
             {/* 7. Campus Contributions & Leadership */}
-            <PublicProfileCampusContributions contributions={profile.campusContributions} />
+            <PublicProfileCampusContributions contributions={activeProfile.campusContributions} />
 
             {/* 8. Activity / Campus Presence */}
-            <PublicProfileActivity activity={profile.activity} />
+            <PublicProfileActivity activity={activeProfile.activity} />
           </main>
 
           {/* Right Sidebar Rail (1/3) - Sticky on Desktop */}
           <div className="lg:col-span-1 lg:sticky lg:top-20 space-y-6">
             <PublicProfileUtilitySidebar
-              profile={profile}
+              profile={activeProfile}
               isConnected={isConnected}
               isConnecting={isConnecting}
               onConnect={handleToggleConnect}
@@ -179,7 +235,7 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
 
       {/* Sticky Mobile Action Bar */}
       <MobilePublicProfileActionBar
-        profile={profile}
+        profile={activeProfile}
         isConnected={isConnected}
         isConnecting={isConnecting}
         onConnect={handleToggleConnect}
@@ -191,7 +247,7 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
       <ConnectMessageModal
         isOpen={activeModal === 'connect' || activeModal === 'message'}
         onClose={() => setActiveModal(null)}
-        profile={profile}
+        profile={activeProfile}
         mode={activeModal === 'message' ? 'message' : 'connect'}
         onSend={activeModal === 'message' ? handleMessageSubmit : handleConnectSubmit}
       />
