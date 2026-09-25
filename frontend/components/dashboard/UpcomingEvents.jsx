@@ -5,6 +5,7 @@ import Link from "next/link";
 
 const EVENTS = [
   {
+    id: "event-4",
     day: "20",
     month: "AUG",
     title: "Tech Talk - AI in Modern World",
@@ -12,6 +13,7 @@ const EVENTS = [
     time: "11:00 AM",
   },
   {
+    id: "event-1",
     day: "24",
     month: "AUG",
     title: "Coding Competition",
@@ -19,6 +21,7 @@ const EVENTS = [
     time: "10:00 AM",
   },
   {
+    id: "event-3",
     day: "28",
     month: "AUG",
     title: "Cultural Fest - Aarohan 2025",
@@ -54,9 +57,10 @@ export default function UpcomingEvents() {
         {/* Event Items */}
         <div className="mt-2.5 space-y-1.5">
           {EVENTS.map((evt, index) => (
-            <div
-              key={index}
-              className="py-1 px-2 rounded-lg bg-[#F7FBF9]/60 dark:bg-[#031A16]/40 border border-[#E8F1ED] dark:border-[#10372F] hover:border-[#D8E8E2] dark:hover:border-[#16463D] transition-all flex items-center gap-2.5 group cursor-pointer"
+            <Link
+              key={evt.id || index}
+              href={`/student/events/${evt.id}`}
+              className="py-1 px-2 rounded-lg bg-[#F7FBF9]/60 dark:bg-[#031A16]/40 border border-[#E8F1ED] dark:border-[#10372F] hover:border-[#D8E8E2] dark:hover:border-[#16463D] transition-all flex items-center gap-2.5 group cursor-pointer block"
             >
               {/* Compact Date Box */}
               <div className="w-8 h-8 rounded-lg bg-[#DDF3EB] dark:bg-[#123F35] flex flex-col items-center justify-center shrink-0 leading-none">
@@ -77,7 +81,7 @@ export default function UpcomingEvents() {
                   {evt.venue} &bull; {evt.time}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

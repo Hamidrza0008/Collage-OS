@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import EventsHero from "./EventsHero";
 import EventTabsAndFilters from "./EventTabsAndFilters";
 import EventGrid from "./EventGrid";
@@ -20,6 +21,7 @@ import { CheckCircle2 } from "lucide-react";
 const ITEMS_PER_PAGE = 6;
 
 export default function Events({ isLoading = false }) {
+  const router = useRouter();
   // Master event dataset state
   const [events] = useState(ALL_EVENTS);
 
@@ -160,10 +162,7 @@ export default function Events({ isLoading = false }) {
   };
 
   const handleSelectSidebarEvent = (eventId) => {
-    const found = events.find((e) => e.id === eventId);
-    if (found) {
-      setSelectedEvent(found);
-    }
+    router.push(`/student/events/${eventId}`);
   };
 
   if (isLoading) {
@@ -200,7 +199,7 @@ export default function Events({ isLoading = false }) {
           <div id="events-grid-container" className="space-y-4">
             <EventGrid
               events={paginatedEvents}
-              onViewDetails={(ev) => setSelectedEvent(ev)}
+              onViewDetails={(ev) => router.push(`/student/events/${ev.id}`)}
               onRegister={(ev) => setSelectedEvent(ev)}
               onToggleInterested={handleToggleInterested}
               interestedIds={interestedIds}

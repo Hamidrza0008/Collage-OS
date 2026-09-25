@@ -1,25 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import { Calendar, MapPin, CheckCircle2, Ticket, UtensilsCrossed } from "lucide-react";
+import Link from "next/link";
+import { Calendar, MapPin, CheckCircle2, Ticket, UtensilsCrossed, ArrowRight } from "lucide-react";
 
 export default function FeedPostMedia({ post, onRegisterEvent, onVotePoll }) {
   // 1. Rich Event Banner & Metadata Block (like Post 2 TechVibe)
   if (post.eventDetails) {
-    const { title, tagline, date, location, status, buttonText, bannerImage } =
+    const { title, tagline, date, location, status, buttonText, bannerImage, eventId } =
       post.eventDetails;
+    const targetEventId = eventId || "event-1";
 
     return (
       <div className="mt-3 rounded-2xl overflow-hidden border border-[#D8E8E2] dark:border-[#16463D] bg-[#021512] shadow-xs">
         <div className="grid grid-cols-1 md:grid-cols-12 items-center">
           {/* Left/Main Event Graphic */}
-          <div className="relative md:col-span-7 h-44 sm:h-48 overflow-hidden bg-black flex items-center justify-center">
+          <Link
+            href={`/student/events/${targetEventId}`}
+            className="relative md:col-span-7 h-44 sm:h-48 overflow-hidden bg-black flex items-center justify-center group block cursor-pointer"
+          >
             {bannerImage && (
               <Image
                 src={bannerImage}
                 alt={title}
                 fill
-                className="object-cover opacity-80"
+                className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-300"
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
@@ -27,14 +32,14 @@ export default function FeedPostMedia({ post, onRegisterEvent, onVotePoll }) {
               <span className="text-[10px] tracking-widest uppercase font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30">
                 Annual Flagship Fest
               </span>
-              <h4 className="text-xl sm:text-2xl font-black text-white mt-1.5 tracking-tight">
+              <h4 className="text-xl sm:text-2xl font-black text-white mt-1.5 tracking-tight group-hover:text-emerald-300 transition-colors">
                 {title}
               </h4>
               <p className="text-[11px] font-semibold tracking-wider text-emerald-200/90 mt-0.5 uppercase">
                 {tagline}
               </p>
             </div>
-          </div>
+          </Link>
 
           {/* Right Event Metadata & CTA */}
           <div className="md:col-span-5 p-4 sm:p-5 flex flex-col justify-between space-y-3 bg-[#06241F] border-t md:border-t-0 md:border-l border-[#16463D]">
@@ -53,13 +58,24 @@ export default function FeedPostMedia({ post, onRegisterEvent, onVotePoll }) {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => onRegisterEvent && onRegisterEvent(post)}
-              className="w-full sm:w-auto self-start px-4 py-2 rounded-xl bg-[#159B72] hover:bg-[#0F8F6B] text-white text-xs font-bold shadow-xs hover:shadow transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <span>{buttonText || "Register Now →"}</span>
-            </button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <Link
+                href={`/student/events/${targetEventId}`}
+                className="flex-1 px-4 py-2 rounded-xl bg-[#159B72] hover:bg-[#0F8F6B] text-white text-xs font-bold shadow-xs hover:shadow transition-all flex items-center justify-center gap-1.5 text-center"
+              >
+                <span>{buttonText || "View Details & Pass →"}</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              {onRegisterEvent && (
+                <button
+                  type="button"
+                  onClick={() => onRegisterEvent(post)}
+                  className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-200 text-xs font-semibold transition-all cursor-pointer text-center"
+                >
+                  Quick Register
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

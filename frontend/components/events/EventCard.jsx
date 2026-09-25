@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   Calendar,
   MapPin,
@@ -71,9 +72,15 @@ export default function EventCard({
           </div>
 
           {/* Event Title */}
-          <h3 className="text-[14.5px] sm:text-[15px] font-bold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-[#159B72] dark:group-hover:text-[#20D39B] transition-colors leading-snug line-clamp-1">
-            {event.title}
-          </h3>
+          <Link
+            href={`/student/events/${event.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="block"
+          >
+            <h3 className="text-[14.5px] sm:text-[15px] font-bold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-[#159B72] dark:group-hover:text-[#20D39B] transition-colors leading-snug line-clamp-1">
+              {event.title}
+            </h3>
+          </Link>
 
           {/* Short Description */}
           <p className="text-[12px] text-[#55786B] dark:text-[#8FAFA4] mt-1 line-clamp-2 leading-relaxed font-normal">
