@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import {
   Megaphone,
   FileText,
@@ -134,9 +135,15 @@ export default function NoticeCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm sm:text-[15px] font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight leading-snug truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
-              {notice.title}
-            </h3>
+            <Link
+              href={`/student/notices/${notice.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="block hover:underline"
+            >
+              <h3 className="text-sm sm:text-[15px] font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight leading-snug truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+                {notice.title}
+              </h3>
+            </Link>
           </div>
 
           <p className="text-xs text-[#5C786E] dark:text-[#8AA89F] line-clamp-2 mt-1 font-normal leading-relaxed">
@@ -199,18 +206,17 @@ export default function NoticeCard({
 
           {menuOpen && (
             <div className="absolute right-0 mt-1.5 w-44 rounded-xl bg-white dark:bg-[#041D18] border border-[#D8E8E2] dark:border-[#10372F] shadow-lg py-1 z-30 animate-in fade-in zoom-in-95 duration-100">
-              <button
-                type="button"
+              <Link
+                href={`/student/notices/${notice.id}`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onViewDetails(notice);
                   setMenuOpen(false);
                 }}
                 className="w-full text-left px-3 py-2 text-xs flex items-center gap-2 text-[#0B3024] dark:text-[#C5DCD4] hover:bg-gray-50 dark:hover:bg-[#0A3029]"
               >
                 <Eye className="w-3.5 h-3.5 text-emerald-600" />
-                <span>View Notice</span>
-              </button>
+                <span>View Notice Page</span>
+              </Link>
 
               {notice.filesCount > 0 && (
                 <button

@@ -1,6 +1,17 @@
 "use client";
 
-import { X, Building2, Calendar, Paperclip, Download, Pin, Share2, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import {
+  X,
+  Building2,
+  Calendar,
+  Paperclip,
+  Download,
+  Pin,
+  Share2,
+  CheckCircle2,
+  ArrowRight,
+} from "lucide-react";
 
 export default function NoticeDetailsModal({
   notice,
@@ -40,24 +51,34 @@ export default function NoticeDetailsModal({
           </button>
         </div>
 
-        {/* Title */}
-        <div className="py-3">
-          <h2 className="text-base sm:text-lg font-bold text-[#0B3024] dark:text-[#F1FAF6] leading-snug">
-            {notice.title}
-          </h2>
-
-          {/* Meta Info */}
-          <div className="flex items-center gap-3 text-xs text-[#658278] dark:text-[#8AA89F] mt-2 font-medium">
-            <div className="flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>{notice.department}</span>
-            </div>
-            <span>•</span>
-            <div className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-gray-400" />
-              <span>{notice.date}</span>
+        {/* Title & Full Page Link */}
+        <div className="py-3 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base sm:text-lg font-bold text-[#0B3024] dark:text-[#F1FAF6] leading-snug">
+              {notice.title}
+            </h2>
+            {/* Meta Info */}
+            <div className="flex items-center gap-3 text-xs text-[#658278] dark:text-[#8AA89F] mt-2 font-medium">
+              <div className="flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>{notice.department}</span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                <span>{notice.date}</span>
+              </div>
             </div>
           </div>
+
+          <Link
+            href={`/student/notices/${notice.id}`}
+            onClick={onClose}
+            className="shrink-0 px-3 py-1.5 rounded-xl bg-[#DDF4EB] dark:bg-[#082A24] text-[#159B72] dark:text-[#20D39B] hover:bg-[#159B72] hover:text-white border border-[#159B72]/30 text-xs font-bold transition-all flex items-center gap-1.5 self-start"
+          >
+            <span>Full Notice Page</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
         {/* Full Notice Content */}
@@ -128,13 +149,22 @@ export default function NoticeDetailsModal({
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-[#10B981] dark:text-[#021512] transition-colors cursor-pointer"
-          >
-            Close
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/student/notices/${notice.id}`}
+              onClick={onClose}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold border border-[#159B72]/40 text-[#159B72] dark:text-[#20D39B] hover:bg-[#DDF4EB]/40 transition-colors"
+            >
+              Open Dedicated Page →
+            </Link>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white dark:bg-[#10B981] dark:text-[#021512] transition-colors cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

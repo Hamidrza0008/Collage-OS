@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import NoticesHero from "./NoticesHero";
 import NoticeFilters from "./NoticeFilters";
 import NoticeList from "./NoticeList";
@@ -19,6 +20,7 @@ import NoticesSkeleton from "./NoticesSkeleton";
 const ITEMS_PER_PAGE = 6;
 
 export default function Notices({ isLoading = false }) {
+  const router = useRouter();
   const [notices, setNotices] = useState(ALL_NOTICES);
   const [announcements, setAnnouncements] = useState(ALL_ANNOUNCEMENTS);
   const [activeTab, setActiveTab] = useState("notices"); // 'notices' | 'announcements'
@@ -128,7 +130,7 @@ export default function Notices({ isLoading = false }) {
       item.title.toLowerCase().includes(title.toLowerCase().slice(0, 15))
     );
     if (found) {
-      setSelectedNotice(found);
+      router.push(`/student/notices/${found.id}`);
     }
   };
 
@@ -208,7 +210,7 @@ export default function Notices({ isLoading = false }) {
           <div id="notices-list-container" className="space-y-3.5">
             <NoticeList
               notices={paginatedNotices}
-              onViewDetails={(item) => setSelectedNotice(item)}
+              onViewDetails={(item) => router.push(`/student/notices/${item.id}`)}
               onDownloadAttachments={(item) => {
                 const firstFile = item.files?.[0]?.name || `${item.title}.pdf`;
                 handleDownloadFile(firstFile);

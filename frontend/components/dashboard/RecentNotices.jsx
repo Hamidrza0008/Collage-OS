@@ -5,24 +5,28 @@ import Link from "next/link";
 
 const NOTICES = [
   {
+    id: "not-2",
     title: "Mid Sem Exam Schedule Released",
     date: "18 Aug",
     cell: "Exam Cell",
     isNew: true,
   },
   {
+    id: "not-4",
     title: "College Fest • Aarohan 2025",
     date: "16 Aug",
     cell: "Council",
     isNew: false,
   },
   {
+    id: "not-1",
     title: "Class Representative Election",
     date: "14 Aug",
     cell: "Academic",
     isNew: false,
   },
   {
+    id: "not-6",
     title: "Library Timings Extended",
     date: "12 Aug",
     cell: "Admin",
@@ -57,9 +61,10 @@ export default function RecentNotices() {
         {/* Notice Items */}
         <div className="mt-2.5 space-y-1.5">
           {NOTICES.map((notice, index) => (
-            <div
-              key={index}
-              className="py-1 px-2 rounded-lg bg-[#F7FBF9]/60 dark:bg-[#031A16]/40 border border-[#E8F1ED] dark:border-[#10372F] hover:border-[#D8E8E2] dark:hover:border-[#16463D] transition-all flex items-center justify-between gap-2 cursor-pointer group"
+            <Link
+              key={notice.id || index}
+              href={`/student/notices/${notice.id}`}
+              className="py-1 px-2 rounded-lg bg-[#F7FBF9]/60 dark:bg-[#031A16]/40 border border-[#E8F1ED] dark:border-[#10372F] hover:border-[#D8E8E2] dark:hover:border-[#16463D] transition-all flex items-center justify-between gap-2 cursor-pointer group block"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <Volume2 className="w-3 h-3 text-[#159B72] dark:text-[#20D39B] shrink-0" />
@@ -76,7 +81,7 @@ export default function RecentNotices() {
                 )}
                 <span>{notice.date}</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
