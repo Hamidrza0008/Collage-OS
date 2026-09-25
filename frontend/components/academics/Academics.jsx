@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import AcademicsHeader from "./AcademicsHeader";
 import AcademicsTabs from "./AcademicsTabs";
 import AcademicOverviewCard from "./AcademicOverviewCard";
@@ -15,9 +16,11 @@ import AcademicNoticesCard from "./AcademicNoticesCard";
 import StudyReminderCard from "./StudyReminderCard";
 import CampusAICard from "./CampusAICard";
 import AcademicsSkeleton from "./AcademicsSkeleton";
+import { SUBJECT_CODE_TO_SLUG } from "./subject-details/subjectDetailsData";
 import { CheckCircle2, X } from "lucide-react";
 
 export default function Academics({ isLoading = false }) {
+  const router = useRouter();
   const [currentSemester, setCurrentSemester] = useState(7);
   const [activeTab, setActiveTab] = useState("overview");
   const [toastMessage, setToastMessage] = useState(null);
@@ -140,15 +143,18 @@ export default function Academics({ isLoading = false }) {
               <CurrentSemesterSubjectsCard
                 onViewAllSubjects={() => {
                   setToastMessage(
-                    "Academic course catalog and full subject list will open here in Phase 3."
+                    "Full subject catalog will be available in a future update."
                   );
                   setTimeout(() => setToastMessage(null), 3500);
                 }}
                 onSubjectClick={(sub) => {
-                  setToastMessage(
-                    `Course workspace for ${sub.code} (${sub.name}) will open here in Phase 3.`
-                  );
-                  setTimeout(() => setToastMessage(null), 3500);
+                  const slug = SUBJECT_CODE_TO_SLUG[sub.id];
+                  if (slug) {
+                    router.push(`/student/academics/subjects/${slug}`);
+                  } else {
+                    setToastMessage(`Opening course details for ${sub.name}...`);
+                    setTimeout(() => setToastMessage(null), 3000);
+                  }
                 }}
               />
             </div>
