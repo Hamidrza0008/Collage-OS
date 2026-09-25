@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   MapPin,
   Calendar,
@@ -105,7 +106,13 @@ export default function LostFoundCard({
             <span className="truncate">
               {isLost ? "Reported by: " : "Found by: "}
               <strong className="font-semibold text-[#0B3024] dark:text-[#F1FAF6]">
-                {item.reportedBy}
+                <Link
+                  href={`/student/profile/${item.reporterId || (item.reportedBy ? item.reportedBy.toLowerCase().replace(/\s+/g, "-") : "student-1")}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="hover:underline hover:text-emerald-600 dark:hover:text-[#20D39B] transition-colors"
+                >
+                  {item.reportedBy}
+                </Link>
               </strong>
             </span>
           </div>

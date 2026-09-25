@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { getProjectDetails, getRelatedProjects } from "./projectDetailsData";
 import ProjectHero from "./ProjectHero";
@@ -37,6 +38,7 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
   }
 
   const relatedProjects = getRelatedProjects(project.id);
+  const router = useRouter();
 
   // Interactive States
   const [isLiked, setIsLiked] = useState(Boolean(project.isLiked));
@@ -98,7 +100,9 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
   };
 
   const handleMemberClick = (member) => {
-    showToast(`Student profile for ${member.name} will open here in Phase 2.`);
+    if (!member) return;
+    const studentId = member.id || (member.name ? member.name.toLowerCase().replace(/\s+/g, "-") : "student-1");
+    router.push(`/student/profile/${studentId}`);
   };
 
   const handleJumpToComments = () => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import CampusFeedHero from "./CampusFeedHero";
 import CreatePostComposer from "./CreatePostComposer";
 import FeedTabsAndFilter from "./FeedTabsAndFilter";
@@ -22,6 +23,8 @@ import { INITIAL_POSTS, filterFeedPosts } from "./feedData";
 import { CheckCircle2 } from "lucide-react";
 
 export default function CampusFeed({ isLoading = false }) {
+  const router = useRouter();
+
   // Master Posts State
   const [posts, setPosts] = useState(INITIAL_POSTS);
 
@@ -50,7 +53,9 @@ export default function CampusFeed({ isLoading = false }) {
   };
 
   const handleAuthorClick = (author) => {
-    showToast(`Student profile for ${author?.name || "Student"} will open here in Phase 2.`);
+    if (!author) return;
+    const studentId = author.id || (author.name ? author.name.toLowerCase().replace(/\s+/g, "-") : "student-1");
+    router.push(`/student/profile/${studentId}`);
   };
 
   // Filtered dataset

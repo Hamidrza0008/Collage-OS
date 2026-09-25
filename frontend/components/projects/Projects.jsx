@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import ProjectsHero from "./ProjectsHero";
 import ProjectTabsAndFilters from "./ProjectTabsAndFilters";
 import ProjectCategories from "./ProjectCategories";
@@ -20,6 +21,8 @@ import { CheckCircle2 } from "lucide-react";
 const ITEMS_PER_PAGE = 9;
 
 export default function Projects({ isLoading = false }) {
+  const router = useRouter();
+
   // Master projects dataset state
   const [projects, setProjects] = useState(INITIAL_PROJECTS);
 
@@ -53,7 +56,9 @@ export default function Projects({ isLoading = false }) {
   };
 
   const handleMemberClick = (member) => {
-    showToast(`Student profile for ${member.name} will open here in Phase 2.`);
+    if (!member) return;
+    const studentId = member.id || (member.name ? member.name.toLowerCase().replace(/\s+/g, "-") : "student-1");
+    router.push(`/student/profile/${studentId}`);
   };
 
   // Dynamic counts for tab badges

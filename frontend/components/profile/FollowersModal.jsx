@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { X, Users, UserCheck, UserPlus } from "lucide-react";
 
@@ -105,8 +106,12 @@ export default function FollowersModal({ isOpen, onClose, type = "followers" }) 
               key={student.id}
               className="py-2.5 px-2 flex items-center justify-between gap-3 hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] rounded-xl transition-colors"
             >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="relative w-9 h-9 rounded-full overflow-hidden border border-[#D8E8E2] dark:border-[#16463D] shrink-0">
+              <Link
+                href={`/student/profile/${student.id}`}
+                onClick={onClose}
+                className="flex items-center gap-2.5 min-w-0 group hover:opacity-90 transition-opacity"
+              >
+                <div className="relative w-9 h-9 rounded-full overflow-hidden border border-[#D8E8E2] dark:border-[#16463D] shrink-0 group-hover:ring-2 group-hover:ring-emerald-500/40 transition-all">
                   <Image
                     src={student.avatar}
                     alt={student.name}
@@ -115,14 +120,14 @@ export default function FollowersModal({ isOpen, onClose, type = "followers" }) 
                   />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6] truncate leading-tight">
+                  <h4 className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-emerald-600 dark:group-hover:text-[#20D39B] transition-colors truncate leading-tight">
                     {student.name}
                   </h4>
                   <p className="text-[11px] text-[#658278] dark:text-[#789991] truncate mt-0.5">
                     {student.branch}
                   </p>
                 </div>
-              </div>
+              </Link>
 
               <button
                 type="button"

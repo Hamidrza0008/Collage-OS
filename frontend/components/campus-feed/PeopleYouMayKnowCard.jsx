@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { Users, ArrowRight, Check, UserPlus } from "lucide-react";
 import { PEOPLE_YOU_MAY_KNOW } from "./feedData";
@@ -59,8 +60,11 @@ export default function PeopleYouMayKnowCard({ onShowToast }) {
               key={person.id}
               className="py-2.5 flex items-center justify-between gap-3 hover:bg-[#F7FBF9] dark:hover:bg-[#031A16] px-1.5 -mx-1.5 rounded-xl transition-all"
             >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 border border-emerald-500/20">
+              <Link
+                href={`/student/profile/${person.id}`}
+                className="flex items-center gap-2.5 min-w-0 group"
+              >
+                <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 border border-emerald-500/20 group-hover:ring-2 group-hover:ring-emerald-500/40 transition-all">
                   <Image
                     src={person.avatar}
                     alt={person.name}
@@ -69,14 +73,14 @@ export default function PeopleYouMayKnowCard({ onShowToast }) {
                   />
                 </div>
                 <div className="truncate">
-                  <h4 className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6] truncate">
+                  <h4 className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-emerald-600 dark:group-hover:text-[#20D39B] transition-colors truncate">
                     {person.name}
                   </h4>
                   <p className="text-[10px] text-[#658278] dark:text-[#789991]">
                     {person.department} • {person.semester}
                   </p>
                 </div>
-              </div>
+              </Link>
 
               {/* Follow Button */}
               <button
