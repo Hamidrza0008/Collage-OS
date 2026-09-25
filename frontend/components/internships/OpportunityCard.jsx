@@ -8,6 +8,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
+import Link from "next/link";
 import CompanyLogo from "./CompanyLogo";
 import { BADGE_STYLES } from "./internshipsData";
 
@@ -67,7 +68,13 @@ export default function OpportunityCard({
 
           {/* Title & Company */}
           <h3 className="text-[13.5px] font-bold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-[#159B72] dark:group-hover:text-[#20D39B] transition-colors leading-snug line-clamp-1">
-            {opportunity.title}
+            <Link
+              href={`/student/internships/${opportunity.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="hover:underline"
+            >
+              {opportunity.title}
+            </Link>
           </h3>
           <p className="text-[11.5px] text-[#55786B] dark:text-[#8FAFA4] font-medium truncate mt-0.5">
             {opportunity.company}

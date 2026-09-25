@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import {
   X,
   MapPin,
@@ -193,26 +194,38 @@ export default function OpportunityDetailsModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 px-6 border-t border-[#E8F1ED] dark:border-[#10372F] flex items-center justify-between bg-[#F7FBF9] dark:bg-[#082A24]">
-          <span className="text-xs text-[#658278] dark:text-[#789991]">
-            Application closes: <span className="font-semibold text-[#0B3024] dark:text-[#F1FAF6]">{opportunity.deadline || "Soon"}</span>
-          </span>
+        <div className="p-4 px-6 border-t border-[#E8F1ED] dark:border-[#10372F] flex flex-wrap items-center justify-between gap-3 bg-[#F7FBF9] dark:bg-[#082A24]">
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-[#658278] dark:text-[#789991]">
+              Closes: <span className="font-semibold text-[#0B3024] dark:text-[#F1FAF6]">{opportunity.deadline || "Soon"}</span>
+            </span>
 
-          {isAppliedOrRegistered ? (
-            <div className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-[#087A5B] dark:text-[#20D39B] font-bold text-xs border border-emerald-300/60 dark:border-emerald-800/40">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{completedLabel}</span>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => onApplyOrRegister(opportunity)}
-              className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#159B72] hover:bg-[#087A5B] text-white text-xs font-bold transition-all shadow-xs cursor-pointer hover:shadow-sm"
+            <Link
+              href={`/student/internships/${opportunity.id}`}
+              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-[#20D39B] hover:underline"
             >
-              <span>{ctaLabel}</span>
+              <span>View Full Opportunity</span>
               <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          )}
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {isAppliedOrRegistered ? (
+              <div className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-[#087A5B] dark:text-[#20D39B] font-bold text-xs border border-emerald-300/60 dark:border-emerald-800/40">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>{completedLabel}</span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => onApplyOrRegister(opportunity)}
+                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#159B72] hover:bg-[#087A5B] text-white text-xs font-bold transition-all shadow-xs cursor-pointer hover:shadow-sm"
+              >
+                <span>{ctaLabel}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

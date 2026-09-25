@@ -5,6 +5,7 @@ import Link from "next/link";
 
 const OPPORTUNITIES = [
   {
+    id: "intern-1",
     title: "Google Summer of Code",
     category: "Internship • Remote",
     badge: "High Demand",
@@ -12,6 +13,7 @@ const OPPORTUNITIES = [
     icon: Award,
   },
   {
+    id: "hack-1",
     title: "Hackathon - DevWars 2025",
     category: "Hackathon • Online",
     badge: "Win Prizes",
@@ -19,6 +21,7 @@ const OPPORTUNITIES = [
     icon: Trophy,
   },
   {
+    id: "intern-4",
     title: "Web Dev Internship",
     category: "Internship • Remote",
     badge: "₹15k/mo",
@@ -56,8 +59,9 @@ export default function RecommendedOpportunities() {
           {OPPORTUNITIES.map((item, index) => {
             const Icon = item.icon;
             return (
-              <div
+              <Link
                 key={index}
+                href={`/student/internships/${item.id}`}
                 className="py-1 px-2 rounded-lg bg-[#F7FBF9]/60 dark:bg-[#031A16]/40 border border-[#E8F1ED] dark:border-[#10372F] hover:border-[#D8E8E2] dark:hover:border-[#16463D] transition-all flex items-center justify-between gap-2 group cursor-pointer"
               >
                 <div className="flex items-center gap-2 min-w-0">
@@ -77,7 +81,7 @@ export default function RecommendedOpportunities() {
                 >
                   {item.badge}
                 </span>
-              </div>
+              </Link>
             );
           })}
         </div>
