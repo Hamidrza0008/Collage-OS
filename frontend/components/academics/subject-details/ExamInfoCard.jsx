@@ -1,6 +1,5 @@
-"use client";
-
-import { Calendar, Clock, MapPin, BookOpen, AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import { Calendar, Clock, MapPin, BookOpen, AlertTriangle, ArrowRight } from "lucide-react";
 
 export default function ExamInfoCard({ exam }) {
   if (!exam) return null;
@@ -50,6 +49,16 @@ export default function ExamInfoCard({ exam }) {
           <BookOpen className="w-3.5 h-3.5 text-[#5C786E] dark:text-[#8AA89F] shrink-0 mt-0.5" />
           <span className="text-[#3B5E52] dark:text-[#C0D8D0]">{exam.syllabus}</span>
         </div>
+      </div>
+
+      <div className="mt-3 pt-2.5 border-t border-black/5 dark:border-white/10 flex justify-end">
+        <Link
+          href="/student/academics/timetable"
+          className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#159B72] dark:text-[#20D39B] hover:underline transition-colors"
+        >
+          <span>View Master Timetable</span>
+          <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
     </div>
   );

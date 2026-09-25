@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 export default function SemesterCalendarCard() {
   const [selectedDay, setSelectedDay] = useState(20);
@@ -167,6 +168,17 @@ export default function SemesterCalendarCard() {
           <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
           <span>Holidays</span>
         </div>
+      </div>
+
+      {/* View Full Timetable Link */}
+      <div className="mt-2.5 pt-2 border-t border-gray-100 dark:border-[#10372F] flex justify-end">
+        <Link
+          href="/student/academics/timetable"
+          className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors"
+        >
+          <span>Full Timetable & Calendar</span>
+          <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
     </div>
   );

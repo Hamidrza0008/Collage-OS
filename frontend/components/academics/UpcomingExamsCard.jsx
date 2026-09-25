@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowUpRight, GraduationCap } from "lucide-react";
 import { UPCOMING_EXAMS } from "./academicsData";
 
@@ -17,13 +18,13 @@ export default function UpcomingExamsCard() {
           </p>
         </div>
 
-        <button
-          type="button"
+        <Link
+          href="/student/academics/timetable"
           className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span>View All</span>
           <ArrowUpRight className="w-3.5 h-3.5" />
-        </button>
+        </Link>
       </div>
 
       {/* Exam List */}
