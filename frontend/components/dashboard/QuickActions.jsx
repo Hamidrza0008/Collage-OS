@@ -11,10 +11,10 @@ import {
 import Link from "next/link";
 
 const ACTIONS = [
-  { label: "View Timetable", icon: Calendar, href: "/student/academics" },
+  { label: "View Timetable", icon: Calendar, href: "/student/academics/timetable" },
   { label: "Mark Attendance", icon: CheckSquare, href: "/student/academics" },
   { label: "Submit Assignment", icon: FileUp, href: "/student/assignments" },
-  { label: "Check Marks", icon: Award, href: "/student/academics" },
+  { label: "Check Marks", icon: Award, href: "/student/academics/grade-card" },
   { label: "Explore Projects", icon: LayoutGrid, href: "/student/projects" },
   { label: "Find Internships", icon: Briefcase, href: "/student/internships" },
 ];

@@ -1,19 +1,30 @@
 "use client";
 
-import { Download, CheckCircle2, Clock } from "lucide-react";
+import Link from "next/link";
+import { Download, CheckCircle2, Clock, ArrowUpRight } from "lucide-react";
 import { RESULTS_AND_GRADE_CARD } from "./academicsData";
 
 export default function ResultsAndGradeCard({ onDownloadGradeCard }) {
   return (
     <div className="w-full bg-[#FFFFFF] dark:bg-[#021512] border border-[#D8E8E2] dark:border-[#10372F] rounded-2xl shadow-xs p-4 sm:p-4.5 flex flex-col justify-between">
       {/* Header */}
-      <div className="mb-2.5">
-        <h2 className="text-sm sm:text-base font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight">
-          Results & Grade Card
-        </h2>
-        <p className="text-xs text-[#5C786E] dark:text-[#8AA89F] mt-0.5">
-          View and download your semester results
-        </p>
+      <div className="flex items-center justify-between mb-2.5">
+        <div>
+          <h2 className="text-sm sm:text-base font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight">
+            Results & Grade Card
+          </h2>
+          <p className="text-xs text-[#5C786E] dark:text-[#8AA89F] mt-0.5">
+            View and download your semester results
+          </p>
+        </div>
+
+        <Link
+          href="/student/academics/grade-card"
+          className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 flex items-center gap-1 transition-colors"
+        >
+          <span>View Portal</span>
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       {/* Table Container */}

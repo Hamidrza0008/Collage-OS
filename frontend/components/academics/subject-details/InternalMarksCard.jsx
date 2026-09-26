@@ -1,6 +1,7 @@
 "use client";
 
-import { BarChart2, CheckCircle2, Clock } from "lucide-react";
+import Link from "next/link";
+import { BarChart2, CheckCircle2, Clock, ArrowUpRight } from "lucide-react";
 
 export default function InternalMarksCard({ internalMarks }) {
   const { breakdown, totalScored, totalMax, grade } = internalMarks;
@@ -89,6 +90,17 @@ export default function InternalMarksCard({ internalMarks }) {
             </div>
           );
         })}
+      </div>
+
+      <div className="mt-4 pt-3 border-t border-[#E8F1ED] dark:border-[#10372F] flex items-center justify-between text-xs">
+        <span className="text-[11px] text-[#5C786E] dark:text-[#8AA89F]">View cumulative marks</span>
+        <Link
+          href="/student/academics/grade-card"
+          className="font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 flex items-center gap-1 transition-colors"
+        >
+          <span>View Grade Card</span>
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
     </div>
   );

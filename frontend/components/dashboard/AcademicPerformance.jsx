@@ -32,10 +32,10 @@ export default function AcademicPerformance() {
           </div>
 
           <Link
-            href="/student/academics"
+            href="/student/academics/grade-card"
             className="group inline-flex items-center gap-1 text-[11px] font-semibold text-[#159B72] dark:text-[#20D39B] hover:text-[#087A5B] dark:hover:text-[#4AE3B5] transition-colors"
           >
-            <span>View Report</span>
+            <span>View Grade Card</span>
             <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>

@@ -50,7 +50,7 @@ export default function Academics({ isLoading = false }) {
 
   const handleQuickAction = (target) => {
     if (target === "download-grade-card") {
-      triggerDownloadToast("Semester 7 Grade Card (Provisional)");
+      router.push("/student/academics/grade-card");
     } else if (target === "revaluation-modal") {
       setIsRevaluationModalOpen(true);
     } else {
@@ -161,9 +161,7 @@ export default function Academics({ isLoading = false }) {
             <div className="h-full">
               <SemesterGradesCard
                 onViewAllMarks={() => {
-                  handleTabClick("marks");
-                  setToastMessage("Detailed grade card portal will connect here in Phase 3.");
-                  setTimeout(() => setToastMessage(null), 3500);
+                  router.push("/student/academics/grade-card");
                 }}
               />
             </div>
