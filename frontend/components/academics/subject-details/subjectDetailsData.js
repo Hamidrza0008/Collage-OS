@@ -1,9 +1,9 @@
-﻿// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // subjectDetailsData.js
 // Rich data model for /student/academics/subjects/[code]
 // ─────────────────────────────────────────────────────────────────────────────
 
-const SUBJECT_DETAILS_MAP = {
+export const SUBJECT_DETAILS_MAP = {
   "CSE-302-dsa": {
     id: "sub-1",
     code: "CSE-302",

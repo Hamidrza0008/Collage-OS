@@ -22,6 +22,7 @@ import {
 
 const NAV_SHORTCUTS = [
   { label: "Home Dashboard", category: "Navigation", href: "/student", icon: Home },
+  { label: "Global Search & Discovery", category: "Search", href: "/student/search", icon: Search },
   { label: "Campus AI Workspace", category: "Featured", href: "/student/campus-ai", icon: Sparkles },
   { label: "Academics & Grades", category: "Curriculum", href: "/student/academics", icon: Layers },
   { label: "Assignments & Deadlines", category: "Curriculum", href: "/student/assignments", icon: ClipboardCheck },
@@ -135,12 +136,36 @@ export default function NavbarSearchModal({ isOpen, onClose }) {
 
         {/* Results List */}
         <div className="p-2 max-h-[380px] overflow-y-auto space-y-1">
+          {query.trim().length > 0 && (
+            <div
+              onClick={() => {
+                onClose();
+                router.push(`/student/search?q=${encodeURIComponent(query.trim())}`);
+              }}
+              className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer bg-emerald-50 dark:bg-[#082A24] text-emerald-900 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 text-xs font-bold hover:bg-emerald-100 transition-colors mb-1.5"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Search className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="truncate">Search all of College OS for &ldquo;{query}&rdquo;</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            </div>
+          )}
+
           {filtered.length === 0 ? (
-            <div className="text-center py-8 text-xs text-[#658278] dark:text-[#789991]">
-              <p>No quick modules match &ldquo;{query}&rdquo;.</p>
-              <p className="mt-1 text-[11px] text-[#85A297]">
-                Full Global Search results page will be available in Phase 4.
-              </p>
+            <div className="text-center py-6 text-xs text-[#658278] dark:text-[#789991] space-y-2">
+              <p>No navigation shortcuts match &ldquo;{query}&rdquo;.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  router.push(`/student/search?q=${encodeURIComponent(query.trim())}`);
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#159B72] hover:bg-[#087A5B] text-white text-xs font-bold transition-colors cursor-pointer"
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span>Search all results in Global Search</span>
+              </button>
             </div>
           ) : (
             filtered.map((item, idx) => {
