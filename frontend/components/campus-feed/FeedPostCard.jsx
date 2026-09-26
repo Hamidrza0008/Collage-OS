@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Heart,
   MessageCircle,
@@ -9,6 +10,7 @@ import {
   Send,
   CornerDownRight,
   ShieldCheck,
+  ArrowRight,
 } from "lucide-react";
 import FeedPostMedia from "./FeedPostMedia";
 import FeedPostMenu from "./FeedPostMenu";
@@ -187,6 +189,15 @@ export default function FeedPostCard({
           <Share2 className="w-4 h-4" />
           <span>Share</span>
         </button>
+
+        {/* Canonical Open Discussion Link */}
+        <Link
+          href={`/student/feed/${post.id}`}
+          className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-[#159B72] dark:text-[#20D39B] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] transition-colors"
+        >
+          <span>Open Discussion</span>
+          <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
 
       {/* Latest Comment Preview (when collapsed) */}

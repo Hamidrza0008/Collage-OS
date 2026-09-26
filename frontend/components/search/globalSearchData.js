@@ -368,7 +368,7 @@ export function buildNormalizedSearchIndex() {
       tags: [post.type || "Campus", post.source || "College"],
       department: post.author?.department || "Campus",
       category: post.type || "Community",
-      route: `/student/feed?post=${post.id}`,
+      route: `/student/feed/${post.id}`,
       visibility: "public",
       date: post.createdAt,
       metadata: {

@@ -207,7 +207,7 @@ export default function CampusFeed({ isLoading = false }) {
   // Share Post
   const handleShare = (post) => {
     if (typeof window !== "undefined") {
-      const url = `${window.location.origin}/student/feed#${post.id}`;
+      const url = `${window.location.origin}/student/feed/${post.id}`;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(url).then(() => {
           showToast("Post link copied to clipboard");

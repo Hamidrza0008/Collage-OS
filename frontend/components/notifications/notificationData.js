@@ -172,7 +172,7 @@ export function generateSeedNotifications() {
       actionLabel: "View Discussion",
       entityType: "feed",
       entityId: "post-1",
-      route: "/student/feed",
+      route: "/student/feed/post-1",
       metadata: {
         author: "Sarah Chen",
         channel: "#development",
