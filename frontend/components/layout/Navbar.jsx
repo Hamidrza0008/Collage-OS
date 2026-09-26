@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Search, Bell, Sun, Moon, ChevronDown, Menu, X, CheckCircle2 } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 import FontSwitcherDropdown from "./FontSwitcherDropdown";
@@ -9,42 +10,43 @@ import NavbarSearchModal from "./NavbarSearchModal";
 import NotificationPanel from "./NotificationPanel";
 import UserProfileDropdown from "./UserProfileDropdown";
 import { STUDENT_USER } from "./navConfig";
-
-const MOCK_NOTIFICATIONS = [
-  {
-    id: "notif-1",
-    type: "assignment",
-    title: "New Assignment: Web Development",
-    message: "Responsive portfolio assignment due in 2 days (18 Aug).",
-    timestamp: "2 hours ago",
-    unread: true,
-  },
-  {
-    id: "notif-2",
-    type: "event",
-    title: "Aarohan 2025 Registrations Open",
-    message: "Annual campus cultural & tech fest registration has commenced.",
-    timestamp: "5 hours ago",
-    unread: true,
-  },
-  {
-    id: "notif-3",
-    type: "general",
-    title: "Semester 7 Timetable Published",
-    message: "Updated classroom allocations for CSE labs are now live.",
-    timestamp: "1 day ago",
-    unread: true,
-  },
-];
+import {
+  getStoredNotifications,
+  markAllNotificationsAsRead,
+  markNotificationAsRead,
+  formatNotificationTime,
+} from "@/components/notifications/notificationData";
 
 export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
+  const router = useRouter();
   const { isDark, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [rawNotifications, setRawNotifications] = useState([]);
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Sync notifications with shared canonical store & listen for real-time changes
+  useEffect(() => {
+    const syncNotifications = () => {
+      try {
+        const stored = getStoredNotifications();
+        setRawNotifications(stored);
+      } catch (err) {
+        console.error("Failed to sync navbar notifications:", err);
+      }
+    };
+
+    syncNotifications();
+    window.addEventListener("college_os_notifications_updated", syncNotifications);
+    window.addEventListener("storage", syncNotifications);
+
+    return () => {
+      window.removeEventListener("college_os_notifications_updated", syncNotifications);
+      window.removeEventListener("storage", syncNotifications);
+    };
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -75,16 +77,35 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const notifications = rawNotifications.map((n) => ({
+    id: n.id,
+    type: n.type,
+    title: n.title,
+    message: n.message,
+    timestamp: formatNotificationTime(n.createdAt),
+    unread: !n.read,
+    route: n.route,
+  }));
+
+  const unreadCount = notifications.filter((n) => n.unread).length;
+
   const handleMarkAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+    markAllNotificationsAsRead();
     showToast("All notifications marked as read.");
   };
 
   const handleViewAllNotifications = () => {
-    showToast("Notification Center (/student/notifications) coming in Phase 4");
+    setIsNotificationsOpen(false);
+    router.push("/student/notifications");
   };
 
-  const unreadCount = notifications.filter((n) => n.unread).length;
+  const handleNotificationClick = (item) => {
+    setIsNotificationsOpen(false);
+    markNotificationAsRead(item.id);
+    if (item.route) {
+      router.push(item.route);
+    }
+  };
 
   return (
     <>
@@ -179,6 +200,7 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
               notifications={notifications}
               onMarkAllAsRead={handleMarkAllRead}
               onViewAllNotifications={handleViewAllNotifications}
+              onNotificationClick={handleNotificationClick}
             />
           </div>
 

@@ -17,6 +17,7 @@ export default function NotificationPanel({
   notifications,
   onMarkAllAsRead,
   onViewAllNotifications,
+  onNotificationClick,
 }) {
   const panelRef = useRef(null);
 
@@ -102,6 +103,7 @@ export default function NotificationPanel({
             return (
               <div
                 key={item.id}
+                onClick={() => onNotificationClick && onNotificationClick(item)}
                 className={`p-3 flex items-start gap-2.5 transition-colors cursor-pointer hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] ${
                   item.unread ? "bg-[#DDF3EB]/25 dark:bg-[#073327]/30" : ""
                 }`}

@@ -33,6 +33,7 @@ const NAV_SHORTCUTS = [
   { label: "Lost & Found Hub", category: "Utility", href: "/student/lost-and-found", icon: ShieldCheck },
   { label: "Campus Feed", category: "Community", href: "/student/feed", icon: MessageSquare },
   { label: "My Profile", category: "Account", href: "/student/profile", icon: User },
+  { label: "Notification Center", category: "Inbox", href: "/student/notifications", icon: Bell },
   { label: "Settings & Preferences", category: "Account", href: "/student/settings", icon: Settings },
 ];
 
