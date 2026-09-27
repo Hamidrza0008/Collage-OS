@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X, Users, Sparkles, Check } from "lucide-react";
+import Link from "next/link";
+import { X, Users, Sparkles, Check, ExternalLink } from "lucide-react";
 
 export default function JoinCommunityModal({ isOpen, onClose, onShowToast }) {
   const [joinedCommunities, setJoinedCommunities] = useState({
@@ -100,9 +101,14 @@ export default function JoinCommunityModal({ isOpen, onClose, onShowToast }) {
               >
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h5 className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6]">
-                      {c.name}
-                    </h5>
+                    <Link
+                      href={`/student/feed/groups/${c.id}`}
+                      onClick={onClose}
+                      className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6] hover:text-emerald-600 dark:hover:text-emerald-400 hover:underline flex items-center gap-1 group/name"
+                    >
+                      <span>{c.name}</span>
+                      <ExternalLink className="w-2.5 h-2.5 opacity-0 group-hover/name:opacity-100 transition-opacity" />
+                    </Link>
                     <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-medium">
                       {c.category}
                     </span>

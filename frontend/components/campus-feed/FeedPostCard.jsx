@@ -109,12 +109,22 @@ export default function FeedPostCard({
               </span>
               <span>•</span>
               <span>{post.createdAt}</span>
-              {post.source && (
+              {post.communityId ? (
+                <>
+                  <span>•</span>
+                  <Link
+                    href={`/student/feed/groups/${post.communityId}`}
+                    className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
+                  >
+                    in {post.communityName || "Community"}
+                  </Link>
+                </>
+              ) : post.source ? (
                 <>
                   <span>•</span>
                   <span>{post.source}</span>
                 </>
-              )}
+              ) : null}
             </div>
           </div>
         </div>

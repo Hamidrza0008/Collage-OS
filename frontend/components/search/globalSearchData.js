@@ -13,6 +13,7 @@ import { INITIAL_ASSIGNMENTS } from "@/components/assignments/assignmentsData";
 import { SUBJECT_DETAILS_MAP } from "@/components/academics/subject-details/subjectDetailsData";
 import { INITIAL_POSTS } from "@/components/campus-feed/feedData";
 import { INITIAL_LOST_FOUND_ITEMS } from "@/components/lost-and-found/lostFoundData";
+import { COMMUNITY_GROUPS } from "@/components/campus-feed/groups/communityGroupData";
 
 // Search categories metadata
 export const SEARCH_CATEGORIES = [
@@ -21,6 +22,7 @@ export const SEARCH_CATEGORIES = [
   { id: "projects", label: "Projects" },
   { id: "opportunities", label: "Opportunities" },
   { id: "events", label: "Events" },
+  { id: "communities", label: "Communities" },
   { id: "notices", label: "Notices" },
   { id: "assignments", label: "Assignments" },
   { id: "courses", label: "Courses" },
@@ -122,6 +124,7 @@ export const ITEMS_PER_PAGE = {
   projects: 9,
   opportunities: 6,
   events: 6,
+  communities: 6,
   notices: 6,
   assignments: 6,
   courses: 6,
@@ -400,6 +403,37 @@ export function buildNormalizedSearchIndex() {
         status: item.status,
         location: item.location,
         reportedBy: item.reportedBy,
+      },
+    });
+  });
+
+  // 10. COMMUNITIES / CLUBS (Public and Department student clubs)
+  COMMUNITY_GROUPS.forEach((group) => {
+    if (!group || !group.id) return;
+    // Privacy constraint: do not index private communities
+    if (group.visibility === "Private") return;
+
+    index.push({
+      id: group.id,
+      type: "communities",
+      typeLabel: "Club / Community",
+      title: group.name,
+      subtitle: `${group.category} • ${group.department} • ${group.memberCount} members`,
+      description: group.tagline || group.description?.mission || "",
+      image: group.logo || null,
+      tags: group.tags || [group.category, group.department],
+      department: group.department,
+      category: group.category,
+      route: `/student/feed/groups/${group.id}`,
+      visibility: "public",
+      date: `Est. ${group.foundedYear}`,
+      metadata: {
+        memberCount: group.memberCount,
+        verified: group.verified,
+        officialStatus: group.officialStatus,
+        category: group.category,
+        department: group.department,
+        membershipType: group.membershipType,
       },
     });
   });

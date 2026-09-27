@@ -47,6 +47,8 @@ export default function SearchResultCard({ item, query = "" }) {
         return <BookOpen className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />;
       case "feed":
         return <MessageSquare className="w-3.5 h-3.5 text-cyan-700 dark:text-cyan-400" />;
+      case "communities":
+        return <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />;
       case "lost-found":
         return <ShieldCheck className="w-3.5 h-3.5 text-orange-700 dark:text-orange-400" />;
       default:
@@ -72,6 +74,8 @@ export default function SearchResultCard({ item, query = "" }) {
         return "bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800";
       case "feed":
         return "bg-cyan-50 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800";
+      case "communities":
+        return "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
       case "lost-found":
         return "bg-orange-50 dark:bg-orange-950/60 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-800";
       default:
