@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import {
   X,
   ClipboardList,
@@ -172,6 +173,17 @@ export default function QuickActionModals({
                     <Download className="w-3 h-3" />
                     <span>Download</span>
                   </button>
+                </div>
+
+                <div className="pt-2">
+                  <Link
+                    href="/student/internships/resume-builder"
+                    onClick={onClose}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Open AI Resume Builder Workspace</span>
+                  </Link>
                 </div>
               </div>
             </div>

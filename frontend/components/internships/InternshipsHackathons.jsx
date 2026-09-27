@@ -304,7 +304,7 @@ export default function InternshipsHackathons({ isLoading = false }) {
         break;
 
       case "resume-builder":
-        setActiveQuickModal("resume-builder");
+        router.push("/student/internships/resume-builder");
         break;
 
       case "career-resources":
