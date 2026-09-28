@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -21,12 +23,49 @@ import {
   Tag,
   Paperclip,
   Award,
+  Bookmark,
 } from "lucide-react";
+import { isSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
 
 export default function SearchResultCard({ item, query = "" }) {
   if (!item) return null;
 
   const { type, route, title, subtitle, description, tags, image, date, metadata } = item;
+
+  const mapTypeToEntityType = (t) => {
+    switch (t) {
+      case "projects": return "project";
+      case "opportunities": return "opportunity";
+      case "events": return "event";
+      case "notices": return "notice";
+      case "assignments": return "assignment";
+      case "feed": return "feedPost";
+      case "communities": return "community";
+      case "courses": return "course";
+      default: return null;
+    }
+  };
+
+  const entityType = mapTypeToEntityType(type);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (!entityType || !item?.id) return;
+    setSaved(isSaved(entityType, item.id));
+
+    const unsubscribe = subscribeToSavedChanges(() => {
+      setSaved(isSaved(entityType, item.id));
+    });
+    return () => unsubscribe();
+  }, [entityType, item?.id]);
+
+  const handleToggleSave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!entityType || !item?.id) return;
+    const res = toggleSavedItem(entityType, item.id);
+    setSaved(res.isSaved);
+  };
 
   // Icon mapping
   const getTypeIcon = () => {
@@ -205,6 +244,21 @@ export default function SearchResultCard({ item, query = "" }) {
                 <span className="font-bold text-[#0B3024] dark:text-[#F1FAF6] text-[11px]">
                   {metadata.credits} Credits
                 </span>
+              )}
+              {entityType && (
+                <button
+                  type="button"
+                  onClick={handleToggleSave}
+                  title={saved ? "Remove from saved items" : "Save item"}
+                  aria-label={saved ? "Remove from saved items" : "Save item"}
+                  className={`p-1 rounded-md transition-colors cursor-pointer ${
+                    saved
+                      ? "text-[#159B72] dark:text-[#20D39B] bg-emerald-50 dark:bg-emerald-950/60"
+                      : "text-gray-400 hover:text-[#159B72] dark:hover:text-[#20D39B] hover:bg-gray-100 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-current" : ""}`} />
+                </button>
               )}
               <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform">
                 <span>View</span>

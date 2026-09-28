@@ -102,22 +102,17 @@ export default function UserProfileDropdown({
           <ChevronRight className="w-3.5 h-3.5 opacity-40" />
         </Link>
 
-        <button
-          type="button"
-          onClick={() => {
-            onClose();
-            onToast("Saved Items Hub (/student/saved) coming in Phase 4");
-          }}
-          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors cursor-pointer text-left"
+        <Link
+          href="/student/saved"
+          onClick={onClose}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors"
         >
           <div className="flex items-center gap-2.5">
             <Bookmark className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
             <span className="font-medium">Saved Items</span>
           </div>
-          <span className="text-[10px] text-[#658278] dark:text-[#789991] font-semibold bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded">
-            Soon
-          </span>
-        </button>
+          <ChevronRight className="w-3.5 h-3.5 opacity-40" />
+        </Link>
 
         <button
           type="button"

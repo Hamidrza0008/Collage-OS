@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { getNoticeDetails, getRelatedNotices } from "./noticeReaderData";
+import { isSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
 import NoticeHeader from "./NoticeHeader";
 import NoticeActionToolbar from "./NoticeActionToolbar";
 import NoticeDocumentReader from "./NoticeDocumentReader";
@@ -42,6 +43,16 @@ export default function NoticeReaderAssembler({ noticeId, isLoading = false }) {
   // Toast feedback state
   const [toastMessage, setToastMessage] = useState(null);
 
+  useEffect(() => {
+    if (!initialNotice?.id) return;
+    setIsBookmarked(isSaved("notice", initialNotice.id));
+
+    const unsubscribe = subscribeToSavedChanges(() => {
+      setIsBookmarked(isSaved("notice", initialNotice.id));
+    });
+    return () => unsubscribe();
+  }, [initialNotice?.id]);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => {
@@ -62,11 +73,10 @@ export default function NoticeReaderAssembler({ noticeId, isLoading = false }) {
 
   // Handler: Toggle Bookmark
   const handleToggleBookmark = () => {
-    setIsBookmarked((prev) => {
-      const next = !prev;
-      showToast(next ? "Notice saved to bookmarks." : "Notice removed from bookmarks.");
-      return next;
-    });
+    if (!initialNotice?.id) return;
+    const res = toggleSavedItem("notice", initialNotice.id);
+    setIsBookmarked(res.isSaved);
+    showToast(res.isSaved ? "Notice saved to bookmarks." : "Notice removed from bookmarks.");
   };
 
   // Handler: Share

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { getSubjectDetails } from "./subjectDetailsData";
+import { isSaved as checkIsSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
 import SubjectHero from "./SubjectHero";
 import SyllabusBrowser from "./SyllabusBrowser";
 import CourseResources from "./CourseResources";
@@ -27,17 +28,26 @@ export default function SubjectDetailsAssembler({ code, isLoading = false }) {
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
+  useEffect(() => {
+    if (!subject?.code) return;
+    setIsSaved(checkIsSaved("course", subject.code));
+
+    const unsubscribe = subscribeToSavedChanges(() => {
+      setIsSaved(checkIsSaved("course", subject.code));
+    });
+    return () => unsubscribe();
+  }, [subject?.code]);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3200);
   };
 
   const handleToggleSave = () => {
-    setIsSaved((prev) => {
-      const next = !prev;
-      showToast(next ? `${subject.name} saved to bookmarks.` : "Removed from saved subjects.");
-      return next;
-    });
+    if (!subject?.code) return;
+    const res = toggleSavedItem("course", subject.code);
+    setIsSaved(res.isSaved);
+    showToast(res.isSaved ? `${subject.name} saved to bookmarks.` : "Removed from saved subjects.");
   };
 
   const handleShare = () => {

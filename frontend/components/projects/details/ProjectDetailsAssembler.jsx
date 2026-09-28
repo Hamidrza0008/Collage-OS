@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { getProjectDetails, getRelatedProjects } from "./projectDetailsData";
+import { isSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
 import ProjectHero from "./ProjectHero";
 import ProjectMetaChips from "./ProjectMetaChips";
 import ProjectOverview from "./ProjectOverview";
@@ -43,10 +44,20 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
   // Interactive States
   const [isLiked, setIsLiked] = useState(Boolean(project.isLiked));
   const [likesCount, setLikesCount] = useState(project.likes || 0);
-  const [isBookmarked, setIsBookmarked] = useState(Boolean(project.isBookmarked));
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+
+  useEffect(() => {
+    if (!project?.id) return;
+    setIsBookmarked(isSaved("project", project.id));
+
+    const unsubscribe = subscribeToSavedChanges(() => {
+      setIsBookmarked(isSaved("project", project.id));
+    });
+    return () => unsubscribe();
+  }, [project?.id]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -65,11 +76,10 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
   };
 
   const handleToggleBookmark = () => {
-    setIsBookmarked((prev) => {
-      const next = !prev;
-      showToast(next ? "Project bookmarked to your saved items." : "Project removed from bookmarks.");
-      return next;
-    });
+    if (!project?.id) return;
+    const res = toggleSavedItem("project", project.id);
+    setIsBookmarked(res.isSaved);
+    showToast(res.isSaved ? "Project bookmarked to your saved items." : "Project removed from bookmarks.");
   };
 
   const handleCopyLink = () => {

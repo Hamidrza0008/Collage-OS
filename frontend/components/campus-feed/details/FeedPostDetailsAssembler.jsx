@@ -17,6 +17,7 @@ import {
   getRelatedPosts,
   saveStoredInteraction,
 } from "./feedPostDetailsData";
+import { isSaved as checkIsSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
 
 export default function FeedPostDetailsAssembler({ postId }) {
   const [post, setPost] = useState(null);
@@ -48,12 +49,21 @@ export default function FeedPostDetailsAssembler({ postId }) {
 
     const loadedPost = getFeedPostById(postId);
     if (loadedPost) {
-      setPost(loadedPost);
+      const activeSaved = checkIsSaved("feedPost", loadedPost.id) || Boolean(loadedPost.isSaved);
+      setPost({ ...loadedPost, isSaved: activeSaved });
       setRelatedPosts(getRelatedPosts(loadedPost, 3));
     } else {
       setPost(null);
     }
     setIsLoaded(true);
+
+    const unsubscribe = subscribeToSavedChanges(() => {
+      setPost((prev) => {
+        if (!prev) return prev;
+        return { ...prev, isSaved: checkIsSaved("feedPost", prev.id) };
+      });
+    });
+    return () => unsubscribe();
   }, [postId]);
 
   // Scroll to comment composer
@@ -90,7 +100,8 @@ export default function FeedPostDetailsAssembler({ postId }) {
   // 2. Save / Bookmark toggle
   const handleSaveToggle = () => {
     if (!post) return;
-    const newIsSaved = !post.isSaved;
+    const res = toggleSavedItem("feedPost", post.id);
+    const newIsSaved = res.isSaved;
     const updated = {
       ...post,
       isSaved: newIsSaved,

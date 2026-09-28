@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { getEventDetails, getRelatedEvents } from "./eventDetailsData";
+import { isSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
 import EventHero from "./EventHero";
 import EventOverview from "./EventOverview";
 import EventHighlights from "./EventHighlights";
@@ -40,13 +41,23 @@ export default function EventDetailsAssembler({ eventId, isLoading = false }) {
 
   // Interactive States
   const [event, setEvent] = useState(initialEvent);
-  const [isBookmarked, setIsBookmarked] = useState(Boolean(initialEvent.isBookmarked));
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isRegistered, setIsRegistered] = useState(Boolean(initialEvent.isRegistered));
   const [registrationId, setRegistrationId] = useState(initialEvent.registrationId);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+
+  useEffect(() => {
+    if (!initialEvent?.id) return;
+    setIsBookmarked(isSaved("event", initialEvent.id));
+
+    const unsubscribe = subscribeToSavedChanges(() => {
+      setIsBookmarked(isSaved("event", initialEvent.id));
+    });
+    return () => unsubscribe();
+  }, [initialEvent?.id]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -56,15 +67,14 @@ export default function EventDetailsAssembler({ eventId, isLoading = false }) {
   };
 
   const handleToggleBookmark = () => {
-    setIsBookmarked((prev) => {
-      const next = !prev;
-      showToast(
-        next
-          ? "Event bookmarked to your saved events."
-          : "Event removed from your bookmarks."
-      );
-      return next;
-    });
+    if (!initialEvent?.id) return;
+    const res = toggleSavedItem("event", initialEvent.id);
+    setIsBookmarked(res.isSaved);
+    showToast(
+      res.isSaved
+        ? "Event bookmarked to your saved events."
+        : "Event removed from your bookmarks."
+    );
   };
 
   const handleCopyLink = () => {

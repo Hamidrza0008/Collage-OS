@@ -20,6 +20,7 @@ import HackathonRegisterModal from './HackathonRegisterModal';
 import ApplicationSuccessModal from './ApplicationSuccessModal';
 import OpportunityDocViewerModal from './OpportunityDocViewerModal';
 import ReportOpportunityModal from './ReportOpportunityModal';
+import { isSaved as checkIsSaved, toggleSavedItem, subscribeToSavedChanges } from '@/components/saved/savedItemsStore';
 
 export default function OpportunityDetailsAssembler({ opportunity, related = [] }) {
   const [isSaved, setIsSaved] = useState(false);
@@ -40,8 +41,10 @@ export default function OpportunityDetailsAssembler({ opportunity, related = [] 
       // Saved state
       const savedKey = `collegeos_saved_opp_${opportunity.id}`;
       const savedVal = localStorage.getItem(savedKey);
-      if (savedVal === 'true') {
+      if (savedVal === 'true' || checkIsSaved("opportunity", opportunity.id)) {
         setIsSaved(true);
+      } else {
+        setIsSaved(false);
       }
 
       // Existing application state
@@ -60,6 +63,11 @@ export default function OpportunityDetailsAssembler({ opportunity, related = [] 
     } catch {
       // LocalStorage access fallback
     }
+
+    const unsubscribe = subscribeToSavedChanges(() => {
+      setIsSaved(checkIsSaved("opportunity", opportunity.id));
+    });
+    return () => unsubscribe();
   }, [opportunity?.id, opportunity?.applicationStatus]);
 
   // Toast handler
@@ -72,14 +80,10 @@ export default function OpportunityDetailsAssembler({ opportunity, related = [] 
 
   // Toggle Save
   const handleToggleSave = () => {
-    const nextSaved = !isSaved;
-    setIsSaved(nextSaved);
-    try {
-      localStorage.setItem(`collegeos_saved_opp_${opportunity.id}`, String(nextSaved));
-    } catch {
-      // LocalStorage fallback
-    }
-    showToast(nextSaved ? 'Saved to your Opportunities' : 'Removed from saved opportunities');
+    if (!opportunity?.id) return;
+    const res = toggleSavedItem("opportunity", opportunity.id);
+    setIsSaved(res.isSaved);
+    showToast(res.isSaved ? 'Saved to your Opportunities' : 'Removed from saved opportunities');
   };
 
   // Share action

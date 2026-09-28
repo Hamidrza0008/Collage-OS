@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { isSaved as checkIsSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { getAssignmentDetails } from "./assignmentDetailsData";
@@ -38,7 +39,17 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
 
   // Interactive Component State
   const [assignment, setAssignment] = useState(initialAssignment);
-  const [isSaved, setIsSaved] = useState(Boolean(initialAssignment.isSaved));
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (!initialAssignment?.id) return;
+    setIsSaved(checkIsSaved("assignment", initialAssignment.id));
+
+    const unsubscribe = subscribeToSavedChanges(() => {
+      setIsSaved(checkIsSaved("assignment", initialAssignment.id));
+    });
+    return () => unsubscribe();
+  }, [initialAssignment?.id]);
   const [activeSubmission, setActiveSubmission] = useState(initialAssignment.submission);
   const [submissionHistory, setSubmissionHistory] = useState(
     initialAssignment.submissionHistory || []
@@ -57,15 +68,14 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
   };
 
   const handleToggleSave = () => {
-    setIsSaved((prev) => {
-      const next = !prev;
-      showToast(
-        next
-          ? "Assignment saved! You can review it in your saved items."
-          : "Assignment removed from saved items."
-      );
-      return next;
-    });
+    if (!assignment?.id) return;
+    const res = toggleSavedItem("assignment", assignment.id);
+    setIsSaved(res.isSaved);
+    showToast(
+      res.isSaved
+        ? "Assignment saved! You can review it in your saved items."
+        : "Assignment removed from saved items."
+    );
   };
 
   const handleCopyLink = () => {
