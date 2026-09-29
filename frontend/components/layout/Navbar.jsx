@@ -83,6 +83,8 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
         }
 
         e.preventDefault();
+        setIsNotificationsOpen(false);
+        setIsProfileDropdownOpen(false);
         setIsSearchModalOpen((prev) => !prev);
       }
     };
@@ -93,14 +95,25 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
   const notifications = rawNotifications.map((n) => ({
     id: n.id,
     type: n.type,
+    priority: n.priority,
     title: n.title,
     message: n.message,
+    source: n.source,
+    createdAt: n.createdAt,
     timestamp: formatNotificationTime(n.createdAt),
+    read: n.read,
     unread: !n.read,
     route: n.route,
+    actionRequired: n.actionRequired,
+    actionLabel: n.actionLabel,
   }));
 
   const unreadCount = notifications.filter((n) => n.unread).length;
+
+  const handleMarkNotificationAsRead = (id) => {
+    markNotificationAsRead(id);
+    showToast("Notification marked as read.");
+  };
 
   const handleMarkAllRead = () => {
     markAllNotificationsAsRead();
@@ -114,9 +127,13 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
 
   const handleNotificationClick = (item) => {
     setIsNotificationsOpen(false);
-    markNotificationAsRead(item.id);
+    if (item.unread) {
+      markNotificationAsRead(item.id);
+    }
     if (item.route) {
       router.push(item.route);
+    } else {
+      router.push("/student/notifications");
     }
   };
 
@@ -158,7 +175,11 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
           {/* Mobile Search Toggle Icon */}
           <button
             type="button"
-            onClick={() => setIsSearchModalOpen(true)}
+            onClick={() => {
+              setIsNotificationsOpen(false);
+              setIsProfileDropdownOpen(false);
+              setIsSearchModalOpen(true);
+            }}
             className="sm:hidden p-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:bg-[#DDF3EB] dark:hover:bg-[#082A24] transition-colors ml-auto cursor-pointer"
             aria-label="Open search"
           >
@@ -167,12 +188,18 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
 
           {/* Desktop / Tablet Search Input Button Container */}
           <div
-            onClick={() => setIsSearchModalOpen(true)}
+            onClick={() => {
+              setIsNotificationsOpen(false);
+              setIsProfileDropdownOpen(false);
+              setIsSearchModalOpen(true);
+            }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
+                setIsNotificationsOpen(false);
+                setIsProfileDropdownOpen(false);
                 setIsSearchModalOpen(true);
               }
             }}
@@ -203,9 +230,12 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
               onClick={() => {
                 setIsNotificationsOpen((prev) => !prev);
                 setIsProfileDropdownOpen(false);
+                setIsSearchModalOpen(false);
               }}
+              aria-expanded={isNotificationsOpen}
+              aria-haspopup="dialog"
+              aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : "Notifications"}
               className="relative p-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:bg-[#DDF3EB]/60 dark:hover:bg-[#075A43]/50 hover:text-[#0B3024] dark:hover:text-[#F1FAF6] transition-colors cursor-pointer"
-              aria-label="Notifications"
             >
               <Bell className="w-[19px] h-[19px]" strokeWidth={1.9} />
               {unreadCount > 0 && (
@@ -220,6 +250,7 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
               isOpen={isNotificationsOpen}
               onClose={() => setIsNotificationsOpen(false)}
               notifications={notifications}
+              onMarkAsRead={handleMarkNotificationAsRead}
               onMarkAllAsRead={handleMarkAllRead}
               onViewAllNotifications={handleViewAllNotifications}
               onNotificationClick={handleNotificationClick}
@@ -253,6 +284,7 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
               onClick={() => {
                 setIsProfileDropdownOpen((prev) => !prev);
                 setIsNotificationsOpen(false);
+                setIsSearchModalOpen(false);
               }}
               className="flex items-center gap-2.5 pl-1 py-1 rounded-xl hover:bg-[#F1F8F5] dark:hover:bg-[#082A24] cursor-pointer transition-colors group select-none"
             >
