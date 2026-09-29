@@ -240,6 +240,7 @@ export function saveProfileEditState(state) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state));
+    window.dispatchEvent(new CustomEvent("college_os_profile_updated"));
   } catch (err) {
     console.error("Failed to save profile state to localStorage", err);
   }

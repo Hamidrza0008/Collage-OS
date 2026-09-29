@@ -16,6 +16,7 @@ import {
   markNotificationAsRead,
   formatNotificationTime,
 } from "@/components/notifications/notificationData";
+import { loadProfileEditState } from "@/components/profile/edit/editProfileData";
 
 export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
   const router = useRouter();
@@ -25,7 +26,31 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [rawNotifications, setRawNotifications] = useState([]);
+  const [profileState, setProfileState] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Sync profile edits with shared canonical store & listen for real-time changes
+  useEffect(() => {
+    const syncProfile = () => {
+      try {
+        const stored = loadProfileEditState();
+        if (stored) {
+          setProfileState(stored);
+        }
+      } catch (err) {
+        console.warn("Failed to sync navbar profile:", err);
+      }
+    };
+
+    syncProfile();
+    window.addEventListener("college_os_profile_updated", syncProfile);
+    window.addEventListener("storage", syncProfile);
+
+    return () => {
+      window.removeEventListener("college_os_profile_updated", syncProfile);
+      window.removeEventListener("storage", syncProfile);
+    };
+  }, []);
 
   // Sync notifications with shared canonical store & listen for real-time changes
   useEffect(() => {
@@ -135,6 +160,16 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
     } else {
       router.push("/student/notifications");
     }
+  };
+
+  const currentUser = {
+    ...user,
+    name: profileState?.name || user?.name || "Hamid Rza",
+    subtitle: profileState?.headline || user?.subtitle || "B.Tech • 7th Sem",
+    headline: profileState?.headline || "Full Stack Engineer & Open Source Builder",
+    username: profileState?.username || "@hamidrza",
+    avatar: profileState?.avatar || user?.avatar || "/assets/profile/avatar.jpg",
+    id: profileState?.id || "student-1",
   };
 
   return (
@@ -280,18 +315,30 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
 
           {/* User Profile Card */}
           <div className="relative">
-            <div
+            <button
+              type="button"
               onClick={() => {
                 setIsProfileDropdownOpen((prev) => !prev);
                 setIsNotificationsOpen(false);
                 setIsSearchModalOpen(false);
               }}
-              className="flex items-center gap-2.5 pl-1 py-1 rounded-xl hover:bg-[#F1F8F5] dark:hover:bg-[#082A24] cursor-pointer transition-colors group select-none"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsProfileDropdownOpen((prev) => !prev);
+                  setIsNotificationsOpen(false);
+                  setIsSearchModalOpen(false);
+                }
+              }}
+              aria-haspopup="menu"
+              aria-expanded={isProfileDropdownOpen}
+              aria-label={`User account menu for ${currentUser.name}`}
+              className="flex items-center gap-2.5 pl-1 py-1 rounded-xl hover:bg-[#F1F8F5] dark:hover:bg-[#082A24] cursor-pointer transition-colors group select-none text-left"
             >
               <div className="relative w-9 h-9 rounded-full overflow-hidden border border-[#D8E8E2] dark:border-[#16463D] shrink-0">
                 <Image
-                  src={user.avatar || "/assets/layout/profile-avatar.jpg"}
-                  alt={user.name || "User Avatar"}
+                  src={currentUser.avatar || "/assets/profile/avatar.jpg"}
+                  alt={currentUser.name || "User Avatar"}
                   width={36}
                   height={36}
                   className="object-cover"
@@ -300,10 +347,10 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
               </div>
               <div className="hidden sm:flex flex-col text-left">
                 <span className="text-[13px] font-semibold text-[#0B3024] dark:text-[#F1FAF6] leading-tight group-hover:text-[#159B72] dark:group-hover:text-[#20D39B] transition-colors">
-                  {user.name}
+                  {currentUser.name}
                 </span>
-                <span className="text-[11px] text-[#658278] dark:text-[#789991] leading-tight mt-0.5">
-                  {user.subtitle}
+                <span className="text-[11px] text-[#658278] dark:text-[#789991] leading-tight mt-0.5 truncate max-w-[140px]">
+                  {currentUser.subtitle}
                 </span>
               </div>
               <ChevronDown
@@ -312,13 +359,13 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
                 }`}
                 strokeWidth={2}
               />
-            </div>
+            </button>
 
             {/* User Profile Popover Dropdown */}
             <UserProfileDropdown
               isOpen={isProfileDropdownOpen}
               onClose={() => setIsProfileDropdownOpen(false)}
-              user={user}
+              user={currentUser}
               onToast={showToast}
             />
           </div>
