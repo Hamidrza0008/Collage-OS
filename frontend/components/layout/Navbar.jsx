@@ -69,6 +69,19 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        const target = e.target;
+        const isInput =
+          target &&
+          (target.tagName === "INPUT" ||
+            target.tagName === "TEXTAREA" ||
+            target.tagName === "SELECT" ||
+            target.isContentEditable);
+
+        // Do not trigger while actively typing inside form fields outside the command palette
+        if (isInput && !target.closest("[data-command-palette]")) {
+          return;
+        }
+
         e.preventDefault();
         setIsSearchModalOpen((prev) => !prev);
       }
@@ -155,16 +168,25 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
           {/* Desktop / Tablet Search Input Button Container */}
           <div
             onClick={() => setIsSearchModalOpen(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setIsSearchModalOpen(true);
+              }
+            }}
+            aria-label="Open command palette (Ctrl+K or Cmd+K)"
             className="hidden sm:flex relative flex-1 w-full items-center h-10 pl-10 pr-3 rounded-xl bg-[#FFFFFF] dark:bg-[#0A2A24] border border-[#D8E8E2] dark:border-[#16463D] text-[13px] text-[#658278] dark:text-[#789991] shadow-[0_1px_2px_rgba(11,48,36,0.03)] dark:shadow-none hover:border-[#159B72]/60 dark:hover:border-[#20D39B]/60 transition-all cursor-pointer select-none"
           >
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
               <Search className="w-4 h-4 text-[#658278] dark:text-[#789991]" strokeWidth={2} />
             </div>
             <span className="truncate">
-              Search anything... (e.g. assignments, students, events, notices)
+              Type a command or search College OS...
             </span>
             {/* Keyboard shortcut indicator */}
-            <div className="ml-auto flex items-center pointer-events-none">
+            <div className="ml-auto flex items-center pointer-events-none gap-1">
               <kbd className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-[#658278] dark:text-[#789991] bg-[#F1F8F5] dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] rounded-md">
                 ⌘ K
               </kbd>
