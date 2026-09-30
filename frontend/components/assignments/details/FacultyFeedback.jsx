@@ -1,8 +1,13 @@
 "use client";
 
-import { MessageSquare, Award, CheckCircle, Clock } from "lucide-react";
+import { MessageSquare, Award, CheckCircle, Clock, History } from "lucide-react";
 
-export default function FacultyFeedback({ feedback, isSubmitted, isGraded }) {
+export default function FacultyFeedback({
+  feedback,
+  isSubmitted,
+  isGraded,
+  onViewHistoryModal,
+}) {
   // If not submitted yet
   if (!isSubmitted && !isGraded) {
     return null;
@@ -26,14 +31,27 @@ export default function FacultyFeedback({ feedback, isSubmitted, isGraded }) {
           </div>
         </div>
 
-        {feedback?.score && (
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-[#06241F] border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-[#20D39B] text-xs font-bold">
-            <Award className="w-4 h-4" />
-            <span>
-              {feedback.score} / {feedback.maxScore || 10} Marks
-            </span>
-          </div>
-        )}
+        <div className="flex items-center gap-2 flex-wrap">
+          {feedback?.score && (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-[#06241F] border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-[#20D39B] text-xs font-bold">
+              <Award className="w-4 h-4" />
+              <span>
+                {feedback.score} / {feedback.maxScore || 10} Marks
+              </span>
+            </div>
+          )}
+
+          {onViewHistoryModal && (
+            <button
+              type="button"
+              onClick={onViewHistoryModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold text-emerald-800 dark:text-[#20D39B] bg-emerald-50 dark:bg-[#06241F] border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100/80 transition-colors cursor-pointer"
+            >
+              <History className="w-3.5 h-3.5" />
+              <span>History Modal</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Graded State */}

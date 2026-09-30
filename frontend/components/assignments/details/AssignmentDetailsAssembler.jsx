@@ -22,6 +22,7 @@ import AssignmentQuickActions from "./AssignmentQuickActions";
 import AskFacultyModal from "./AskFacultyModal";
 import SubmitConfirmationModal from "./SubmitConfirmationModal";
 import ReportProblemModal from "./ReportProblemModal";
+import SubmissionHistoryModal from "./SubmissionHistoryModal";
 import MobileSubmissionBar from "./MobileSubmissionBar";
 import AssignmentNotFound from "./AssignmentNotFound";
 import AssignmentDetailsSkeleton from "./AssignmentDetailsSkeleton";
@@ -50,6 +51,17 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
     });
     return () => unsubscribe();
   }, [initialAssignment?.id]);
+
+  // Deep-link query param detection for ?modal=history or ?view=history
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("view") === "history" || urlParams.get("modal") === "history") {
+        setIsHistoryModalOpen(true);
+      }
+    }
+  }, []);
+
   const [activeSubmission, setActiveSubmission] = useState(initialAssignment.submission);
   const [submissionHistory, setSubmissionHistory] = useState(
     initialAssignment.submissionHistory || []
@@ -58,7 +70,14 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [historyModalInitialAttempt, setHistoryModalInitialAttempt] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+
+  const handleOpenHistoryModal = (attemptNum = null) => {
+    setHistoryModalInitialAttempt(attemptNum);
+    setIsHistoryModalOpen(true);
+  };
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -161,6 +180,9 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
       reviewState: "Under Review",
       attemptNumber: attemptNum,
       files: newFiles,
+      githubUrl: payload.githubUrl,
+      demoUrl: payload.demoUrl,
+      notes: payload.notes,
       marksEarned: null,
     };
 
@@ -245,6 +267,7 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
             onShare={handleShare}
             onOpenReportModal={() => setIsReportModalOpen(true)}
             onSubmitClick={handleScrollToSubmission}
+            onOpenHistoryModal={() => handleOpenHistoryModal()}
           />
 
           {/* 2. Assignment Overview */}
@@ -275,16 +298,21 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
             onInitiateSubmit={handleInitiateSubmit}
             onDownloadSubmittedFiles={handleDownloadSubmittedFiles}
             onResetSubmissionForTesting={handleResetForTesting}
+            onOpenHistoryModal={() => handleOpenHistoryModal()}
           />
 
           {/* 8. Submission History */}
-          <SubmissionHistory history={submissionHistory} />
+          <SubmissionHistory
+            history={submissionHistory}
+            onViewInModal={(attemptNum) => handleOpenHistoryModal(attemptNum)}
+          />
 
           {/* 9. Faculty Evaluation Feedback */}
           <FacultyFeedback
             feedback={assignment.feedback}
             isSubmitted={Boolean(activeSubmission)}
             isGraded={assignment.status === "graded"}
+            onViewHistoryModal={() => handleOpenHistoryModal()}
           />
         </div>
 
@@ -296,7 +324,11 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
           <DeadlineCard assignment={assignment} activeSubmission={activeSubmission} />
 
           {/* 2. Submission Status Card */}
-          <SubmissionStatusCard assignment={assignment} activeSubmission={activeSubmission} />
+          <SubmissionStatusCard
+            assignment={assignment}
+            activeSubmission={activeSubmission}
+            onViewHistoryModal={() => handleOpenHistoryModal()}
+          />
 
           {/* 3. Grading Rubric Card */}
           <GradingRubric rubric={assignment.rubric} feedback={assignment.feedback} />
@@ -329,6 +361,7 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
         assignment={assignment}
         activeSubmission={activeSubmission}
         onActionClick={handleScrollToSubmission}
+        onOpenHistoryModal={() => handleOpenHistoryModal()}
       />
 
       {/* Pre-Submission Confirmation Modal */}
@@ -357,6 +390,19 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
         onClose={() => setIsReportModalOpen(false)}
         assignmentTitle={assignment.title}
         onSubmitReport={handleReportProblemSubmit}
+      />
+
+      {/* Submission History & Feedback Modal (MD-05) */}
+      <SubmissionHistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
+        assignment={assignment}
+        activeSubmission={activeSubmission}
+        submissionHistory={submissionHistory}
+        feedback={assignment.feedback}
+        initialAttemptNumber={historyModalInitialAttempt}
+        onReopenWorkspace={handleResetForTesting}
+        onDownloadAttachment={handleDownloadResource}
       />
     </div>
   );

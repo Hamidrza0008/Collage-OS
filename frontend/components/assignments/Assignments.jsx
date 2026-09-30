@@ -11,6 +11,7 @@ import AssignmentCalendarCard from "./AssignmentCalendarCard";
 import QuickActionsCard from "./QuickActionsCard";
 import AssignmentDetailsModal from "./AssignmentDetailsModal";
 import UploadAssignmentModal from "./UploadAssignmentModal";
+import SubmissionHistoryModal from "./SubmissionHistoryModal";
 import { ALL_ASSIGNMENTS, SUBJECTS_LIST } from "./assignmentsData";
 import { CheckCircle2 } from "lucide-react";
 import AssignmentsSkeleton from "./AssignmentsSkeleton";
@@ -24,6 +25,7 @@ export default function Assignments({ isLoading = false }) {
   const [selectedSubject, setSelectedSubject] = useState("All Subjects");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [historyModalAssignment, setHistoryModalAssignment] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -223,6 +225,7 @@ export default function Assignments({ isLoading = false }) {
               onDownloadResources={(title) =>
                 showToast(`Downloading resources for "${title}"...`)
               }
+              onOpenHistory={(asg) => setHistoryModalAssignment(asg)}
             />
 
             {/* 4. Pagination Controls (Directly below cards; hidden when filtered items <= 6) */}
@@ -275,6 +278,15 @@ export default function Assignments({ isLoading = false }) {
             handleToggleStatus(id);
             setSelectedAssignment(null);
           }}
+        />
+      )}
+
+      {/* Submission History & Feedback Modal (MD-05) */}
+      {historyModalAssignment && (
+        <SubmissionHistoryModal
+          isOpen={Boolean(historyModalAssignment)}
+          onClose={() => setHistoryModalAssignment(null)}
+          assignment={historyModalAssignment}
         />
       )}
 

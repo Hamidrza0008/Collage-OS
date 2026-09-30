@@ -16,9 +16,16 @@ import {
   Eye,
   CheckCircle,
   Download,
+  History,
 } from "lucide-react";
 
-export default function AssignmentCard({ assignment, onViewDetails, onToggleStatus, onDownloadResources }) {
+export default function AssignmentCard({
+  assignment,
+  onViewDetails,
+  onToggleStatus,
+  onDownloadResources,
+  onOpenHistory,
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -184,6 +191,19 @@ export default function AssignmentCard({ assignment, onViewDetails, onToggleStat
                     <Eye className="w-3.5 h-3.5 text-emerald-600" />
                     <span>View Details</span>
                   </Link>
+                  {onOpenHistory && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onOpenHistory(assignment);
+                        setMenuOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-xs flex items-center gap-2 text-[#0B3024] dark:text-[#C5DCD4] hover:bg-gray-50 dark:hover:bg-[#0A3029] cursor-pointer"
+                    >
+                      <History className="w-3.5 h-3.5 text-emerald-600 dark:text-[#20D39B]" />
+                      <span>Submission History</span>
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => {

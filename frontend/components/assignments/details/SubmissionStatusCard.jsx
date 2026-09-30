@@ -9,7 +9,11 @@ const STAGES = [
   { id: "graded", label: "Graded" },
 ];
 
-export default function SubmissionStatusCard({ assignment, activeSubmission }) {
+export default function SubmissionStatusCard({
+  assignment,
+  activeSubmission,
+  onViewHistoryModal,
+}) {
   const isSubmitted = Boolean(activeSubmission);
   const isGraded = assignment.status === "graded" || Boolean(assignment.feedback);
 
@@ -63,10 +67,22 @@ export default function SubmissionStatusCard({ assignment, activeSubmission }) {
 
       {/* Attempt Counter */}
       <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-[#F8FAF9] dark:bg-[#041D18] border border-[#E8F1ED] dark:border-[#10372F]">
-        <span className="font-semibold text-[#55786B] dark:text-[#8FAFA4]">Current Attempt</span>
-        <span className="font-bold text-[#0B3024] dark:text-[#F1FAF6]">
-          {activeSubmission?.attempt || assignment.currentAttempt || 1} / {assignment.maxAttempts || 3}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span className="font-semibold text-[#55786B] dark:text-[#8FAFA4]">Current Attempt:</span>
+          <span className="font-bold text-[#0B3024] dark:text-[#F1FAF6]">
+            {activeSubmission?.attempt || assignment.currentAttempt || 1} / {assignment.maxAttempts || 3}
+          </span>
+        </div>
+
+        {onViewHistoryModal && (
+          <button
+            type="button"
+            onClick={onViewHistoryModal}
+            className="text-[11px] font-bold text-emerald-700 dark:text-[#20D39B] hover:underline cursor-pointer"
+          >
+            History &rarr;
+          </button>
+        )}
       </div>
 
       {/* Vertical Status Timeline */}

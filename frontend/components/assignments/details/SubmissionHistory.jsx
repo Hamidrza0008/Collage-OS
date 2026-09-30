@@ -2,24 +2,37 @@
 
 import { History, FileArchive, CheckCircle2, Award, Clock } from "lucide-react";
 
-export default function SubmissionHistory({ history }) {
+export default function SubmissionHistory({ history, onViewInModal }) {
   if (!history || history.length === 0) return null;
 
   return (
     <div className="w-full bg-[#FFFFFF] dark:bg-[#021512] border border-[#D8E8E2] dark:border-[#10372F] rounded-2xl shadow-xs p-5 sm:p-6 transition-all space-y-4">
       {/* Header */}
-      <div className="flex items-center gap-2 pb-3 border-b border-[#E8F1ED] dark:border-[#10372F]">
-        <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-[#20D39B] flex items-center justify-center shrink-0">
-          <History className="w-4 h-4" />
+      <div className="flex items-center justify-between pb-3 border-b border-[#E8F1ED] dark:border-[#10372F] flex-wrap gap-2">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-[#20D39B] flex items-center justify-center shrink-0">
+            <History className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-sm sm:text-base font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight">
+              Submission History & Versions
+            </h2>
+            <p className="text-[11px] text-[#5C786E] dark:text-[#8AA89F]">
+              Audit trail of uploaded solutions and grading revisions
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-sm sm:text-base font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight">
-            Submission History & Versions
-          </h2>
-          <p className="text-[11px] text-[#5C786E] dark:text-[#8AA89F]">
-            Audit trail of uploaded solutions and grading revisions
-          </p>
-        </div>
+
+        {onViewInModal && (
+          <button
+            type="button"
+            onClick={() => onViewInModal()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-emerald-800 dark:text-[#20D39B] bg-emerald-50 dark:bg-[#06241F] hover:bg-emerald-100/80 dark:hover:bg-[#082A24] border border-emerald-200/70 dark:border-emerald-800 transition-colors cursor-pointer shrink-0"
+          >
+            <History className="w-3.5 h-3.5" />
+            <span>Open History Modal</span>
+          </button>
+        )}
       </div>
 
       {/* History List */}
@@ -60,21 +73,35 @@ export default function SubmissionHistory({ history }) {
               </div>
             </div>
 
-            {/* Attached files */}
-            {entry.files && entry.files.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-gray-100 dark:border-[#10372F]">
-                {entry.files.map((f, i) => (
-                  <div
-                    key={i}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white dark:bg-[#021512] border border-[#D8E8E2] dark:border-[#10372F] text-[11px] text-[#0B3024] dark:text-[#C5DCD4]"
-                  >
-                    <FileArchive className="w-3.5 h-3.5 text-emerald-600 dark:text-[#20D39B]" />
-                    <span className="truncate max-w-[200px]">{f.name}</span>
-                    {f.size && <span className="text-[#8AA89F]">({f.size})</span>}
-                  </div>
-                ))}
+            {/* Attached files & Inspect action */}
+            <div className="flex items-center justify-between gap-2 flex-wrap pt-1 border-t border-gray-100 dark:border-[#10372F]">
+              <div className="flex items-center gap-2 flex-wrap">
+                {entry.files && entry.files.length > 0 ? (
+                  entry.files.map((f, i) => (
+                    <div
+                      key={i}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white dark:bg-[#021512] border border-[#D8E8E2] dark:border-[#10372F] text-[11px] text-[#0B3024] dark:text-[#C5DCD4]"
+                    >
+                      <FileArchive className="w-3.5 h-3.5 text-emerald-600 dark:text-[#20D39B]" />
+                      <span className="truncate max-w-[200px]">{f.name}</span>
+                      {f.size && <span className="text-[#8AA89F]">({f.size})</span>}
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-[11px] text-[#789991] italic">No files attached</span>
+                )}
               </div>
-            )}
+
+              {onViewInModal && (
+                <button
+                  type="button"
+                  onClick={() => onViewInModal(entry.attemptNumber)}
+                  className="text-[11px] font-semibold text-emerald-700 dark:text-[#20D39B] hover:underline cursor-pointer ml-auto"
+                >
+                  Inspect Attempt &rarr;
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>

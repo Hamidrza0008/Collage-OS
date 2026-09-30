@@ -13,6 +13,7 @@ import {
   CheckCircle,
   AlertTriangle,
   RotateCcw,
+  History,
 } from "lucide-react";
 
 export default function AssignmentHero({
@@ -22,6 +23,7 @@ export default function AssignmentHero({
   onShare,
   onOpenReportModal,
   onSubmitClick,
+  onOpenHistoryModal,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -157,6 +159,19 @@ export default function AssignmentHero({
             <span className="hidden sm:inline">Share</span>
           </button>
 
+          {/* History Button if already submitted or graded */}
+          {onOpenHistoryModal && (assignment.status === "submitted" || assignment.status === "graded") && (
+            <button
+              type="button"
+              onClick={onOpenHistoryModal}
+              title="View submission history and feedback"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-[#0A3029] text-emerald-800 dark:text-[#20D39B] border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100/70 transition-colors cursor-pointer"
+            >
+              <History className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">History & Feedback</span>
+            </button>
+          )}
+
           {/* More 3-Dot Dropdown */}
           <div className="relative" ref={menuRef}>
             <button
@@ -169,7 +184,20 @@ export default function AssignmentHero({
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-[#041D18] border border-[#D8E8E2] dark:border-[#10372F] shadow-xl py-1.5 z-40 animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute right-0 mt-2 w-52 rounded-xl bg-white dark:bg-[#041D18] border border-[#D8E8E2] dark:border-[#10372F] shadow-xl py-1.5 z-40 animate-in fade-in zoom-in-95 duration-100">
+                {onOpenHistoryModal && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenHistoryModal();
+                      setMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2 text-xs flex items-center gap-2.5 text-[#0B3024] dark:text-[#C5DCD4] hover:bg-emerald-50/60 dark:hover:bg-[#082A24]"
+                  >
+                    <History className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span>Submission History</span>
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => {

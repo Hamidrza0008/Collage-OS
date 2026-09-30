@@ -8,6 +8,7 @@ export default function AssignmentList({
   onViewDetails,
   onToggleStatus,
   onDownloadResources,
+  onOpenHistory,
 }) {
   if (assignments.length === 0) {
     return (
@@ -34,6 +35,7 @@ export default function AssignmentList({
           onViewDetails={onViewDetails}
           onToggleStatus={onToggleStatus}
           onDownloadResources={onDownloadResources}
+          onOpenHistory={onOpenHistory}
         />
       ))}
     </div>

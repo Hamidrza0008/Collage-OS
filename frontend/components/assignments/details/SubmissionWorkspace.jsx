@@ -14,6 +14,7 @@ import {
   RotateCcw,
   Download,
   Loader2,
+  History,
 } from "lucide-react";
 import Link from "next/link";
 import GithubIcon from "./GithubIcon";
@@ -27,6 +28,7 @@ export default function SubmissionWorkspace({
   onInitiateSubmit,
   onDownloadSubmittedFiles,
   onResetSubmissionForTesting,
+  onOpenHistoryModal,
 }) {
   const [primaryFile, setPrimaryFile] = useState(null);
   const [docFile, setDocFile] = useState(null);
@@ -251,6 +253,17 @@ export default function SubmissionWorkspace({
         {/* Action Buttons: Download Files, Re-submit, Back to assignments */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E8F1ED] dark:border-[#10372F]">
           <div className="flex items-center gap-2 flex-wrap">
+            {onOpenHistoryModal && (
+              <button
+                type="button"
+                onClick={onOpenHistoryModal}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-[#0A3029] text-emerald-800 dark:text-[#20D39B] border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100/70 transition-colors cursor-pointer"
+              >
+                <History className="w-3.5 h-3.5" />
+                <span>Submission History & Feedback</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={onDownloadSubmittedFiles}
@@ -264,7 +277,7 @@ export default function SubmissionWorkspace({
               <button
                 type="button"
                 onClick={onResetSubmissionForTesting}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-[#0A3029] text-emerald-800 dark:text-[#20D39B] border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100/70 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-[#041D18] text-[#55786B] dark:text-[#8AA89F] border border-[#D8E8E2] dark:border-[#10372F] hover:bg-emerald-50/50 dark:hover:bg-[#082A24] transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Re-submit Assignment</span>
@@ -306,9 +319,22 @@ export default function SubmissionWorkspace({
           </div>
         </div>
 
-        <span className="text-[11px] font-semibold text-[#55786B] dark:text-[#8FAFA4] bg-[#F5FAF8] dark:bg-[#041D18] px-2.5 py-1 rounded-md border border-[#D8E8E2] dark:border-[#10372F]">
-          Attempt {assignment.currentAttempt || 1} of {assignment.maxAttempts || 3}
-        </span>
+        <div className="flex items-center gap-2">
+          {onOpenHistoryModal && assignment.submissionHistory?.length > 0 && (
+            <button
+              type="button"
+              onClick={onOpenHistoryModal}
+              className="text-xs font-semibold text-emerald-700 dark:text-[#20D39B] hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <History className="w-3.5 h-3.5" />
+              <span>Past Attempts ({assignment.submissionHistory.length})</span>
+            </button>
+          )}
+
+          <span className="text-[11px] font-semibold text-[#55786B] dark:text-[#8FAFA4] bg-[#F5FAF8] dark:bg-[#041D18] px-2.5 py-1 rounded-md border border-[#D8E8E2] dark:border-[#10372F]">
+            Attempt {assignment.currentAttempt || 1} of {assignment.maxAttempts || 3}
+          </span>
+        </div>
       </div>
 
       {/* Main Drag & Drop Box */}
