@@ -11,6 +11,7 @@ export default function ProjectGrid({
   onToggleLike,
   onToggleBookmark,
   onMemberClick,
+  onEditProject,
   likedIds,
   bookmarkedIds,
   onResetFilters,
@@ -100,6 +101,7 @@ export default function ProjectGrid({
           onToggleLike={onToggleLike}
           onToggleBookmark={onToggleBookmark}
           onMemberClick={onMemberClick}
+          onEditProject={onEditProject}
           isLiked={likedIds.has(project.id)}
           isBookmarked={bookmarkedIds.has(project.id)}
         />

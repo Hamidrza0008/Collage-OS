@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProjectsHero from "./ProjectsHero";
 import ProjectTabsAndFilters from "./ProjectTabsAndFilters";
@@ -14,8 +14,14 @@ import CollaborationCard from "./CollaborationCard";
 import ProjectIdeaCta from "./ProjectIdeaCta";
 import ProjectDetailsModal from "./ProjectDetailsModal";
 import CreateProjectModal from "./CreateProjectModal";
+import EditProjectModal from "./EditProjectModal";
 import ProjectsSkeleton from "./ProjectsSkeleton";
 import { INITIAL_PROJECTS, CURRENT_STUDENT } from "./projectsData";
+import {
+  getStoredProjects,
+  saveNewProject,
+  subscribeToProjectChanges,
+} from "./projectsStore";
 import { CheckCircle2 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 9;
@@ -23,8 +29,19 @@ const ITEMS_PER_PAGE = 9;
 export default function Projects({ isLoading = false }) {
   const router = useRouter();
 
-  // Master projects dataset state
+  // Master projects dataset state (synced with localStorage & broadcast events)
   const [projects, setProjects] = useState(INITIAL_PROJECTS);
+
+  // Sync with stored projects on client mount and subscribe to real-time updates
+  useEffect(() => {
+    setProjects(getStoredProjects());
+
+    const unsubscribe = subscribeToProjectChanges(() => {
+      setProjects(getStoredProjects());
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Filter & Toolbar States
   const [activeTab, setActiveTab] = useState("all"); // 'all' | 'my-projects' | 'liked' | 'my-team'
@@ -44,6 +61,7 @@ export default function Projects({ isLoading = false }) {
 
   // Modal States
   const [selectedProject, setSelectedProject] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isIdeaMode, setIsIdeaMode] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -327,6 +345,7 @@ export default function Projects({ isLoading = false }) {
 
   // Project Creation Callback
   const handleProjectCreated = (newProject, isIdea) => {
+    saveNewProject(newProject);
     setProjects((prev) => [newProject, ...prev]);
     setActiveTab("my-projects");
     setCurrentPage(1);
@@ -335,6 +354,23 @@ export default function Projects({ isLoading = false }) {
         ? `Project idea "${newProject.title}" posted to student feed!`
         : `Project "${newProject.title}" published successfully!`
     );
+  };
+
+  // Project Edit Callbacks
+  const handleEditProject = (projectToEdit) => {
+    setEditingProject(projectToEdit);
+  };
+
+  const handleProjectSaved = (savedProject) => {
+    setProjects((currentProjects) =>
+      currentProjects.map((p) =>
+        p.id === savedProject.id ? { ...p, ...savedProject } : p
+      )
+    );
+    if (selectedProject && selectedProject.id === savedProject.id) {
+      setSelectedProject((prev) => ({ ...prev, ...savedProject }));
+    }
+    showToast(`Project "${savedProject.title}" updated successfully! 🚀`);
   };
 
   const handleSelectSidebarProject = (projId) => {
@@ -391,6 +427,7 @@ export default function Projects({ isLoading = false }) {
               onToggleLike={handleToggleLike}
               onToggleBookmark={handleToggleBookmark}
               onMemberClick={handleMemberClick}
+              onEditProject={handleEditProject}
               likedIds={likedIds}
               bookmarkedIds={bookmarkedIds}
               onResetFilters={handleResetFilters}
@@ -471,6 +508,7 @@ export default function Projects({ isLoading = false }) {
           onToggleLike={handleToggleLike}
           onToggleBookmark={handleToggleBookmark}
           onMemberClick={handleMemberClick}
+          onEditProject={handleEditProject}
           isLiked={likedIds.has(selectedProject.id)}
           isBookmarked={bookmarkedIds.has(selectedProject.id)}
           onAddComment={handleAddComment}
@@ -483,6 +521,15 @@ export default function Projects({ isLoading = false }) {
         onSubmit={handleProjectCreated}
         isIdeaMode={isIdeaMode}
       />
+
+      {editingProject && (
+        <EditProjectModal
+          isOpen={Boolean(editingProject)}
+          onClose={() => setEditingProject(null)}
+          project={editingProject}
+          onProjectSaved={handleProjectSaved}
+        />
+      )}
 
       {/* Floating Feedback Toast */}
       {toastMessage && (

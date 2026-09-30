@@ -16,8 +16,10 @@ import {
   Lightbulb,
   Sprout,
   Users,
+  Pencil,
 } from "lucide-react";
 import { CATEGORY_THEMES } from "./projectsData";
+import { isProjectOwner } from "./projectsStore";
 
 // Helper to render icon for project category/style
 function ProjectCategoryIcon({ category, className = "w-3 h-3" }) {
@@ -69,16 +71,18 @@ export default function ProjectCard({
   onToggleLike,
   onToggleBookmark,
   onMemberClick,
+  onEditProject,
   isLiked = false,
   isBookmarked = false,
 }) {
+  const isOwner = isProjectOwner(project);
   const theme = CATEGORY_THEMES[project.category] || CATEGORY_THEMES["Other"];
   const visibleTech = project.tech ? project.tech.slice(0, 4) : [];
   const remainingTechCount = project.tech && project.tech.length > 4 ? project.tech.length - 4 : 0;
 
   return (
     <div className="group relative flex flex-col justify-between h-full p-4 rounded-2xl bg-[#FFFFFF] dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] shadow-xs hover:shadow-md hover:border-[#159B72]/60 dark:hover:border-[#20D39B]/60 transition-all duration-200">
-      {/* Top Row: Category Badge + Bookmark */}
+      {/* Top Row: Category Badge + Actions (Edit & Bookmark) */}
       <div className="flex items-center justify-between gap-2 mb-3">
         <span
           className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border ${theme.badgeBg} ${theme.badgeText} ${theme.badgeBorder}`}
@@ -87,24 +91,42 @@ export default function ProjectCard({
           <span>{project.category}</span>
         </span>
 
-        {/* Bookmark Icon Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleBookmark(project.id);
-          }}
-          className={`p-1 rounded-lg transition-colors cursor-pointer ${
-            isBookmarked
-              ? "text-[#159B72] dark:text-[#20D39B] bg-emerald-50 dark:bg-emerald-950/40"
-              : "text-[#85A297] dark:text-[#65857B] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-gray-100 dark:hover:bg-[#082A24]"
-          }`}
-          title={isBookmarked ? "Remove Bookmark" : "Bookmark Project"}
-        >
-          <Bookmark
-            className={`w-4 h-4 ${isBookmarked ? "fill-[#159B72] dark:fill-[#20D39B]" : ""}`}
-          />
-        </button>
+        {/* Action Buttons: Edit (Owner only) + Bookmark */}
+        <div className="flex items-center gap-1">
+          {isOwner && onEditProject && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditProject(project);
+              }}
+              className="p-1 rounded-lg text-[#85A297] dark:text-[#65857B] hover:text-[#159B72] dark:hover:text-[#20D39B] hover:bg-emerald-50 dark:hover:bg-[#082A24] transition-colors cursor-pointer"
+              title="Edit Project & Team"
+              aria-label={`Edit ${project.title}`}
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+          )}
+
+          {/* Bookmark Icon Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleBookmark(project.id);
+            }}
+            className={`p-1 rounded-lg transition-colors cursor-pointer ${
+              isBookmarked
+                ? "text-[#159B72] dark:text-[#20D39B] bg-emerald-50 dark:bg-emerald-950/40"
+                : "text-[#85A297] dark:text-[#65857B] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-gray-100 dark:hover:bg-[#082A24]"
+            }`}
+            title={isBookmarked ? "Remove Bookmark" : "Bookmark Project"}
+          >
+            <Bookmark
+              className={`w-4 h-4 ${isBookmarked ? "fill-[#159B72] dark:fill-[#20D39B]" : ""}`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Middle Body: Large Icon + Title + Description */}

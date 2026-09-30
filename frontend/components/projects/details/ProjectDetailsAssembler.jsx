@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { getProjectDetails, getRelatedProjects } from "./projectDetailsData";
 import { isSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
+import { isProjectOwner, subscribeToProjectChanges } from "../projectsStore";
 import ProjectHero from "./ProjectHero";
 import ProjectMetaChips from "./ProjectMetaChips";
 import ProjectOverview from "./ProjectOverview";
@@ -24,6 +25,7 @@ import RelatedProjectsCard from "./RelatedProjectsCard";
 import RequestJoinTeamModal from "./RequestJoinTeamModal";
 import ReportProjectModal from "./ReportProjectModal";
 import MobileActionBar from "./MobileActionBar";
+import EditProjectModal from "../EditProjectModal";
 import ProjectNotFound from "./ProjectNotFound";
 import ProjectDetailsSkeleton from "./ProjectDetailsSkeleton";
 
@@ -32,7 +34,25 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
     return <ProjectDetailsSkeleton />;
   }
 
-  const project = getProjectDetails(projectId);
+  // Dynamic project state synced with localStorage and custom broadcast events
+  const [project, setProject] = useState(() => getProjectDetails(projectId));
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Sync initial project data on mount
+    const fresh = getProjectDetails(projectId);
+    if (fresh) setProject(fresh);
+
+    // Subscribe to live project edits across the app
+    const unsubscribe = subscribeToProjectChanges(() => {
+      const updated = getProjectDetails(projectId);
+      if (updated) {
+        setProject(updated);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [projectId]);
 
   if (!project) {
     return <ProjectNotFound projectId={projectId} />;
@@ -40,6 +60,7 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
 
   const relatedProjects = getRelatedProjects(project.id);
   const router = useRouter();
+  const isOwner = isProjectOwner(project);
 
   // Interactive States
   const [isLiked, setIsLiked] = useState(Boolean(project.isLiked));
@@ -153,6 +174,7 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
             onToggleBookmark={handleToggleBookmark}
             onOpenJoinModal={() => setIsJoinModalOpen(true)}
             onOpenReportModal={() => setIsReportModalOpen(true)}
+            onOpenEditModal={() => setIsEditModalOpen(true)}
             onCopyLink={handleCopyLink}
             onShare={handleShare}
           />
@@ -241,6 +263,8 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
         onToggleBookmark={handleToggleBookmark}
         demoUrl={project.demoUrl}
         onJumpToComments={handleJumpToComments}
+        isOwner={isOwner}
+        onOpenEditModal={() => setIsEditModalOpen(true)}
       />
 
       {/* Request to Join Team Modal */}
@@ -258,6 +282,19 @@ export default function ProjectDetailsAssembler({ projectId, isLoading = false }
         projectTitle={project.title}
         onSubmit={handleReportSubmit}
       />
+
+      {/* Edit Project & Team Modal (MD-04) */}
+      {isEditModalOpen && project && (
+        <EditProjectModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          project={project}
+          onProjectSaved={(savedProject) => {
+            setProject(savedProject);
+            showToast("Project details & team updated! 🚀");
+          }}
+        />
+      )}
     </div>
   );
 }

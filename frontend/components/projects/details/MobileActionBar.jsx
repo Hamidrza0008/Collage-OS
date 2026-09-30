@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Bookmark, ExternalLink, MessageSquare } from "lucide-react";
+import { Star, Bookmark, ExternalLink, MessageSquare, Pencil } from "lucide-react";
 
 export default function MobileActionBar({
   isLiked,
@@ -10,6 +10,8 @@ export default function MobileActionBar({
   onToggleBookmark,
   demoUrl,
   onJumpToComments,
+  isOwner = false,
+  onOpenEditModal,
 }) {
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#06241F]/95 backdrop-blur-md border-t border-[#D8E8E2] dark:border-[#16463D] px-4 py-2.5 shadow-lg flex items-center justify-between gap-2 safe-area-bottom">
@@ -59,6 +61,19 @@ export default function MobileActionBar({
         >
           <MessageSquare className="w-4 h-4 text-[#658278] dark:text-[#8BAEA3]" />
         </button>
+
+        {/* Edit Project Button for Owner */}
+        {isOwner && onOpenEditModal && (
+          <button
+            type="button"
+            onClick={onOpenEditModal}
+            className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#159B72] dark:text-[#20D39B] border border-emerald-300/60 dark:border-emerald-800/40 transition-all active:scale-95 cursor-pointer"
+            title="Edit Project & Team"
+            aria-label="Edit project"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Live Demo CTA */}

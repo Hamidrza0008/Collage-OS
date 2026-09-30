@@ -358,32 +358,82 @@ Database Layer
 
 /**
  * Normalizes input ID or slug to find project in DETAILED_PROJECTS or INITIAL_PROJECTS.
+ * Merges real-time stored edits from college_os_project_details_v1 and college_os_projects_v1.
  */
 export function getProjectDetails(idOrSlug) {
   if (!idOrSlug) return null;
   const query = String(idOrSlug).toLowerCase().trim();
 
+  // Check stored details override from localStorage if in client environment
+  let storedOverride = null;
+  let summaryProject = null;
+  if (typeof window !== "undefined") {
+    try {
+      const rawDetails = localStorage.getItem("college_os_project_details_v1");
+      if (rawDetails) {
+        const detailsMap = JSON.parse(rawDetails);
+        storedOverride =
+          detailsMap[query] ||
+          Object.values(detailsMap).find(
+            (p) => p.slug === query || p.id?.toLowerCase() === query
+          );
+      }
+      const rawSummary = localStorage.getItem("college_os_projects_v1");
+      if (rawSummary) {
+        const summaryList = JSON.parse(rawSummary);
+        if (Array.isArray(summaryList)) {
+          summaryProject = summaryList.find(
+            (p) =>
+              p.id?.toLowerCase() === query ||
+              p.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") === query
+          );
+        }
+      }
+    } catch (e) {
+      console.warn("Error reading stored project overrides:", e);
+    }
+  }
+
   // 1. Direct key match in DETAILED_PROJECTS
   if (DETAILED_PROJECTS[query]) {
-    return DETAILED_PROJECTS[query];
+    const base = DETAILED_PROJECTS[query];
+    if (storedOverride && (storedOverride.id === base.id || storedOverride.slug === base.slug)) {
+      return { ...base, ...storedOverride };
+    }
+    return base;
   }
 
   // 2. Slug match in DETAILED_PROJECTS
   const detailedMatch = Object.values(DETAILED_PROJECTS).find(
     (p) => p.slug === query || p.id.toLowerCase() === query
   );
-  if (detailedMatch) return detailedMatch;
+  if (detailedMatch) {
+    if (storedOverride && (storedOverride.id === detailedMatch.id || storedOverride.slug === detailedMatch.slug)) {
+      return { ...detailedMatch, ...storedOverride };
+    }
+    return detailedMatch;
+  }
 
-  // 3. Fallback search in INITIAL_PROJECTS
-  const initialMatch = INITIAL_PROJECTS.find(
-    (p) =>
-      p.id.toLowerCase() === query ||
-      p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") === query
-  );
+  // 3. If storedOverride is a standalone full detail record
+  if (storedOverride && storedOverride.team && storedOverride.techStack) {
+    return storedOverride;
+  }
+
+  // 4. Fallback search in summary projects or INITIAL_PROJECTS
+  const initialMatch =
+    summaryProject ||
+    INITIAL_PROJECTS.find(
+      (p) =>
+        p.id.toLowerCase() === query ||
+        p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") === query
+    );
 
   if (!initialMatch) {
     // If query is 'college-os', return proj-1
-    if (query === "college-os") return DETAILED_PROJECTS["proj-1"];
+    if (query === "college-os") {
+      const base = DETAILED_PROJECTS["proj-1"];
+      return storedOverride ? { ...base, ...storedOverride } : base;
+    }
     return null;
   }
 
@@ -574,5 +624,17 @@ export function getProjectDetails(idOrSlug) {
  * Returns 3 related projects excluding current project.
  */
 export function getRelatedProjects(currentProjectId) {
-  return INITIAL_PROJECTS.filter((p) => p.id !== currentProjectId).slice(0, 3);
+  let projectList = INITIAL_PROJECTS;
+  if (typeof window !== "undefined") {
+    try {
+      const raw = localStorage.getItem("college_os_projects_v1");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) projectList = parsed;
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return projectList.filter((p) => p.id !== currentProjectId).slice(0, 3);
 }

@@ -16,8 +16,10 @@ import {
   Sparkles,
   CheckCircle2,
   ArrowRight,
+  Pencil,
 } from "lucide-react";
 import { CATEGORY_THEMES } from "./projectsData";
+import { isProjectOwner } from "./projectsStore";
 
 function GithubIcon({ className = "w-4 h-4" }) {
   return (
@@ -33,10 +35,12 @@ export default function ProjectDetailsModal({
   onToggleLike,
   onToggleBookmark,
   onMemberClick,
+  onEditProject,
   isLiked = false,
   isBookmarked = false,
   onAddComment,
 }) {
+  const isOwner = isProjectOwner(project);
   const [newComment, setNewComment] = useState("");
 
   // Close on Escape key
@@ -78,8 +82,22 @@ export default function ProjectDetailsModal({
             </span>
           </div>
 
-          {/* Action buttons: Like, Bookmark, Close */}
+          {/* Action buttons: Edit (Owner), Like, Bookmark, Close */}
           <div className="flex items-center gap-1.5">
+            {isOwner && onEditProject && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onEditProject(project);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-[#159B72] dark:text-[#20D39B] border border-emerald-200/80 dark:border-emerald-800/40 hover:bg-emerald-100/60 text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+                title="Edit Project & Team"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Edit</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => onToggleLike(project.id)}

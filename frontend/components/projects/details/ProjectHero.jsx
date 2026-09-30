@@ -13,9 +13,11 @@ import {
   Copy,
   Check,
   Sparkles,
+  Pencil,
 } from "lucide-react";
 import GithubIcon from "./GithubIcon";
 import { useTheme } from "../../providers/ThemeProvider";
+import { isProjectOwner } from "../projectsStore";
 
 export default function ProjectHero({
   project,
@@ -28,8 +30,10 @@ export default function ProjectHero({
   onOpenReportModal,
   onCopyLink,
   onShare,
+  onOpenEditModal,
 }) {
   const { isDark } = useTheme();
+  const isOwner = isProjectOwner(project);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const menuRef = useRef(null);
@@ -143,6 +147,20 @@ export default function ProjectHero({
 
             {isMenuOpen && (
               <div className="absolute right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] shadow-xl p-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-150">
+                {isOwner && onOpenEditModal && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onOpenEditModal) onOpenEditModal();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#0B3024] dark:text-[#F1FAF6] hover:bg-[#F0F8F5] dark:hover:bg-[#0A2E27] font-medium transition-colors text-left"
+                  >
+                    <Pencil className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
+                    <span>Edit Project & Team</span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={() => {
@@ -168,17 +186,19 @@ export default function ProjectHero({
                   <span>{copied ? "Link Copied!" : "Copy Project Link"}</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onOpenJoinModal) onOpenJoinModal();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#0B3024] dark:text-[#F1FAF6] hover:bg-[#F0F8F5] dark:hover:bg-[#0A2E27] font-medium transition-colors text-left"
-                >
-                  <UserPlus className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
-                  <span>Request to Join Team</span>
-                </button>
+                {!isOwner && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onOpenJoinModal) onOpenJoinModal();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[#0B3024] dark:text-[#F1FAF6] hover:bg-[#F0F8F5] dark:hover:bg-[#0A2E27] font-medium transition-colors text-left"
+                  >
+                    <UserPlus className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
+                    <span>Request to Join Team</span>
+                  </button>
+                )}
 
                 <div className="h-px bg-gray-100 dark:bg-[#10372F] my-1" />
 
@@ -213,7 +233,7 @@ export default function ProjectHero({
           {project.tagline || project.description}
         </p>
 
-        {/* Action Buttons: Live Demo + GitHub */}
+        {/* Action Buttons: Live Demo + GitHub + Edit/Join */}
         <div className="flex flex-wrap items-center gap-3 pt-1">
           {project.demoUrl && (
             <a
@@ -239,14 +259,25 @@ export default function ProjectHero({
             </a>
           )}
 
-          <button
-            type="button"
-            onClick={onOpenJoinModal}
-            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-dashed border-[#159B72]/40 hover:border-[#159B72] dark:border-[#20D39B]/40 dark:hover:border-[#20D39B] text-[#159B72] dark:text-[#20D39B] text-xs font-semibold hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 transition-all cursor-pointer ml-auto sm:ml-0"
-          >
-            <UserPlus className="w-3.5 h-3.5" />
-            <span>Join Team</span>
-          </button>
+          {isOwner && onOpenEditModal ? (
+            <button
+              type="button"
+              onClick={onOpenEditModal}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-[#159B72] hover:bg-emerald-100/70 text-[#159B72] dark:text-[#20D39B] text-xs sm:text-sm font-bold shadow-xs transition-all active:scale-95 cursor-pointer ml-auto sm:ml-0"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+              <span>Edit Project & Team</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onOpenJoinModal}
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-dashed border-[#159B72]/40 hover:border-[#159B72] dark:border-[#20D39B]/40 dark:hover:border-[#20D39B] text-[#159B72] dark:text-[#20D39B] text-xs font-semibold hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 transition-all cursor-pointer ml-auto sm:ml-0"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Join Team</span>
+            </button>
+          )}
         </div>
       </div>
     </section>
