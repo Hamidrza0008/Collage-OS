@@ -24,13 +24,40 @@ import {
   Paperclip,
   Award,
   Bookmark,
+  UserPlus,
+  UserCheck,
 } from "lucide-react";
 import { isSaved, toggleSavedItem, subscribeToSavedChanges } from "@/components/saved/savedItemsStore";
+import PeerMessageConnectModal from "@/components/profile/PeerMessageConnectModal";
+import {
+  getPeerConnectionStatus,
+  subscribeToPeerConnections,
+  isSelfStudent,
+} from "@/components/profile/peerConnectionStore";
 
 export default function SearchResultCard({ item, query = "" }) {
   if (!item) return null;
 
   const { type, route, title, subtitle, description, tags, image, date, metadata } = item;
+
+  const isStudent = type === "students";
+  const isSelf = isStudent && isSelfStudent(item?.id);
+  const [isPeerModalOpen, setIsPeerModalOpen] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState(() =>
+    isStudent && item?.id ? getPeerConnectionStatus(item.id) : "not_connected"
+  );
+
+  useEffect(() => {
+    if (!isStudent || !item?.id || isSelf) return;
+    setConnectionStatus(getPeerConnectionStatus(item.id));
+
+    const unsubscribe = subscribeToPeerConnections((detail) => {
+      if (!detail?.targetStudentId || detail.targetStudentId === item.id) {
+        setConnectionStatus(getPeerConnectionStatus(item.id));
+      }
+    });
+    return () => unsubscribe();
+  }, [isStudent, item?.id, isSelf]);
 
   const mapTypeToEntityType = (t) => {
     switch (t) {
@@ -123,6 +150,7 @@ export default function SearchResultCard({ item, query = "" }) {
   };
 
   return (
+    <>
     <Link
       href={route}
       className="group block p-4 sm:p-4.5 rounded-2xl bg-[#FFFFFF] dark:bg-[#021512] border border-[#D8E8E2] dark:border-[#10372F] hover:border-emerald-400 dark:hover:border-emerald-700/80 hover:shadow-xs transition-all cursor-pointer relative"
@@ -260,6 +288,42 @@ export default function SearchResultCard({ item, query = "" }) {
                   <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-current" : ""}`} />
                 </button>
               )}
+
+              {isStudent && !isSelf && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsPeerModalOpen(true);
+                  }}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                    connectionStatus === 'connected'
+                      ? 'bg-emerald-50 dark:bg-[#10372F] text-emerald-700 dark:text-[#20D39B] border border-emerald-300 dark:border-[#159B72]'
+                      : connectionStatus === 'request_sent'
+                      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+                      : 'bg-[#159B72] hover:bg-[#087A5B] text-white shadow-2xs'
+                  }`}
+                >
+                  {connectionStatus === 'connected' ? (
+                    <>
+                      <UserCheck className="w-3 h-3" />
+                      <span>Connected</span>
+                    </>
+                  ) : connectionStatus === 'request_sent' ? (
+                    <>
+                      <Clock className="w-3 h-3 text-amber-500" />
+                      <span>Request Sent</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-3 h-3" />
+                      <span>Connect</span>
+                    </>
+                  )}
+                </button>
+              )}
+
               <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform">
                 <span>View</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -269,5 +333,17 @@ export default function SearchResultCard({ item, query = "" }) {
         </div>
       </div>
     </Link>
+
+    {/* Student Peer Direct Message / Connect Modal (MD-06) */}
+    {isStudent && (
+      <PeerMessageConnectModal
+        isOpen={isPeerModalOpen}
+        onClose={() => setIsPeerModalOpen(false)}
+        targetStudent={item.id}
+        sourceContext="search"
+        contextLabel="Campus Search Result"
+      />
+    )}
+    </>
   );
 }

@@ -16,11 +16,18 @@ import PublicProfileUtilitySidebar from './PublicProfileUtilitySidebar';
 import MobilePublicProfileActionBar from './MobilePublicProfileActionBar';
 import ConnectMessageModal from './ConnectMessageModal';
 import FollowersModal from '../FollowersModal';
+import {
+  getPeerConnectionStatus,
+  subscribeToPeerConnections,
+  isSelfStudent,
+} from '@/components/profile/peerConnectionStore';
 
 export default function PublicStudentProfileAssembler({ profile, relatedStudents = [] }) {
   const [activeProfile, setActiveProfile] = useState(profile);
-  const [isConnected, setIsConnected] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
+  const isSelf = isSelfStudent(profile?.id);
+  const [connectionStatus, setConnectionStatus] = useState(() =>
+    getPeerConnectionStatus(profile?.id)
+  );
   const [activeModal, setActiveModal] = useState(null); // 'connect' | 'message' | 'followers' | 'following' | null
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -79,19 +86,21 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
     } catch {}
   }, [profile?.id]);
 
-  // Load connection state from localStorage
+  // Load and subscribe to connection state from peerConnectionStore
   useEffect(() => {
-    if (!profile?.id) return;
-    try {
-      const connKey = `collegeos_conn_${profile.id}`;
-      const saved = localStorage.getItem(connKey);
-      if (saved === 'true') {
-        setIsConnected(true);
+    if (!profile?.id || isSelf) return;
+    setConnectionStatus(getPeerConnectionStatus(profile.id));
+
+    const unsubscribe = subscribeToPeerConnections((detail) => {
+      if (!detail?.targetStudentId || detail.targetStudentId === profile.id) {
+        setConnectionStatus(getPeerConnectionStatus(profile.id));
       }
-    } catch {
-      // LocalStorage access fallback
-    }
-  }, [profile?.id]);
+    });
+
+    return () => unsubscribe();
+  }, [profile?.id, isSelf]);
+
+  const isConnected = connectionStatus === 'connected';
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -101,29 +110,16 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
   };
 
   const handleToggleConnect = () => {
-    if (isConnected) {
-      setIsConnected(false);
-      try {
-        localStorage.removeItem(`collegeos_conn_${profile.id}`);
-      } catch {}
-      showToast(`Disconnected from ${profile.name}`);
-      return;
-    }
-
-    // Open connection modal to add note or connect directly
+    if (isSelf) return;
     setActiveModal('connect');
   };
 
   const handleConnectSubmit = (data) => {
-    setIsConnected(true);
-    try {
-      localStorage.setItem(`collegeos_conn_${profile.id}`, 'true');
-    } catch {}
     showToast(`Connection request sent to ${profile.name}!`);
   };
 
   const handleMessageSubmit = (data) => {
-    showToast(`Message sent to ${profile.name}!`);
+    showToast(`Message delivered to ${profile.name}!`);
   };
 
   const handleShare = async () => {
@@ -181,7 +177,8 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
             <PublicStudentProfileHero
               profile={activeProfile}
               isConnected={isConnected}
-              isConnecting={isConnecting}
+              connectionStatus={connectionStatus}
+              isSelf={isSelf}
               onConnect={handleToggleConnect}
               onMessage={() => setActiveModal('message')}
               onShare={handleShare}
@@ -222,7 +219,8 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
             <PublicProfileUtilitySidebar
               profile={activeProfile}
               isConnected={isConnected}
-              isConnecting={isConnecting}
+              connectionStatus={connectionStatus}
+              isSelf={isSelf}
               onConnect={handleToggleConnect}
               onMessage={() => setActiveModal('message')}
               onShare={handleShare}
@@ -237,7 +235,8 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
       <MobilePublicProfileActionBar
         profile={activeProfile}
         isConnected={isConnected}
-        isConnecting={isConnecting}
+        connectionStatus={connectionStatus}
+        isSelf={isSelf}
         onConnect={handleToggleConnect}
         onMessage={() => setActiveModal('message')}
         onShare={handleShare}
@@ -249,6 +248,7 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
         onClose={() => setActiveModal(null)}
         profile={activeProfile}
         mode={activeModal === 'message' ? 'message' : 'connect'}
+        sourceContext="profile"
         onSend={activeModal === 'message' ? handleMessageSubmit : handleConnectSubmit}
       />
 

@@ -6,6 +6,8 @@ import Image from 'next/image';
 import {
   UserPlus,
   UserCheck,
+  Clock,
+  User,
   MessageSquare,
   Share2,
   Building2,
@@ -41,6 +43,8 @@ export default function PublicProfileUtilitySidebar({
   profile,
   isConnected,
   isConnecting,
+  connectionStatus,
+  isSelf,
   onConnect,
   onMessage,
   onShare,
@@ -52,38 +56,57 @@ export default function PublicProfileUtilitySidebar({
       {/* A. Primary Actions Card */}
       <div className="bg-white dark:bg-[#06241F] rounded-2xl border border-gray-200 dark:border-[#10372F] p-5 shadow-sm space-y-3">
         <h3 className="text-xs uppercase tracking-wider font-bold text-gray-400 dark:text-[#A7C7BC] mb-2">
-          Student Actions
+          {isSelf ? "Your Profile" : "Student Actions"}
         </h3>
 
-        <button
-          onClick={onConnect}
-          disabled={isConnecting}
-          className={`w-full py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.99] ${
-            isConnected
-              ? 'bg-emerald-50 dark:bg-[#10372F] text-emerald-700 dark:text-[#20D39B] border border-emerald-300 dark:border-[#159B72]'
-              : 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
-          }`}
-        >
-          {isConnected ? (
-            <>
-              <UserCheck className="w-4 h-4" />
-              <span>Connected with {profile.name?.split(' ')[0]}</span>
-            </>
-          ) : (
-            <>
-              <UserPlus className="w-4 h-4" />
-              <span>{isConnecting ? 'Connecting...' : `Connect with ${profile.name?.split(' ')[0]}`}</span>
-            </>
-          )}
-        </button>
+        {isSelf ? (
+          <Link
+            href="/student/profile/edit"
+            className="w-full py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border border-emerald-300 dark:border-[#159B72] text-emerald-700 dark:text-[#20D39B] hover:bg-emerald-50 dark:hover:bg-[#10372F]/50 transition-all active:scale-[0.99]"
+          >
+            <User className="w-4 h-4" />
+            <span>Edit Profile</span>
+          </Link>
+        ) : (
+          <>
+            <button
+              onClick={onConnect}
+              disabled={isConnecting}
+              className={`w-full py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.99] ${
+                connectionStatus === 'connected' || isConnected
+                  ? 'bg-emerald-50 dark:bg-[#10372F] text-emerald-700 dark:text-[#20D39B] border border-emerald-300 dark:border-[#159B72]'
+                  : connectionStatus === 'request_sent'
+                  ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+                  : 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
+              }`}
+            >
+              {connectionStatus === 'connected' || isConnected ? (
+                <>
+                  <UserCheck className="w-4 h-4" />
+                  <span>Connected with {profile.name?.split(' ')[0]}</span>
+                </>
+              ) : connectionStatus === 'request_sent' ? (
+                <>
+                  <Clock className="w-4 h-4 text-amber-500" />
+                  <span>Request Sent (Pending)</span>
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4" />
+                  <span>{isConnecting ? 'Connecting...' : `Connect with ${profile.name?.split(' ')[0]}`}</span>
+                </>
+              )}
+            </button>
 
-        <button
-          onClick={onMessage}
-          className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs sm:text-sm border border-gray-200 dark:border-[#10372F] text-gray-700 dark:text-[#F1FAF6] hover:bg-gray-50 dark:hover:bg-[#10372F]/50 flex items-center justify-center gap-2 transition-all"
-        >
-          <MessageSquare className="w-4 h-4 text-emerald-500" />
-          <span>Send Direct Message</span>
-        </button>
+            <button
+              onClick={onMessage}
+              className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs sm:text-sm border border-gray-200 dark:border-[#10372F] text-gray-700 dark:text-[#F1FAF6] hover:bg-gray-50 dark:hover:bg-[#10372F]/50 flex items-center justify-center gap-2 transition-all"
+            >
+              <MessageSquare className="w-4 h-4 text-emerald-500" />
+              <span>Send Direct Message</span>
+            </button>
+          </>
+        )}
 
         <button
           onClick={onShare}
