@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, GitBranch, X } from "lucide-react";
+import { Search, GitBranch, X, SlidersHorizontal } from "lucide-react";
 import { BRANCH_OPTIONS } from "./projectsData";
 
 export default function ProjectTabsAndFilters({
@@ -11,6 +11,8 @@ export default function ProjectTabsAndFilters({
   selectedBranch,
   onBranchChange,
   counts = {},
+  onOpenMobileFilters,
+  activeFilterCount = 0,
 }) {
   const tabs = [
     { id: "all", label: "All Projects", count: counts.all },
@@ -55,6 +57,22 @@ export default function ProjectTabsAndFilters({
 
       {/* Right: Search Input + Branch Dropdown */}
       <div className="flex items-center gap-2 shrink-0">
+        {/* Mobile Filter Button (visible only on mobile) */}
+        <button
+          type="button"
+          onClick={onOpenMobileFilters}
+          className="flex lg:hidden items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#082A24] text-[#0B3024] dark:text-[#F1FAF6] text-xs font-semibold hover:bg-[#F1F8F5] dark:hover:bg-[#0A3029] transition-colors cursor-pointer shrink-0"
+          aria-label="Open filters"
+        >
+          <SlidersHorizontal className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
+          <span>Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-[#159B72] text-white">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+
         {/* Search Field */}
         <div className="relative flex-1 sm:w-56 md:w-64">
           <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#658278] dark:text-[#789991] pointer-events-none" />
@@ -77,8 +95,8 @@ export default function ProjectTabsAndFilters({
           )}
         </div>
 
-        {/* Branch Dropdown */}
-        <div className="relative shrink-0">
+        {/* Branch Dropdown (Hidden on mobile) */}
+        <div className="relative shrink-0 hidden lg:block">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#082A24] text-[#0B3024] dark:text-[#F1FAF6] text-xs font-semibold">
             <GitBranch className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B] shrink-0" />
             <select

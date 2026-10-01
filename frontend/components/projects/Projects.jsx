@@ -15,6 +15,7 @@ import ProjectIdeaCta from "./ProjectIdeaCta";
 import ProjectDetailsModal from "./ProjectDetailsModal";
 import CreateProjectModal from "./CreateProjectModal";
 import EditProjectModal from "./EditProjectModal";
+import MobileProjectFilterDrawer from "./MobileProjectFilterDrawer";
 import ProjectsSkeleton from "./ProjectsSkeleton";
 import { INITIAL_PROJECTS, CURRENT_STUDENT } from "./projectsData";
 import {
@@ -64,6 +65,7 @@ export default function Projects({ isLoading = false }) {
   const [editingProject, setEditingProject] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isIdeaMode, setIsIdeaMode] = useState(false);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -72,6 +74,16 @@ export default function Projects({ isLoading = false }) {
       setToastMessage(null);
     }, 3200);
   };
+
+  // Calculate active filter count for mobile badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (activeTab !== "all") count++;
+    if (selectedBranch !== "all") count++;
+    if (selectedCategory !== "All") count++;
+    if (sortBy !== "latest") count++;
+    return count;
+  }, [activeTab, selectedBranch, selectedCategory, sortBy]);
 
   const handleMemberClick = (member) => {
     if (!member) return;
@@ -407,6 +419,8 @@ export default function Projects({ isLoading = false }) {
             selectedBranch={selectedBranch}
             onBranchChange={handleBranchChange}
             counts={counts}
+            onOpenMobileFilters={() => setIsMobileFiltersOpen(true)}
+            activeFilterCount={activeFilterCount}
           />
 
           {/* 3. Category Filter Chips + Sort Dropdown */}
@@ -415,6 +429,8 @@ export default function Projects({ isLoading = false }) {
             onCategoryChange={handleCategoryChange}
             sortBy={sortBy}
             onSortChange={handleSortChange}
+            onOpenMobileFilters={() => setIsMobileFiltersOpen(true)}
+            activeFilterCount={activeFilterCount}
           />
 
           {/* 4. Three-Column Project Cards Grid (Paginated max 9 per page) */}
@@ -501,6 +517,30 @@ export default function Projects({ isLoading = false }) {
       {/* ========================================================================= */}
       {/* Interactive Modals & Toast Notification                                    */}
       {/* ========================================================================= */}
+      {/* Mobile Filter Drawer */}
+      <MobileProjectFilterDrawer
+        isOpen={isMobileFiltersOpen}
+        onClose={() => setIsMobileFiltersOpen(false)}
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          handleTabChange(tab);
+        }}
+        selectedBranch={selectedBranch}
+        onBranchChange={(branch) => {
+          handleBranchChange(branch);
+        }}
+        selectedCategory={selectedCategory}
+        onCategoryChange={(cat) => {
+          handleCategoryChange(cat);
+        }}
+        sortBy={sortBy}
+        onSortChange={(sort) => {
+          handleSortChange(sort);
+        }}
+        onResetFilters={handleResetFilters}
+        counts={counts}
+      />
+
       {selectedProject && (
         <ProjectDetailsModal
           project={selectedProject}

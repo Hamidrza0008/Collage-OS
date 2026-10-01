@@ -13,6 +13,8 @@ export default function EventTabsAndFilters({
   onCategoryChange,
   searchQuery,
   onSearchChange,
+  onOpenMobileFilters,
+  activeFilterCount = 0,
 }) {
   const [catOpen, setCatOpen] = useState(false);
   const catRef = useRef(null);
@@ -36,8 +38,8 @@ export default function EventTabsAndFilters({
 
   return (
     <div className="w-full bg-[#FFFFFF] dark:bg-[#021512] border border-[#D8E8E2] dark:border-[#10372F] rounded-2xl shadow-xs p-2 sm:p-2.5 flex flex-col md:flex-row md:items-center md:justify-between gap-2.5 transition-colors">
-      {/* Left: Tabs */}
-      <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+      {/* Left: Tabs (Hidden on mobile) */}
+      <div className="hidden md:flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -68,8 +70,24 @@ export default function EventTabsAndFilters({
         })}
       </div>
 
-      {/* Right: Search Input + Category Dropdown */}
+      {/* Right: Mobile Filter Button + Search Input + Category Dropdown */}
       <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+        {/* Mobile Filter Button (visible only on mobile) */}
+        <button
+          type="button"
+          onClick={onOpenMobileFilters}
+          className="flex md:hidden items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#D8E8E2] dark:border-[#10372F] bg-gray-50/60 dark:bg-[#041D18] hover:bg-gray-100 dark:hover:bg-[#082A24] text-xs font-semibold text-[#0B3024] dark:text-[#E2F1EC] transition-colors cursor-pointer shrink-0"
+          aria-label="Open filters"
+        >
+          <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          <span>Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-[#159B72] text-white">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+
         {/* Search Field */}
         <div className="relative flex-1 sm:w-52 md:w-56">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 dark:text-[#658278]" />
@@ -91,8 +109,8 @@ export default function EventTabsAndFilters({
           )}
         </div>
 
-        {/* Category Dropdown */}
-        <div className="relative shrink-0" ref={catRef}>
+        {/* Category Dropdown (Hidden on mobile) */}
+        <div className="relative shrink-0 hidden md:block" ref={catRef}>
           <button
             type="button"
             onClick={() => setCatOpen((prev) => !prev)}

@@ -13,6 +13,7 @@ import StayInformedCtaCard from "./StayInformedCtaCard";
 import NoticeDetailsModal from "./NoticeDetailsModal";
 import NotificationSettingsModal from "./NotificationSettingsModal";
 import ContactAdminModal from "./ContactAdminModal";
+import MobileNoticeFilterDrawer from "./MobileNoticeFilterDrawer";
 import { ALL_NOTICES, ALL_ANNOUNCEMENTS } from "./noticesData";
 import { CheckCircle2 } from "lucide-react";
 import NoticesSkeleton from "./NoticesSkeleton";
@@ -33,6 +34,7 @@ export default function Notices({ isLoading = false }) {
   const [selectedNotice, setSelectedNotice] = useState(null);
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [isContactAdminModalOpen, setIsContactAdminModalOpen] = useState(false);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -41,6 +43,15 @@ export default function Notices({ isLoading = false }) {
       setToastMessage(null);
     }, 3200);
   };
+
+  // Calculate active filter count for mobile badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (activeTab !== "notices") count++;
+    if (selectedDepartment !== "All Departments") count++;
+    if (selectedCategory !== "All Categories") count++;
+    return count;
+  }, [activeTab, selectedDepartment, selectedCategory]);
 
   // Base list depending on active tab
   const baseList = activeTab === "notices" ? notices : announcements;
@@ -204,6 +215,8 @@ export default function Notices({ isLoading = false }) {
             onCategoryChange={handleCategoryChange}
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
+            onOpenMobileFilters={() => setIsMobileFiltersOpen(true)}
+            activeFilterCount={activeFilterCount}
           />
 
           {/* 3. Notice Cards List (Paginated - max 6 cards per page) */}
@@ -261,6 +274,25 @@ export default function Notices({ isLoading = false }) {
           <StayInformedCtaCard onViewAllNotices={handleResetFilters} />
         </div>
       </div>
+
+      {/* Mobile Filter Drawer */}
+      <MobileNoticeFilterDrawer
+        isOpen={isMobileFiltersOpen}
+        onClose={() => setIsMobileFiltersOpen(false)}
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          handleTabChange(tab);
+        }}
+        selectedDepartment={selectedDepartment}
+        onDepartmentChange={(dept) => {
+          handleDepartmentChange(dept);
+        }}
+        selectedCategory={selectedCategory}
+        onCategoryChange={(cat) => {
+          handleCategoryChange(cat);
+        }}
+        onResetFilters={handleResetFilters}
+      />
 
       {/* Notice Details Modal */}
       {selectedNotice && (

@@ -14,6 +14,7 @@ import NeverMissEventCta from "./NeverMissEventCta";
 import EventDetailsModal from "./EventDetailsModal";
 import SubmitProposalModal from "./SubmitProposalModal";
 import EventNotificationModal from "./EventNotificationModal";
+import MobileEventFilterDrawer from "./MobileEventFilterDrawer";
 import EventsSkeleton from "./EventsSkeleton";
 import { ALL_EVENTS } from "./eventsData";
 import { CheckCircle2 } from "lucide-react";
@@ -38,6 +39,7 @@ export default function Events({ isLoading = false }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -46,6 +48,14 @@ export default function Events({ isLoading = false }) {
       setToastMessage(null);
     }, 3200);
   };
+
+  // Calculate active filter count for mobile badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (activeTab !== "all") count++;
+    if (selectedCategory !== "All Categories") count++;
+    return count;
+  }, [activeTab, selectedCategory]);
 
   // Dynamic counts for tab badges
   const upcomingCount = useMemo(
@@ -193,6 +203,8 @@ export default function Events({ isLoading = false }) {
             onCategoryChange={handleCategoryChange}
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
+            onOpenMobileFilters={() => setIsMobileFiltersOpen(true)}
+            activeFilterCount={activeFilterCount}
           />
 
           {/* 3. Event Cards Grid (Paginated - max 6 cards per page) */}
@@ -264,6 +276,23 @@ export default function Events({ isLoading = false }) {
       {/* ========================================================================= */}
       {/* Modals & Feedback Notifications                                           */}
       {/* ========================================================================= */}
+      {/* Mobile Filter Drawer */}
+      <MobileEventFilterDrawer
+        isOpen={isMobileFiltersOpen}
+        onClose={() => setIsMobileFiltersOpen(false)}
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          handleTabChange(tab);
+        }}
+        upcomingCount={upcomingCount}
+        ongoingCount={ongoingCount}
+        selectedCategory={selectedCategory}
+        onCategoryChange={(cat) => {
+          handleCategoryChange(cat);
+        }}
+        onResetFilters={handleResetFilters}
+      />
+
       {selectedEvent && (
         <EventDetailsModal
           event={selectedEvent}

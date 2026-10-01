@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search, ChevronDown, Check, Building2, Tag } from "lucide-react";
+import { Search, ChevronDown, Check, Building2, Tag, SlidersHorizontal } from "lucide-react";
 import { DEPARTMENTS_LIST, CATEGORIES_LIST } from "./noticesData";
 
 export default function NoticeFilters({
@@ -13,6 +13,8 @@ export default function NoticeFilters({
   onCategoryChange,
   searchQuery,
   onSearchChange,
+  onOpenMobileFilters,
+  activeFilterCount = 0,
 }) {
   const [deptOpen, setDeptOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
@@ -70,8 +72,24 @@ export default function NoticeFilters({
 
       {/* Right: Department Filter + Category Filter + Search Field */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 w-full lg:w-auto">
-        {/* Dropdowns Row on Mobile */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        {/* Mobile Filter Button (visible only on mobile) */}
+        <button
+          type="button"
+          onClick={onOpenMobileFilters}
+          className="flex lg:hidden items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#D8E8E2] dark:border-[#10372F] bg-gray-50/70 dark:bg-[#041D18] hover:bg-gray-100 dark:hover:bg-[#082A24] text-xs font-semibold text-[#0B3024] dark:text-[#E2F1EC] transition-colors cursor-pointer"
+          aria-label="Open filters"
+        >
+          <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          <span>Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold bg-[#159B72] text-white">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+
+        {/* Dropdowns Row on Mobile (hidden on mobile when filter button is shown) */}
+        <div className="hidden lg:flex items-center gap-2 w-full sm:w-auto">
           {/* Department Dropdown */}
           <div className="relative flex-1 sm:flex-initial shrink-0" ref={deptRef}>
             <button
