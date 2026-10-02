@@ -282,7 +282,7 @@ export default function NotificationCenterAssembler() {
             <span>Try Again</span>
           </button>
           <Link
-            href="/student/dashboard"
+            href="/student"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold border border-[#D8E8E2] dark:border-[#16463D] text-[#36594C] dark:text-[#A3BFB5] hover:bg-[#F1FAF6] dark:hover:bg-[#082A24] transition-all"
           >
             <ArrowLeft className="w-3.5 h-3.5" />

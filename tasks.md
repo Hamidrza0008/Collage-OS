@@ -79,7 +79,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 **Goal:** Resolve immediate routing bugs, entity ID mismatches, and wire existing orphaned modals into their primary entry points without altering desktop layouts.
 
-### - [ ] P1-T01: Fix Notification Center Canonical Dashboard Route
+### - [x] P1-T01: Fix Notification Center Canonical Dashboard Route
 - **Task ID:** P1-T01
 - **Title:** Fix Notification Center Canonical Dashboard Route
 - **Size:** SMALL
