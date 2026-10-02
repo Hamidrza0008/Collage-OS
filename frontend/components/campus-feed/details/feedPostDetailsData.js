@@ -121,7 +121,7 @@ export function getLinkedEntityForPost(post) {
       type: "event",
       typeLabel: "Campus Event",
       title: post.eventDetails?.title || "TechVibe 2025 Flagship Fest",
-      route: "/student/events/evt-1",
+      route: "/student/events/event-1",
       subtitle: "Main Ground • Aug 22-24, 2025",
       actionText: "View Event & Pass →",
     };

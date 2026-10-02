@@ -110,8 +110,8 @@ export function generateSeedNotifications() {
       actionRequired: true,
       actionLabel: "View Event",
       entityType: "event",
-      entityId: "evt-1",
-      route: "/student/events/evt-1",
+      entityId: "event-1",
+      route: "/student/events/event-1",
       metadata: {
         venue: "Main Campus Auditorium",
         date: "October 18-20, 2026",

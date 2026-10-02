@@ -101,7 +101,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P1-T02: Fix Event ID Mismatch Across Notifications and Feed
+### - [x] P1-T02: Fix Event ID Mismatch Across Notifications and Feed
 - **Task ID:** P1-T02
 - **Title:** Fix Event ID Mismatch Across Notifications and Feed
 - **Size:** SMALL
