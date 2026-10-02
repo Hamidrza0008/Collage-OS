@@ -237,7 +237,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P2-T03: Safely Remove Deprecated Localized Document Viewers
+### - [x] P2-T03: Safely Remove Deprecated Localized Document Viewers
 - **Task ID:** P2-T03
 - **Title:** Safely Remove Deprecated Localized Document Viewers
 - **Size:** SMALL
