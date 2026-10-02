@@ -21,10 +21,10 @@
 | **Remove 6 Dead Saved Files** | Dead Code Cleanup | ⚠️ 6 orphaned files in `saved/` | **Mandatory** | Phase 2 | P2-T04 | None | Safely delete unused legacy files after confirming zero active imports. |
 | **Profile Storage Key Unification**| State Consistency | 🟡 `collegeos_student_profile_edit` | **Mandatory** | Phase 2 | P2-T05 | None | Normalize key with automatic migration fallback to prevent any user data loss. |
 | **All Subjects Catalog Page** | Missing Full Page | ❌ Missing route (`/academics/subjects`)| **Mandatory** | Phase 3 | P3-T01 | None | Reuse real existing subject data across semesters to resolve Academics toast. |
-| **SP-07 Shell & Architecture** | Missing Sub-Page | ❌ Missing route (`/settings/security`) | **Mandatory** | Phase 4 | P4-T01 | None | Scaffold thin page, layout, tabs, and hero with explicit local demo labeling. |
-| **SP-07 2FA & Password UI** | Sub-Page Feature | ❌ "Coming Soon" badge in settings | **Mandatory** | Phase 4 | P4-T02 | P4-T01 | Client-side 2FA walkthrough and password form; strictly local/demo state. |
-| **SP-07 Sessions & OAuth Accounts**| Sub-Page Feature | ❌ Missing connected accounts UI | **Mandatory** | Phase 4 | P4-T03 | P4-T02 | Default providers to "Not Connected"; simulated local connection toggles. |
-| **SP-07 Settings Hub Linkage** | Navigation Linkage | 🟡 Currently modal-based | **Mandatory** | Phase 4 | P4-T04 | P4-T03 | Update Settings Security card to deep link to SP-07 sub-page. |
+| **SP-07 Shell & Architecture** | Missing Sub-Page | ✅ Complete (`/student/settings/security`) | **Mandatory** | Phase 4 | P4-T01 | None | Scaffold thin page, layout, tabs, and hero with explicit local demo labeling. |
+| **SP-07 2FA & Password UI** | Sub-Page Feature | ✅ Complete (Simulated 2FA & Password UI) | **Mandatory** | Phase 4 | P4-T02 | P4-T01 | Client-side 2FA walkthrough and password form; strictly local/demo state. |
+| **SP-07 Sessions & OAuth Accounts**| Sub-Page Feature | ✅ Complete (Active sessions & OAuth UI) | **Mandatory** | Phase 4 | P4-T03 | P4-T02 | Default providers to "Not Connected"; simulated local connection toggles. |
+| **SP-07 Settings Hub Linkage** | Navigation Linkage | ✅ Complete (Deep linked to SP-07) | **Mandatory** | Phase 4 | P4-T04 | P4-T03 | Update Settings Security card to deep link to SP-07 sub-page. |
 | **Final QA & Verification** | Quality Assurance | ⏳ Pending implementation | **Mandatory** | Phase 5 | P5-T01 | P1-T01 – P4-T04 | Build verification, code link audit, and environment limitation disclosure. |
 | **Community Groups Directory** | Directory Page | 🟡 Optional / Modal-only | **Optional** | Optional Phase 6 | OPT-T01 | None | Dedicated `/student/feed/groups` hub; does NOT block main frontend completion. |
 
@@ -378,7 +378,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 **Goal:** Implement the missing sub-page SP-07 (`/student/settings/security`) strictly as a frontend local-state experience, providing account security, 2FA, session visibility, and OAuth connection cards without backend services.
 
-### - [ ] P4-T01: Scaffold SP-07 Route & Security Assembler Architecture
+### - [x] P4-T01: Scaffold SP-07 Route & Security Assembler Architecture
 - **Task ID:** P4-T01
 - **Title:** Scaffold SP-07 Route & Security Assembler Architecture
 - **Size:** SMALL
@@ -415,7 +415,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P4-T02: Build 2-Factor Authentication & Password Management UI (Demo Simulation)
+### - [x] P4-T02: Build 2-Factor Authentication & Password Management UI (Demo Simulation)
 - **Task ID:** P4-T02
 - **Title:** Build 2-Factor Authentication & Password Management UI (Demo Simulation)
 - **Size:** MEDIUM
@@ -459,7 +459,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P4-T03: Build Active Login Sessions & Connected Accounts UI (Demo State)
+### - [x] P4-T03: Build Active Login Sessions & Connected Accounts UI (Demo State)
 - **Task ID:** P4-T03
 - **Title:** Build Active Login Sessions & Connected Accounts UI (Demo State)
 - **Size:** MEDIUM
@@ -506,7 +506,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P4-T04: Wire Settings Hub to Dedicated SP-07 Security Page
+### - [x] P4-T04: Wire Settings Hub to Dedicated SP-07 Security Page
 - **Task ID:** P4-T04
 - **Title:** Wire Settings Hub to Dedicated SP-07 Security Page
 - **Size:** SMALL
