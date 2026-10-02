@@ -9,7 +9,7 @@ import NoticeHeader from "./NoticeHeader";
 import NoticeActionToolbar from "./NoticeActionToolbar";
 import NoticeDocumentReader from "./NoticeDocumentReader";
 import NoticeAttachmentCard from "./NoticeAttachmentCard";
-import NoticePdfViewerModal from "./NoticePdfViewerModal";
+import DocumentViewerModal from "@/components/shared/DocumentViewerModal";
 import NoticeAcknowledgementModal from "./NoticeAcknowledgementModal";
 import NoticeContactModal from "./NoticeContactModal";
 import NoticeUtilitySidebar from "./NoticeUtilitySidebar";
@@ -240,16 +240,29 @@ export default function NoticeReaderAssembler({ noticeId, isLoading = false }) {
       />
 
       {/* ========================================================================= */}
-      {/* 4. MODALS (PDF Viewer, Acknowledgement, Contact)                          */}
+      {/* 4. MODALS (Canonical Document Viewer, Acknowledgement, Contact)          */}
       {/* ========================================================================= */}
-      {previewFile && (
-        <NoticePdfViewerModal
-          file={previewFile}
-          notice={notice}
-          onClose={() => setPreviewFile(null)}
-          onDownload={handleDownloadFile}
-        />
-      )}
+      <DocumentViewerModal
+        isOpen={Boolean(previewFile)}
+        onClose={() => setPreviewFile(null)}
+        file={
+          previewFile
+            ? {
+                id: previewFile.id || previewFile.name,
+                name: previewFile.name,
+                type: "application/pdf",
+                size: previewFile.size,
+                url: previewFile.url || "/assets/documents/sample-circular.pdf",
+              }
+            : null
+        }
+        sourceContext={`${notice.referenceNumber} • ${notice.department || "Academic Directorate"}`}
+        onDownload={() => {
+          if (previewFile) {
+            handleDownloadFile(previewFile);
+          }
+        }}
+      />
 
       <NoticeAcknowledgementModal
         notice={notice}

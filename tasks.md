@@ -188,7 +188,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 **Goal:** Consolidate document viewing into the canonical MD-08 component, safely remove verified dead duplicate files, and standardize local storage key naming with backwards compatibility.
 
-### - [ ] P2-T01: Migrate Notice Reader to Canonical DocumentViewerModal
+### - [x] P2-T01: Migrate Notice Reader to Canonical DocumentViewerModal
 - **Task ID:** P2-T01
 - **Title:** Migrate Notice Reader to Canonical DocumentViewerModal
 - **Size:** SMALL
