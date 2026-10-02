@@ -264,7 +264,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P2-T04: Safely Remove 6 Orphaned Dead Files in Saved Items Module
+### - [x] P2-T04: Safely Remove 6 Orphaned Dead Files in Saved Items Module
 - **Task ID:** P2-T04
 - **Title:** Safely Remove 6 Orphaned Dead Files in Saved Items Module
 - **Size:** SMALL
