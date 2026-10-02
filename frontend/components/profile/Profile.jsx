@@ -22,6 +22,7 @@ import ProfileSkeleton from "./ProfileSkeleton";
 import EditQuoteModal from "./EditQuoteModal";
 import FollowersModal from "./FollowersModal";
 import { EditProfileModal } from "../settings/SettingsModals";
+import { loadProfileEditState, saveProfileEditState } from "./edit/editProfileData";
 
 const TAB_TO_ID = {
   Overview: "profile-overview",
@@ -54,27 +55,45 @@ export default function Profile({ isLoading = false }) {
 
   const handleAvatarChange = (newAvatarUrl) => {
     setUserProfile((prev) => ({ ...prev, avatar: newAvatarUrl }));
+    try {
+      const current = loadProfileEditState();
+      saveProfileEditState({ ...current, avatar: newAvatarUrl });
+    } catch {}
     showToast("Profile avatar updated successfully!");
   };
 
-  // Sync edits saved from /student/profile/edit if present
+  // Sync edits saved from /student/profile/edit if present & listen for live updates
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("collegeos_student_profile_edit");
-      if (raw) {
-        const saved = JSON.parse(raw);
-        setUserProfile((prev) => ({
-          ...prev,
-          name: saved.name || prev.name,
-          quote: saved.quote || prev.quote,
-          avatar: saved.avatar || prev.avatar,
-        }));
-      }
-    } catch {}
+    const syncProfile = () => {
+      try {
+        const saved = loadProfileEditState();
+        if (saved) {
+          setUserProfile((prev) => ({
+            ...prev,
+            name: saved.name || prev.name,
+            quote: saved.quote || prev.quote,
+            avatar: saved.avatar || prev.avatar,
+          }));
+        }
+      } catch {}
+    };
+
+    syncProfile();
+    window.addEventListener("college_os_profile_updated", syncProfile);
+    window.addEventListener("storage", syncProfile);
+
+    return () => {
+      window.removeEventListener("college_os_profile_updated", syncProfile);
+      window.removeEventListener("storage", syncProfile);
+    };
   }, []);
 
   const handleSaveQuote = (newQuote) => {
     setUserProfile((prev) => ({ ...prev, quote: newQuote }));
+    try {
+      const current = loadProfileEditState();
+      saveProfileEditState({ ...current, quote: newQuote });
+    } catch {}
     showToast("Profile quote updated successfully!");
   };
 
@@ -86,6 +105,13 @@ export default function Profile({ isLoading = false }) {
       semester: updatedData.semester,
       phone: updatedData.phone,
     }));
+    try {
+      const current = loadProfileEditState();
+      saveProfileEditState({
+        ...current,
+        name: updatedData.name,
+      });
+    } catch {}
     showToast("Profile details updated successfully!");
   };
 

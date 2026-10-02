@@ -1,6 +1,5 @@
-// Canonical initial profile state and persistence helper for the Student Profile Editor
-
-export const PROFILE_STORAGE_KEY = "collegeos_student_profile_edit";
+export const PROFILE_STORAGE_KEY = "college_os_profile_v1";
+export const LEGACY_PROFILE_KEY = "collegeos_student_profile_edit";
 
 export const DEFAULT_EDIT_PROFILE_DATA = {
   id: "student-1",
@@ -207,7 +206,18 @@ export function loadProfileEditState() {
     return DEFAULT_EDIT_PROFILE_DATA;
   }
   try {
-    const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+    let raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+    if (!raw) {
+      const legacyRaw = localStorage.getItem(LEGACY_PROFILE_KEY);
+      if (legacyRaw) {
+        raw = legacyRaw;
+        try {
+          localStorage.setItem(PROFILE_STORAGE_KEY, legacyRaw);
+        } catch {
+          // Ignore storage quota or security errors
+        }
+      }
+    }
     if (!raw) return DEFAULT_EDIT_PROFILE_DATA;
     const parsed = JSON.parse(raw);
     return {

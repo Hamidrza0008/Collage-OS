@@ -21,6 +21,7 @@ import {
   subscribeToPeerConnections,
   isSelfStudent,
 } from '@/components/profile/peerConnectionStore';
+import { loadProfileEditState } from '@/components/profile/edit/editProfileData';
 
 export default function PublicStudentProfileAssembler({ profile, relatedStudents = [] }) {
   const [activeProfile, setActiveProfile] = useState(profile);
@@ -34,56 +35,67 @@ export default function PublicStudentProfileAssembler({ profile, relatedStudents
   // Sync edits saved from /student/profile/edit for student-1
   useEffect(() => {
     if (!profile?.id || profile.id !== "student-1") return;
-    try {
-      const raw = localStorage.getItem("collegeos_student_profile_edit");
-      if (raw) {
-        const saved = JSON.parse(raw);
-        setActiveProfile((prev) => {
-          const links = [];
-          if (saved.socialLinks?.github) {
-            links.push({
-              platform: "GitHub",
-              handle: saved.socialLinks.github.replace(/^https?:\/\//, ""),
-              url: saved.socialLinks.github,
-              type: "github",
-            });
-          }
-          if (saved.socialLinks?.linkedin) {
-            links.push({
-              platform: "LinkedIn",
-              handle: saved.socialLinks.linkedin.replace(/^https?:\/\//, ""),
-              url: saved.socialLinks.linkedin,
-              type: "linkedin",
-            });
-          }
-          if (saved.socialLinks?.portfolio) {
-            links.push({
-              platform: "Portfolio",
-              handle: saved.socialLinks.portfolio.replace(/^https?:\/\//, ""),
-              url: saved.socialLinks.portfolio,
-              type: "portfolio",
-            });
-          }
 
-          return {
-            ...prev,
-            name: saved.name || prev.name,
-            username: saved.username || prev.username,
-            avatar: saved.avatar || prev.avatar,
-            headline: saved.headline || prev.headline,
-            quote: saved.quote || prev.quote,
-            bio: saved.bio || prev.bio,
-            careerFocus: saved.careerFocus || prev.careerFocus,
-            interests: saved.interests || prev.interests,
-            skills: saved.skills || prev.skills,
-            projects: saved.projects || prev.projects,
-            achievements: saved.achievements || prev.achievements,
-            campusContributions: saved.campusContributions || prev.campusContributions,
-            socialLinks: links.length > 0 ? links : prev.socialLinks,
-          };
-        });
-      }
-    } catch {}
+    const syncProfile = () => {
+      try {
+        const saved = loadProfileEditState();
+        if (saved) {
+          setActiveProfile((prev) => {
+            const links = [];
+            if (saved.socialLinks?.github) {
+              links.push({
+                platform: "GitHub",
+                handle: saved.socialLinks.github.replace(/^https?:\/\//, ""),
+                url: saved.socialLinks.github,
+                type: "github",
+              });
+            }
+            if (saved.socialLinks?.linkedin) {
+              links.push({
+                platform: "LinkedIn",
+                handle: saved.socialLinks.linkedin.replace(/^https?:\/\//, ""),
+                url: saved.socialLinks.linkedin,
+                type: "linkedin",
+              });
+            }
+            if (saved.socialLinks?.portfolio) {
+              links.push({
+                platform: "Portfolio",
+                handle: saved.socialLinks.portfolio.replace(/^https?:\/\//, ""),
+                url: saved.socialLinks.portfolio,
+                type: "portfolio",
+              });
+            }
+
+            return {
+              ...prev,
+              name: saved.name || prev.name,
+              username: saved.username || prev.username,
+              avatar: saved.avatar || prev.avatar,
+              headline: saved.headline || prev.headline,
+              quote: saved.quote || prev.quote,
+              bio: saved.bio || prev.bio,
+              careerFocus: saved.careerFocus || prev.careerFocus,
+              interests: saved.interests || prev.interests,
+              skills: saved.skills || prev.skills,
+              projects: saved.projects || prev.projects,
+              achievements: saved.achievements || prev.achievements,
+              campusContributions: saved.campusContributions || prev.campusContributions,
+              socialLinks: links.length > 0 ? links : prev.socialLinks,
+            };
+          });
+        }
+      } catch {}
+    };
+
+    syncProfile();
+    window.addEventListener("college_os_profile_updated", syncProfile);
+    window.addEventListener("storage", syncProfile);
+
+    return () => {
+      window.removeEventListener("college_os_profile_updated", syncProfile);
+      window.removeEventListener("storage", syncProfile);
+    };
   }, [profile?.id]);
 
   // Load and subscribe to connection state from peerConnectionStore

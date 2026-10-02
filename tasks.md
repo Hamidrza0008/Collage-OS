@@ -299,7 +299,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P2-T05: Normalize Profile LocalStorage Key with Migration Fallback
+### - [x] P2-T05: Normalize Profile LocalStorage Key with Migration Fallback
 - **Task ID:** P2-T05
 - **Title:** Normalize Profile LocalStorage Key with Migration Fallback
 - **Size:** SMALL
