@@ -174,10 +174,9 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
   5. Preserve `DocumentViewerModal` styling and structure without unnecessary redesigns.
   6. Do NOT delete legacy local viewers (`NoticePdfViewerModal`, `OpportunityDocViewerModal`) during this task.
 - **Acceptance Criteria:**
-  - Clicking preview on a PDF assignment rubric or syllabus document opens `DocumentViewerModal` with zoom, page indicator, and download controls.
-  - Clicking preview on image resources opens the modal with full-resolution rendering.
-  - Unsupported files (e.g. `.zip` datasets) trigger standard file download without breaking modal state.
-  - Closing the modal returns focus to the parent resource section.
+  - Supported files (PDF, PNG, JPG, JPEG, WEBP, GIF) open through the canonical `DocumentViewerModal` with existing preview, zoom, rotate, fullscreen, multi-file navigation, download, and open-in-new-tab controls.
+  - Unsupported files (e.g. `.docx`, `.xlsx`, `.zip` archives) fall back cleanly to file download without launching a broken modal preview.
+  - Closing the modal cleanly returns focus to the parent resource section.
 - **Build / Validation:** Run `npm run build` inside `frontend/`.
 - **Commit Checkpoint:**  
   *STOP AFTER THIS TASK. USER MUST REVIEW AND COMMIT BEFORE NEXT TASK.*
@@ -383,7 +382,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 - **Task ID:** P4-T01
 - **Title:** Scaffold SP-07 Route & Security Assembler Architecture
 - **Size:** SMALL
-- **Objective:** Create the route structure, loading skeleton, and master assembler for `/student/settings/security`, labeled clearly as local demo state.
+- **Objective:** Create the route structure, loading skeleton, and master assembler for `/student/settings/security`, labeled clearly as local demo state with zero fabricated security telemetry.
 - **Current State:** `frontend/app/student/settings/security` does not exist (returns 404).
 - **Scope:**
   - Create: `frontend/app/student/settings/security/page.jsx`
@@ -396,17 +395,18 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 - **Implementation Requirements:**
   1. Thin `page.jsx` with metadata (`Security & Connected Accounts - College OS`) rendering `SecurityAssembler`.
   2. Implement breadcrumb navigation (`Settings > Security & Connected Accounts`).
-  3. Create mock seed dataset in `securityData.js`:
+  3. Create demo-safe seed dataset in `securityData.js`:
      - 2FA status (`enabled: false`)
-     - Password metadata (`lastChanged: '45 days ago'`)
-     - Active login sessions (labeled explicitly as `"Local Demo Session"`)
-     - Connected accounts (Google, GitHub, LinkedIn, Microsoft — all defaulted to `"Not Connected"`)
-  4. Ensure prominent disclaimer: `"Local Demo Mode: Security settings and session states are simulated locally within this browser session."`
+     - Password metadata with ZERO fabricated history: `lastChanged: null` and status notice `"Demo state — authentication backend not connected"` (or `"No real authentication/security data available"`). Do NOT make the UI appear to know the user's real password history, security history, login history, or account state.
+     - Active login sessions labeled explicitly as `"Demo Session (This Device)"` and `"Local Mobile Demo"` (Platform: Windows / Android, Browser: Chrome, Status: `"Active Demo Session"`).
+     - Connected accounts (Google, GitHub, LinkedIn, Microsoft — all defaulted to `"Not Connected"`).
+  4. Ensure prominent disclaimer: `"Local Demo Mode: Security settings, credentials, and session states are simulated locally within this browser session. No authentication backend is connected."`
   5. Ensure light/dark mode tokens and responsive shell layout.
 - **Acceptance Criteria:**
   - Direct navigation to `/student/settings/security` renders the page shell without errors.
   - Loading skeleton matches existing settings pages.
-  - Clear local demo indicator is present.
+  - Clear local demo indicator and backend-not-connected notice are present.
+  - Password metadata reflects demo state (`lastChanged: null`) with no invented history.
   - `npm run build` generates the route statically.
 - **Build / Validation:** Run `npm run build` inside `frontend/`.
 - **Commit Checkpoint:**  
@@ -415,11 +415,11 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P4-T02: Build 2-Factor Authentication & Password Management UI
+### - [ ] P4-T02: Build 2-Factor Authentication & Password Management UI (Demo Simulation)
 - **Task ID:** P4-T02
-- **Title:** Build 2-Factor Authentication & Password Management UI
+- **Title:** Build 2-Factor Authentication & Password Management UI (Demo Simulation)
 - **Size:** MEDIUM
-- **Objective:** Implement interactive frontend UI for Two-Factor Authentication setup, recovery codes, and password rotation using client-side validation only.
+- **Objective:** Implement interactive frontend UI for Two-Factor Authentication setup walkthrough and password management using client-side validation only, with explicit demo-safe messaging.
 - **Current State:** 2FA in `SecurityRegionCard.jsx` has a static "Coming Soon" badge. Password change only exists as a basic modal in `SettingsModals.jsx`.
 - **Scope:**
   - Create: `frontend/components/settings/security/TwoFactorAuthCard.jsx`
@@ -433,14 +433,24 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
      - Step 1: Simulated QR code graphic with demo secret key copy button.
      - Step 2: 6-digit OTP verification input with auto-advance (accepts demo codes; client-side simulation only).
      - Step 3: Generated 8 demo recovery backup codes with "Copy All" and "Download TXT" actions.
-     - Clearly label that no real authenticator service is contacted.
-  3. **PasswordManagementCard (Client-side Only):** Current password, new password with dynamic strength meter (characters, digits, symbols), confirm password input, and save action.
-  4. Perform client-side validation only (minimum 8 characters, confirmation matching). Do NOT store plaintext passwords and do NOT simulate backend hashing.
-  5. Store 2FA enabled boolean in `localStorage` under `college_os_security_settings_v1`.
-  6. Provide toast notifications for successful local state changes.
+     - Clearly label: `"Simulated Local UI — no real authenticator service is contacted and the account is not truly protected by 2FA."`
+  3. **PasswordManagementCard (Client-side Only):**
+     - Inputs: Current password, new password with dynamic strength meter (characters, digits, symbols), confirm password input, and save action.
+     - Validation: Perform client-side validation only (minimum 8 characters, confirmation matching).
+     - **STRICT DEMO SAFETY:**
+       - No backend update.
+       - No API call.
+       - No password persistence.
+       - No plaintext password storage.
+       - No fake production authentication behavior.
+       - Do NOT use wording such as `"Password updated successfully"` as if a real account password was changed.
+       - Use clearly demo-safe wording: `"Demo password update validated locally (UI demo — no real password was changed)"`.
+  4. Store 2FA enabled boolean in `localStorage` under `college_os_security_settings_v1`.
+  5. Provide toast notifications using demo-safe wording for successful local state changes.
 - **Acceptance Criteria:**
-  - Completing the 2FA setup updates the toggle to "Enabled" and updates local state.
-  - Password form performs client-side validation (minimum 8 characters, match confirmation) without storing raw credentials.
+  - Completing the 2FA setup updates the toggle to "Enabled (Demo)" and updates local state.
+  - Password form performs client-side validation without storing raw credentials or calling any backend.
+  - Success feedback explicitly states that the password update was a local UI demo.
   - Modal and cards clearly indicate that 2FA and password management are simulated local UI experiences.
 - **Build / Validation:** Run `npm run build` inside `frontend/`.
 - **Commit Checkpoint:**  
@@ -449,11 +459,11 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P4-T03: Build Active Login Sessions & Connected Accounts UI
+### - [ ] P4-T03: Build Active Login Sessions & Connected Accounts UI (Demo State)
 - **Task ID:** P4-T03
-- **Title:** Build Active Login Sessions & Connected Accounts UI
+- **Title:** Build Active Login Sessions & Connected Accounts UI (Demo State)
 - **Size:** MEDIUM
-- **Objective:** Implement active session cards with local revoke actions, and connected accounts cards with all providers defaulted to "Not Connected".
+- **Objective:** Implement demo session cards with local revoke actions, and connected accounts cards with all providers defaulted to "Not Connected", without fabricated security telemetry.
 - **Current State:** No UI exists for viewing active devices or managing external connected accounts.
 - **Scope:**
   - Create: `frontend/components/settings/security/ActiveSessionsCard.jsx`
@@ -463,24 +473,31 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
   - Modify: `frontend/components/settings/security/SecurityAssembler.jsx`
 - **Dependencies:** P4-T02 must be complete.
 - **Implementation Requirements:**
-  1. **ActiveSessionsCard:** List session items labeled as `"Demo Session (This Device)"` and `"Local Mobile Demo"`.
-     - Display browser name, operating system, and last active timestamp.
-     - Do NOT fabricate fake real-looking public IP addresses or fake geolocations.
-     - Include "Revoke Session" button with confirmation modal that removes the session from local React state.
-     - Clearly state that session revocation is a local simulation.
+  1. **ActiveSessionsCard:**
+     - List session cards labeled strictly as mock/local UI state:
+       - `"Demo Session (This Device)"` (Browser: Chrome, Platform: Windows, Status: `"Active Demo Session"`)
+       - `"Local Mobile Demo"` (Browser: Mobile Safari, Platform: iOS / Android, Status: `"Active Demo Session"`)
+     - **NO FAKE SECURITY TELEMETRY:**
+       - Do NOT invent or display realistic fake IP addresses (e.g. 192.168.x.x, 203.0.113.x).
+       - Do NOT invent fake geographic locations (e.g. "San Francisco, CA", "New Delhi, IN").
+       - Do NOT invent exact fake login timestamps presented as real history.
+       - Do NOT invent device fingerprints or fake session IDs.
+     - Include "Revoke Session" button with confirmation modal that removes the session card from local React state.
+     - Clearly state in UI: `"Revoking a demo session removes it from this local preview only; no server-side session invalidation occurs."`
   2. **ConnectedAccountsCard:** Render 4 provider rows:
-     - Google
-     - GitHub
-     - LinkedIn
-     - Microsoft / Office 365
-  3. **DEFAULT TO "NOT CONNECTED":** All providers must be initialized as `"Not Connected"`. Do NOT assume or fabricate a connected Google institutional account.
-  4. Clicking "Connect" opens a simulated confirmation modal and toggles local status to `"Connected (Demo)"`.
+     - Google — `"Not Connected"`
+     - GitHub — `"Not Connected"`
+     - LinkedIn — `"Not Connected"`
+     - Microsoft / Office 365 — `"Not Connected"`
+  3. **DEFAULT TO "NOT CONNECTED":** All 4 providers must initialize as `"Not Connected"`. Do NOT assume or fabricate a connected institutional email or provider profile.
+  4. Clicking "Connect" opens an explicitly local/demo confirmation dialog and toggles status to `"Connected (Demo)"`.
   5. Clicking "Disconnect" prompts for confirmation and reverts status to `"Not Connected"`.
   6. Store connection preferences in `localStorage` under `college_os_connected_accounts_v1`.
-  7. **SecurityAuditLogCard:** Chronological list of demo security events (e.g. "Demo session started", "2FA simulation updated").
+  7. **SecurityAuditLogCard:** Chronological list of demo events labeled as simulated (e.g. `"Local demo session initialized"`, `"Demo 2FA walkthrough completed"`).
 - **Acceptance Criteria:**
   - All 4 provider accounts initialize in "Not Connected" state.
-  - Toggling connect/disconnect updates local state with toast feedback; zero external OAuth network requests are dispatched.
+  - Zero fabricated IP addresses, geolocations, or realistic telemetry are rendered.
+  - Toggling connect/disconnect updates local demo state with toast feedback; zero external OAuth network requests are dispatched.
   - Revoking a demo session removes it from the list with explicit disclaimer that no server session was invalidated.
 - **Build / Validation:** Run `npm run build` inside `frontend/`.
 - **Commit Checkpoint:**  
