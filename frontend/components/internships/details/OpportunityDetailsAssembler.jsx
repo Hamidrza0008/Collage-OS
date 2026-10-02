@@ -18,7 +18,7 @@ import MobileOpportunityActionBar from './MobileOpportunityActionBar';
 import ApplyModal from './ApplyModal';
 import HackathonRegisterModal from './HackathonRegisterModal';
 import ApplicationSuccessModal from './ApplicationSuccessModal';
-import OpportunityDocViewerModal from './OpportunityDocViewerModal';
+import DocumentViewerModal from '@/components/shared/DocumentViewerModal';
 import ReportOpportunityModal from './ReportOpportunityModal';
 import { isSaved as checkIsSaved, toggleSavedItem, subscribeToSavedChanges } from '@/components/saved/savedItemsStore';
 
@@ -172,6 +172,10 @@ export default function OpportunityDetailsAssembler({ opportunity, related = [] 
     setActiveDoc(doc);
   };
 
+  const handleDownloadDoc = (doc) => {
+    showToast(`Downloading "${doc.name}"...`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50/50 dark:bg-[#021512] transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12 space-y-6">
@@ -225,6 +229,7 @@ export default function OpportunityDetailsAssembler({ opportunity, related = [] 
             <OpportunityDocuments
               opportunity={opportunity}
               onPreview={handlePreviewDoc}
+              onDownload={handleDownloadDoc}
             />
           </main>
 
@@ -287,11 +292,27 @@ export default function OpportunityDetailsAssembler({ opportunity, related = [] 
         applicationData={userApplication}
       />
 
-      {/* 4. Document Viewer Modal */}
-      <OpportunityDocViewerModal
+      {/* 4. Canonical Document Viewer Modal (MD-08) */}
+      <DocumentViewerModal
         isOpen={Boolean(activeDoc)}
         onClose={() => setActiveDoc(null)}
-        document={activeDoc}
+        file={
+          activeDoc
+            ? {
+                id: activeDoc.id || activeDoc.name,
+                name: activeDoc.name,
+                type: activeDoc.type || "application/pdf",
+                size: activeDoc.size || "",
+                url: activeDoc.url || "/assets/documents/sample-opportunity.pdf",
+              }
+            : null
+        }
+        sourceContext={`${opportunity.company} • ${opportunity.title}`}
+        onDownload={() => {
+          if (activeDoc) {
+            handleDownloadDoc(activeDoc);
+          }
+        }}
       />
 
       {/* 5. Report Opportunity Modal */}

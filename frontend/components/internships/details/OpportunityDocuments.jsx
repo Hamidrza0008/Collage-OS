@@ -2,8 +2,26 @@
 
 import { FileText, Download, Eye, Paperclip } from "lucide-react";
 
-export default function OpportunityDocuments({ documents = [], onPreviewDoc, onDownloadDoc }) {
+export default function OpportunityDocuments({
+  opportunity,
+  documents: directDocs,
+  onPreview,
+  onPreviewDoc,
+  onDownload,
+  onDownloadDoc,
+}) {
+  const documents = directDocs || opportunity?.documents || [];
   if (!documents || documents.length === 0) return null;
+
+  const handlePreview = (doc) => {
+    if (onPreviewDoc) onPreviewDoc(doc);
+    else if (onPreview) onPreview(doc);
+  };
+
+  const handleDownload = (doc) => {
+    if (onDownloadDoc) onDownloadDoc(doc);
+    else if (onDownload) onDownload(doc);
+  };
 
   return (
     <div className="rounded-2xl bg-[#FFFFFF] dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] shadow-xs p-5 sm:p-7 transition-all">
@@ -35,7 +53,7 @@ export default function OpportunityDocuments({ documents = [], onPreviewDoc, onD
             <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
               <button
                 type="button"
-                onClick={() => onPreviewDoc(doc)}
+                onClick={() => handlePreview(doc)}
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] text-[#159B72] dark:text-[#20D39B] hover:bg-[#DDF4EB]/50 transition-all flex items-center gap-1 cursor-pointer"
               >
                 <Eye className="w-3.5 h-3.5" />
@@ -44,7 +62,7 @@ export default function OpportunityDocuments({ documents = [], onPreviewDoc, onD
 
               <button
                 type="button"
-                onClick={() => onDownloadDoc(doc)}
+                onClick={() => handleDownload(doc)}
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#159B72] hover:bg-[#0F805D] text-white shadow-2xs transition-all flex items-center gap-1 cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />

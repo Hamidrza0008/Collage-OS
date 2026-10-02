@@ -213,7 +213,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P2-T02: Migrate Opportunity Details to Canonical DocumentViewerModal
+### - [x] P2-T02: Migrate Opportunity Details to Canonical DocumentViewerModal
 - **Task ID:** P2-T02
 - **Title:** Migrate Opportunity Details to Canonical DocumentViewerModal
 - **Size:** SMALL
