@@ -15,7 +15,7 @@
       font-weight: 500;
     }
     @top-right {
-      content: "🔒 LOCKED — SOURCE OF TRUTH (v1.0)";
+      content: "🔒 LOCKED — SOURCE OF TRUTH (v1.1)";
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       font-size: 7.5pt;
       color: #047857;
@@ -679,7 +679,7 @@
       </div>
       <div class="metadata-item">
         <div class="metadata-label">Document Version &amp; Status</div>
-        <div class="metadata-value">Version 1.0 &bull; Step 1 Foundation Locked</div>
+        <div class="metadata-value">Version 1.1 &bull; Foundation Updated — Auth &amp; Onboarding Locked</div>
       </div>
     </div>
   </div>
@@ -693,14 +693,29 @@
 <!-- PAGE 2: SOT POLICY + TABLE OF CONTENTS -->
 <div class="doc-wrapper">
   
-  <!-- SOURCE OF TRUTH POLICY -->
+  <!-- SOURCE OF TRUTH POLICY & VERSION 1.1 REVISION DIRECTIVE -->
   <div class="callout-sot" style="margin-top: 6pt;">
-    <div class="callout-title">
+    <div class="callout-title" style="display: flex; justify-content: space-between; align-items: center;">
       <span>🔒 SOURCE OF TRUTH POLICY &amp; GOVERNANCE DIRECTIVE</span>
+      <span class="cover-status-tag" style="font-size: 7pt; padding: 2px 8px; background: rgba(16, 185, 129, 0.2);">VERSION 1.1 LOCKED</span>
     </div>
     <p style="margin: 2pt 0; font-size: 8.5pt;">
       <strong>Purpose &amp; Authority:</strong> This document establishes the authoritative, finalized planning decisions for <strong>College OS</strong>. All sections marked with <strong>🔒 LOCKED — SOURCE OF TRUTH</strong> are permanently binding across all development phases, backend architectures, MongoDB schemas, Next.js frontend modules, and Campus AI retrieval pipelines.
     </p>
+    <div style="margin-top: 4pt; padding: 5pt 8pt; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 7.6pt; line-height: 1.4;">
+      <strong>Version 1.1 Revision Changelog (Foundation Updated — Authentication &amp; Institutional Onboarding Locked):</strong>
+      <ul style="margin: 2pt 0 0 0; padding-left: 14px;">
+        <li>Added institution-controlled identity architecture ("Users do not choose their institutional role; the institution provisions/authorizes it").</li>
+        <li>Replaced unrestricted role-based signup concept; eliminated public self-registration across all roles.</li>
+        <li>Locked student account activation workflow via verified institutional records (Enrollment Number + Official Contact + OTP).</li>
+        <li>Locked faculty/staff activation workflow (Employee ID + Official Contact + OTP).</li>
+        <li>Clarified HOD / Principal / VP provisioning (institution-provisioned; authenticated via Staff/Institutional Login; zero self-elevation).</li>
+        <li>Added account lifecycle states: <code>INVITED / NOT_ACTIVATED</code>, <code>ACTIVE</code>, <code>SUSPENDED</code>, <code>GRADUATED / INACTIVE</code>.</li>
+        <li>Clarified strict separation of institution-controlled academic identity data vs. user-controlled showcase profile data.</li>
+        <li>Updated authentication UI model: two clean entry paths (Student Portal vs. Faculty &amp; College Staff Portal).</li>
+        <li>Updated MongoDB operational schemas (<code>users</code>, <code>studentProfiles</code>, <code>facultyProfiles</code>), RBAC matrices, and Campus AI authority pipelines.</li>
+      </ul>
+    </div>
     <ul style="margin: 3pt 0 0 0; font-size: 8pt;">
       <li><strong>Authoritative Rule:</strong> Engineering execution must strictly implement these locked decisions without arbitrary deviations.</li>
       <li><strong>Change Control:</strong> Any modification requires explicit justification against the 4-Question Evaluation Gate and formal increment of document versioning.</li>
@@ -753,7 +768,7 @@
           <span class="toc-tag">LOCKED</span>
         </div>
         <div class="toc-item">
-          <span class="toc-text">10. Core User Types &bull; Initial Scope</span>
+          <span class="toc-text">10. Core User Types &amp; Institutional Onboarding</span>
           <span class="toc-tag">LOCKED</span>
         </div>
         <div class="toc-item">
@@ -772,7 +787,7 @@
 
       <div>
         <div class="toc-item">
-          <span class="toc-text">14. Core Functionality (11 Modules)</span>
+          <span class="toc-text">14. Core Functionality (11 MVP Modules &bull; Auth Updated)</span>
           <span class="toc-tag">LOCKED</span>
         </div>
         <div class="toc-item">
@@ -792,7 +807,7 @@
           <span class="toc-tag">LOCKED</span>
         </div>
         <div class="toc-item">
-          <span class="toc-text">19. What College OS Is NOT</span>
+          <span class="toc-text">19. What College OS Is NOT (Security Non-Goals)</span>
           <span class="toc-tag">LOCKED</span>
         </div>
         <div class="toc-item">
@@ -800,11 +815,11 @@
           <span class="toc-tag">LOCKED</span>
         </div>
         <div class="toc-item">
-          <span class="toc-text">21. Master Product Taxonomy Tree</span>
+          <span class="toc-text">21. Master Product Taxonomy Tree (Updated v1.1)</span>
           <span class="toc-tag">LOCKED</span>
         </div>
         <div class="toc-item">
-          <span class="toc-text">22. Master Registry of Locked Decisions</span>
+          <span class="toc-text">22. Master Registry of Locked Decisions (v1.1 Additions)</span>
           <span class="toc-tag">LOCKED</span>
         </div>
         <div class="toc-item">
@@ -835,7 +850,7 @@
   <h1 class="step-title">
     STEP 1 &bull; PROJECT FOUNDATION &amp; SCOPE
     <div style="font-size: 9pt; font-weight: 500; color: #475569; margin-top: 3px;">
-      Source of Truth — Version 1.0 &bull; Baseline Architectural Planning
+      Source of Truth — Version 1.1 &bull; Baseline Architectural Planning — Authentication &amp; Institutional Onboarding Locked
     </div>
   </h1>
 
@@ -960,26 +975,31 @@
 
   <hr class="divider" />
 
-  <!-- 5. STUDENT INTERACTION PROBLEM -->
+  <!-- 5. STUDENT INTERACTION & CAMPUS PROFILE ARCHITECTURE -->
   <h2>5. Student Interaction &amp; Campus Profile Architecture <span class="locked-pill">🔒 Locked</span></h2>
   <p>
-    College OS establishes a dedicated student identity model that lives natively within the institutional software environment:
+    College OS establishes a dedicated student identity model that lives natively within the institutional software environment. A foundational architectural principle separates <strong>institution-controlled academic identity</strong> from <strong>user-controlled profile content</strong>:
   </p>
 
   <div class="diagram-container">
-    <div class="diagram-title">Student Profile Identity Architecture</div>
+    <div class="diagram-title">Student Profile Identity Architecture &bull; Two-Tier Data Division</div>
     <div class="flow-row">
-      <div class="flow-node primary">Student Account</div>
+      <div class="flow-node primary">College Official Record (Immutable)</div>
       <div class="flow-arrow">&rarr;</div>
-      <div class="flow-node highlight">Verified Campus Profile</div>
+      <div class="flow-node highlight">Activated Student Account</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node primary">Verified Campus Profile</div>
     </div>
     <div class="flow-arrow-down">&darr;</div>
-    <div class="flow-row">
-      <div class="flow-node secondary">About / Bio</div>
-      <div class="flow-node secondary">Technical Skills</div>
-      <div class="flow-node secondary">GitHub Profile</div>
-      <div class="flow-node secondary">Personal Website</div>
-      <div class="flow-node secondary">Project Showcase</div>
+    <div class="flow-row" style="gap: 8px;">
+      <div class="flow-node secondary" style="flex: 1; border-color: #dc2626;">
+        <strong style="color: #b91c1c;">Tier 1: Institution-Controlled (Read-Only)</strong><br />
+        <span style="font-size: 6.8pt;">Full Name &bull; Enrollment No. &bull; Roll No. &bull; Official Email &bull; Branch &bull; Semester &bull; Section &bull; Status</span>
+      </div>
+      <div class="flow-node secondary" style="flex: 1; border-color: #10b981;">
+        <strong style="color: #047857;">Tier 2: Student-Controlled (Customizable)</strong><br />
+        <span style="font-size: 6.8pt;">Profile Photo &bull; Bio / About &bull; Technical Skills &bull; GitHub &bull; Portfolio Website &bull; Project Showcase</span>
+      </div>
     </div>
   </div>
 
@@ -1070,39 +1090,200 @@
 
   <hr class="divider" />
 
-  <!-- 10. CORE USER TYPES -->
-  <h2>10. Core User Types &bull; Initial Scope Definition <span class="locked-pill">🔒 Locked</span></h2>
+  <!-- 10. CORE USER TYPES & INSTITUTIONAL ONBOARDING ARCHITECTURE -->
+  <h2>10. Core User Types &amp; Institutional Onboarding Architecture <span class="locked-pill">🔒 Locked v1.1</span></h2>
   
-  <table>
+  <div class="callout-sot">
+    <div class="callout-title">Core Institutional Identity Principle</div>
+    <strong>"Users do not choose their institutional role. The institution provisions and authorizes the user's role."</strong><br />
+    College OS is an institution-controlled digital campus platform, NOT an open public registration portal. A user cannot self-register and arbitrarily select <em>Student</em>, <em>Faculty</em>, <em>HOD</em>, <em>Principal</em>, or <em>VP</em>. All institutional identities and roles must originate from official college records.
+  </div>
+
+  <table style="margin-top: 6pt;">
     <thead>
       <tr>
-        <th style="width: 20%;">User Role</th>
-        <th style="width: 35%;">Functional Scope &amp; Access</th>
-        <th style="width: 45%;">Key Capabilities</th>
+        <th style="width: 18%;">User Role</th>
+        <th style="width: 32%;">Provisioning &amp; Onboarding Mechanism</th>
+        <th style="width: 50%;">Functional Scope &amp; Access Boundaries</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><strong>Student</strong></td>
-        <td>Primary platform end users; restricted strictly to own academic records and public campus directories.</td>
-        <td>Personal dashboard, timetable, own attendance, own marks, assignments submission, campus notices, events, Campus AI assistant, personal profile, project showcase, explore directory, project likes.</td>
+        <td><strong>Institutional Pre-Provisioning &rarr; Self-Activation:</strong> College imports/creates official record. Student activates account via verified Enrollment No. + Official Email/Phone + OTP, then sets own password.</td>
+        <td>Primary platform users; restricted strictly to own academic records (attendance, marks, timetable, assignments) and public campus directories (profile showcase, explore directory, project likes, notices, events, Campus AI).</td>
       </tr>
       <tr>
         <td><strong>Faculty</strong></td>
-        <td>Academic managers; granted elevated, strictly scoped permissions based on admin course assignments.</td>
-        <td>Faculty dashboard, view assigned classes/subjects only, record attendance for assigned classes, create/evaluate assignments, enter academic marks, publish class/departmental notices.</td>
+        <td><strong>Institutional Pre-Provisioning &rarr; Self-Activation:</strong> College administration provisions faculty record with Employee ID, department, and teaching assignments. Faculty activates via Employee ID + Contact + OTP, then sets password.</td>
+        <td>Academic managers; granted elevated, strictly scoped permissions bounded dynamically to admin-assigned classes and subjects (attendance marking, assignment creation/grading, marks entry, class notices).</td>
       </tr>
       <tr>
-        <td><strong>College / Institution</strong></td>
-        <td>Official institutional entity represented on the platform.</td>
-        <td>Official institution profile, publish college-wide verified notices, post campus events, broadcast administrative updates (managed by authorized administrative personnel).</td>
+        <td><strong>HOD (Head of Department)</strong></td>
+        <td><strong>Administrative Provisioning Only:</strong> Provisioned directly by executive authority with departmental scope. Authenticates via Staff Login. Never self-selectable.</td>
+        <td>Department-level academic oversight; review faculty class assignments, inspect departmental attendance and grades, publish department bulletins, monitor curricula.</td>
+      </tr>
+      <tr>
+        <td><strong>Principal / VP / Dean</strong></td>
+        <td><strong>Administrative Provisioning Only:</strong> Executive-level credentials provisioned by university governance. Authenticates via Staff Login. Never self-selectable.</td>
+        <td>Campus-wide institutional oversight; campus-wide bulletins, cross-department academic audits, university event authoring, executive reports.</td>
+      </tr>
+      <tr>
+        <td><strong>College / Institution Entity</strong></td>
+        <td><strong>Singleton Institutional Presence:</strong> Official profile representing the university/college as an institution.</td>
+        <td>Official institution profile, verified campus circulars, accredited announcements, master academic calendars (managed by authorized administrative personnel).</td>
       </tr>
     </tbody>
   </table>
 
-  <div class="callout">
-    <strong>Note on Granular Permissions:</strong> The precise RBAC matrix governing specific roles (Assistant Professor, HOD, Principal, Dean, Super Admin) is formally finalized in Step 2.
+  <h3>10.1 Student Authentication &amp; Account Activation Flow <span class="locked-pill">🔒 Locked Flow</span></h3>
+  <p>
+    A student does <strong>not</strong> independently invent their institutional identity during signup. Before an account can be activated, the college must already have an official student record in College OS containing:
+    <em>Full Name, Enrollment Number / Student ID, Official College Email, Phone Number, Department / Branch, Semester, Section, Roll Number, and Academic Status</em>.
+  </p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Locked Student Account Activation Lifecycle Flow</div>
+    <div class="flow-row">
+      <div class="flow-node secondary" style="font-size: 7.2pt;">1. College Creates / Imports Student Record</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node secondary" style="font-size: 7.2pt;">2. Record in College OS (accountStatus = INVITED)</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node secondary" style="font-size: 7.2pt;">3. Student Opens College OS &amp; Selects "Activate Account"</div>
+    </div>
+    <div class="flow-arrow-down">&darr;</div>
+    <div class="flow-row">
+      <div class="flow-node highlight" style="font-size: 7.2pt;">4. Student Enters Enrollment No. + Official Email / Contact</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight" style="font-size: 7.2pt;">5. System Verifies Record &amp; Dispatches Secure OTP</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight" style="font-size: 7.2pt;">6. OTP Verification Confirmed</div>
+    </div>
+    <div class="flow-arrow-down">&darr;</div>
+    <div class="flow-row">
+      <div class="flow-node primary" style="font-size: 7.2pt;">7. System Displays Verified Academic Identity (Read-Only)</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node primary" style="font-size: 7.2pt;">8. Student Creates Own Password (Bcrypt Hashed)</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node primary" style="font-size: 7.2pt; border-color: #10b981;">9. Account ACTIVE &rarr; Login &rarr; Student Dashboard</div>
+    </div>
   </div>
+
+  <div class="two-col" style="margin-top: 5pt;">
+    <div class="panel-box">
+      <div class="panel-header">🔒 Student Account Security Rule</div>
+      <p style="font-size: 8pt; margin: 2pt 0;">
+        <strong>Enrollment Number alone is strictly INSUFFICIENT for activation.</strong> To prevent malicious takeover by anyone knowing a student's public enrollment ID, the system requires a multi-factor handshake: <code>Enrollment Number</code> + <code>Official College Email / Verified Phone</code> + <code>Time-bound OTP</code>.
+      </p>
+    </div>
+    <div class="panel-box">
+      <div class="panel-header">🔒 Password Ownership &amp; Privacy Policy</div>
+      <p style="font-size: 8pt; margin: 2pt 0;">
+        <strong>The college does NOT provide or maintain permanent student passwords.</strong> Students create their own passwords during activation. Credentials are cryptographically hashed using <code>bcrypt</code> (cost factor &ge; 10). College staff have zero access to plaintext passwords.
+      </p>
+    </div>
+  </div>
+
+  <h3>10.2 Faculty &amp; Staff Authentication Flow <span class="locked-pill">🔒 Locked Flow</span></h3>
+  <p>
+    Faculty members follow the identical institution-controlled provisioning principle. The college administration provisions the faculty record (<em>Employee ID, Full Name, Official Email, Department, Designation, Assigned Classes, Assigned Subjects</em>).
+  </p>
+  <div class="diagram-container">
+    <div class="diagram-title">Faculty &amp; Staff Institutional Onboarding &amp; Activation Flow</div>
+    <div class="flow-row">
+      <div class="flow-node secondary" style="font-size: 7.2pt;">1. College Provisions Faculty Record &amp; Course Assignments</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node secondary" style="font-size: 7.2pt;">2. Faculty Verifies Employee ID + Official Email/Contact</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node highlight" style="font-size: 7.2pt;">3. Dispatches OTP &amp; Verifies Identity</div>
+    </div>
+    <div class="flow-arrow-down">&darr;</div>
+    <div class="flow-row">
+      <div class="flow-node highlight" style="font-size: 7.2pt;">4. Faculty Creates Secure Password</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node primary" style="font-size: 7.2pt;">5. Account ACTIVE &bull; Role Bound to Institutional Record</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node primary" style="font-size: 7.2pt; border-color: #10b981;">6. Faculty Logs in via Staff Portal &rarr; Faculty Dashboard</div>
+    </div>
+  </div>
+
+  <h3>10.3 HOD, Principal &amp; Executive Provisioning <span class="locked-pill">🔒 Locked Rule</span></h3>
+  <div class="callout-warning">
+    <strong>Zero Public Self-Registration for Institutional Authorities:</strong> There is NO public <em>"Sign Up as HOD"</em>, <em>"Sign Up as Principal"</em>, or <em>"Sign Up as VP"</em>. These high-privilege administrative accounts are provisioned exclusively through authorized institutional channels. A user can never elevate their own privileges through user-inputted registration fields.
+  </div>
+
+  <h3>10.4 Authentication UI Information Architecture <span class="locked-pill">🔒 Locked UX</span></h3>
+  <p>
+    The public-facing authentication interface eliminates all generic role-selection dropdowns. Instead, College OS provides two streamlined authentication paths:
+  </p>
+  <div class="tree-node" style="font-size: 8pt;">
+COLLEGE OS AUTHENTICATION PORTAL
+    ├── 1. Student Portal
+    │     ├── Student Login (Email/Enrollment No. + Password)
+    │     └── Activate Student Account ("Activate Your College OS Account" &bull; OTP Verification)
+    │
+    └── 2. Faculty &amp; College Staff Portal
+          └── Staff Login (Email/Employee ID + Password &bull; Backend Authoritative Role Resolution)
+  </div>
+  <p style="font-size: 7.8pt; color: #475569; margin-top: 3pt;">
+    <em>Note:</em> For staff, the backend securely determines whether the authenticated user is Faculty, HOD, Principal, or VP based strictly on their institutionally provisioned database record.
+  </p>
+
+  <h3>10.5 Account Status Lifecycle Management <span class="locked-pill">🔒 Locked States</span></h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Lifecycle State</th>
+        <th style="width: 25%;">System Trigger</th>
+        <th style="width: 50%;">Access &amp; Operational Permissions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>INVITED / NOT_ACTIVATED</code></td>
+        <td>Official record created/imported by college</td>
+        <td>Pre-provisioned record exists in operational store; cannot log in; pending identity verification and password creation.</td>
+      </tr>
+      <tr>
+        <td><code>ACTIVE</code></td>
+        <td>Successful OTP verification + password creation</td>
+        <td>Full role-permitted access to student or staff dashboard, academic tools, directory, and Campus AI.</td>
+      </tr>
+      <tr>
+        <td><code>SUSPENDED</code></td>
+        <td>Administrative disciplinary action or security hold</td>
+        <td>Authentication blocked; session tokens invalidated; read/write access revoked pending institutional review.</td>
+      </tr>
+      <tr>
+        <td><code>GRADUATED / INACTIVE</code></td>
+        <td>Student graduation or faculty offboarding</td>
+        <td>Archived academic record; read-only portfolio preservation if alumni policy permits; write access revoked.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>10.6 Institution-Controlled Data vs. User-Controlled Profile Data <span class="locked-pill">🔒 Locked Boundary</span></h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 22%;">Data Classification</th>
+        <th style="width: 43%;">Contained Attributes</th>
+        <th style="width: 35%;">Governance &amp; Mutation Rules</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Institution-Controlled Data</strong><br /><span style="font-size: 7pt; color: #dc2626;">Official Academic Identity</span></td>
+        <td>Full Name, Enrollment Number / Student ID, Roll Number, Official College Email, Institutional Phone, Department / Branch, Current Semester, Section, Academic Standing, Faculty Employee ID, Faculty Designation, Assigned Classes &amp; Subjects, Institutional Role.</td>
+        <td><strong>Read-Only for User:</strong> Established exclusively via institutional provisioning. The user CANNOT edit, redefine, or forge these values. Updates require administrative verification.</td>
+      </tr>
+      <tr>
+        <td><strong>User-Controlled Profile Data</strong><br /><span style="font-size: 7pt; color: #16a34a;">Student Portfolio &amp; Showcase</span></td>
+        <td>Profile Avatar / Photo, About Me / Bio, Technical Skills tags, GitHub Profile URL, Personal Website / Portfolio Link, Project Showcase submissions, Approved interest tags.</td>
+        <td><strong>Customizable by User:</strong> Editable directly by the authenticated user to build a professional campus presence and project portfolio.</td>
+      </tr>
+    </tbody>
+  </table>
 
   <hr class="divider" />
 
@@ -1167,7 +1348,7 @@
       <tr>
         <td>1</td>
         <td><strong>Authentication &amp; RBAC</strong></td>
-        <td>Secure registration, credential authentication, JWT session lifecycle, role identification, and granular route authorization.</td>
+        <td>Institution-controlled user provisioning, student account activation (Enrollment + Contact + OTP), faculty/staff activation, role provisioning, secure credential creation, login, session lifecycle (JWT/HttpOnly), RBAC authorization, account lifecycle management, and verification.</td>
         <td>All Users</td>
       </tr>
       <tr>
@@ -1242,7 +1423,7 @@
   </p>
   <ul>
     <li><strong>College OS is the Primary Source of Truth:</strong> The assistant's reasoning is anchored strictly in authoritative College OS databases (MongoDB operational store) and verified institutional documents (RAG vector store).</li>
-    <li><strong>One Common Engine with Role-Aware Context:</strong> Student AI and Faculty AI share ONE common Campus AI engine. The authenticated user's role and RBAC permissions govern accessible context, permitted data, RAG document scope, suggested prompts, and actions.</li>
+    <li><strong>One Common Engine with Role-Aware Context &amp; Authoritative RBAC:</strong> Student AI and Faculty AI share ONE common Campus AI engine. The AI authorization pipeline is strictly bounded: <em>Authenticated User &rarr; Institution Check &rarr; Authoritative Backend Role &rarr; RBAC Permissions &rarr; Allowed Context &rarr; Grounded Query</em>. User-claimed roles from the frontend are never trusted; the authenticated institutional role from the database is authoritative. Queries enforce least privilege, and passwords, credentials, OTPs, session tokens, and unauthorized student/faculty records are strictly excluded.</li>
     <li><strong>Absolute Anti-Hallucination Mandate:</strong> If an authenticated student or faculty member asks a college question not found in verified records, the assistant explicitly responds: <em>"This information is currently unavailable in official college records"</em>, rather than speculating.</li>
     <li><strong>Contextual Privacy, Least-Privilege &amp; Credential Exclusion:</strong> Queries strictly enforce RBAC (students: own records; faculty: assigned classes/students). The AI never exposes unauthorized peer data, another faculty's records, or credentials.</li>
   </ul>
@@ -1311,7 +1492,7 @@ PHASE 2 EXPANSION ROADMAP
     <div class="panel-box" style="border-top: 3px solid #2563eb;">
       <div class="panel-header" style="color: #2563eb;">Core MVP Scope (Current Focus)</div>
       <ul style="font-size: 8pt; margin: 2pt 0 0 0; padding-left: 14px;">
-        <li>Authentication &amp; RBAC</li>
+        <li>Authentication, Institutional Identity &amp; RBAC</li>
         <li>Student Profile &amp; Showcase</li>
         <li>Student Projects Showcase</li>
         <li>Explore Students &amp; Projects</li>
@@ -1350,6 +1531,7 @@ PHASE 2 EXPANSION ROADMAP
     To protect engineering resources and prevent fatal scope creep, College OS explicitly defines what it is <strong>NOT</strong>:
   </p>
   <ul>
+    <li><strong>NOT an unrestricted public registration platform:</strong> College OS is not an open social platform where anyone can create a fake institutional identity or self-assign an academic/administrative role. The platform's institutional identity layer must remain strictly college-controlled.</li>
     <li><strong>NOT a complete 100% replacement for institutional legacy systems:</strong> It integrates with or sits alongside complex backend administration without attempting to rebuild financial accounting engines.</li>
     <li><strong>NOT a generic, open social network:</strong> It is not Instagram, Facebook, or Twitter; all interactions are academically and professionally focused.</li>
     <li><strong>NOT a generic ChatGPT clone:</strong> The AI is an anchored institutional tool, not an open-ended conversational gimmick.</li>
@@ -1383,10 +1565,15 @@ PHASE 2 EXPANSION ROADMAP
   <div class="tree-node">
 COLLEGE OS PLATFORM
 │
-├── 1. AUTHENTICATION & SECURITY
-│   ├── User Registration & Login (Email/Password)
-│   ├── Role Identification (Student, Faculty, Admin)
-│   └── Session Security (JWT, HttpOnly Cookies, RBAC Guard)
+├── 1. AUTHENTICATION & INSTITUTIONAL IDENTITY
+│   ├── Institutional User Provisioning (College Pre-Created Records)
+│   ├── Student Account Activation (Enrollment No. + Contact + OTP Verification)
+│   ├── Faculty / Staff Account Activation (Employee ID + Contact + OTP)
+│   ├── Secure Institutional Login (Student & Staff Portals)
+│   ├── Role Assignment (Institution-Provisioned, Backend-Authoritative)
+│   ├── Account Lifecycle Management (INVITED, ACTIVE, SUSPENDED, GRADUATED)
+│   ├── Credential Security (User-Owned Passwords, Bcrypt Hashing, Zero Plaintext)
+│   └── Session Security (JWT, HttpOnly Cookies, Scoped RBAC Guard)
 │
 ├── 2. STUDENT ECOSYSTEM
 │   ├── Verified Campus Profile (Bio, Skills, GitHub, Portfolio)
@@ -1435,6 +1622,56 @@ COLLEGE OS PLATFORM
         <td><strong>Project Identity</strong></td>
         <td><span class="locked-pill">LOCKED</span></td>
         <td>Working name established as <strong>College OS</strong>; final branding deferred.</td>
+      </tr>
+      <tr>
+        <td><strong>College-Controlled Identity</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Users do not choose their role; the institution provisions and authorizes all student, faculty, and administrative identities.</td>
+      </tr>
+      <tr>
+        <td><strong>No Open Registration</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Public self-registration with arbitrary role selection is strictly rejected across all user levels.</td>
+      </tr>
+      <tr>
+        <td><strong>Student Account Activation</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Students activate pre-provisioned records using Enrollment Number + Official Email/Phone + OTP; official academic identity is read-only.</td>
+      </tr>
+      <tr>
+        <td><strong>Multi-Factor Security Rule</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Enrollment Number alone is insufficient for activation; verified institution-controlled contact + OTP is mandatory.</td>
+      </tr>
+      <tr>
+        <td><strong>User Password Ownership</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Users create their own passwords during activation; stored via bcrypt; college staff does not maintain or see plaintext passwords.</td>
+      </tr>
+      <tr>
+        <td><strong>Faculty Account Activation</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Faculty activate provisioned records using Employee ID + Official Contact + OTP; permissions derive from institutional course mapping.</td>
+      </tr>
+      <tr>
+        <td><strong>HOD / Principal Provisioning</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Administrative accounts are provisioned exclusively through authorized institutional channels; zero public self-elevation.</td>
+      </tr>
+      <tr>
+        <td><strong>Authoritative Role Backend</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Roles are non-selectable and enforced by backend database authority; frontend role claims are never trusted.</td>
+      </tr>
+      <tr>
+        <td><strong>Identity vs. Profile Boundary</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Institution-controlled academic fields (immutable by user) are strictly separated from user-controlled showcase portfolio fields.</td>
+      </tr>
+      <tr>
+        <td><strong>Account Lifecycle Model</strong></td>
+        <td><span class="locked-pill">LOCKED v1.1</span></td>
+        <td>Formal lifecycle states enforced: INVITED/NOT_ACTIVATED &rarr; ACTIVE &rarr; SUSPENDED &rarr; GRADUATED/INACTIVE.</td>
       </tr>
       <tr>
         <td><strong>Core Vision</strong></td>
@@ -1584,7 +1821,7 @@ COLLEGE OS PLATFORM
       <li><strong>Core MVP Foundation:</strong> 11 fully validated, interlinked modules.</li>
       <li><strong>Future Horizons:</strong> 4 planned expansion modules reserved for Phase 2.</li>
       <li><strong>Governing Philosophy:</strong> <em>Core First &rarr; Stabilize &rarr; Expand</em>.</li>
-      <li><strong>Milestone Status:</strong> 🟢 <strong>FOUNDATION DEFINED &bull; READY FOR STEP 2 (USER TYPES &amp; PERMISSION MATRIX)</strong>.</li>
+      <li><strong>Milestone Status:</strong> 🟢 <strong>FOUNDATION UPDATED &amp; LOCKED &bull; AUTHENTICATION &amp; INSTITUTIONAL ONBOARDING LOCKED (v1.1)</strong>.</li>
     </ul>
   </div>
 
@@ -1679,7 +1916,9 @@ COLLEGE OS PLATFORM
     &darr;
 Authentication (JWT Session Validation)
     &darr;
-RBAC / Permission Check (Role &amp; Dynamic Assignment Scoping)
+Authoritative Institutional Role Check (Backend Database Authoritative)
+    &darr;
+RBAC / Dynamic Scoping (Class/Dept/Campus Bounded Permissions)
     &darr;
 Role-Specific Context
     ├── Student Context (Personal Scoped: Own Attendance, Timetable, Marks, Assignments)
@@ -1799,10 +2038,13 @@ Grounded AI Response (Least Privilege &bull; Zero Hallucination)</pre>
       </div>
       <div class="schema-body">{
   _id: ObjectId,
-  email: String,          // Unique institutional email
-  passwordHash: String,   // Bcrypt hashed credential
-  role: String,           // "student"|"faculty"|"admin"
-  isActive: Boolean,
+  institutionId: ObjectId,  // Ref -> collegeProfile._id
+  email: String,            // Unique official institutional email
+  passwordHash: String,     // Bcrypt hashed credential (user-created)
+  role: String,             // "student"|"faculty"|"hod"|"principal"|"vp"|"admin" (Institution-assigned)
+  accountStatus: String,    // "INVITED"|"ACTIVE"|"SUSPENDED"|"GRADUATED"
+  isActivated: Boolean,     // True once activation completed
+  activatedAt: Date,        // Timestamp of activation
   lastLoginAt: Date,
   createdAt: Date,
   updatedAt: Date
@@ -1816,17 +2058,23 @@ Grounded AI Response (Least Privilege &bull; Zero Hallucination)</pre>
       </div>
       <div class="schema-body">{
   _id: ObjectId,
-  userId: ObjectId,       // Reference -> users._id
-  studentId: String,      // College Roll Number / PRN
-  fullName: String,
-  department: String,     // e.g., "CSE"
-  semester: Number,       // e.g., 7
-  section: String,        // e.g., "A"
-  bio: String,
-  skills: [String],       // e.g., ["React", "MongoDB"]
-  githubUrl: String,
-  websiteUrl: String,
-  avatarUrl: String,
+  userId: ObjectId,         // Reference -> users._id
+  // --- INSTITUTION-CONTROLLED FIELDS (Immutable by Student) ---
+  studentId: String,        // Enrollment Number / University PRN
+  rollNumber: String,       // Class Roll Number (where applicable)
+  fullName: String,         // Official student name from college record
+  officialEmail: String,    // Institution-issued email address
+  phone: String,            // Institution-verified contact number
+  department: String,       // Academic Branch (e.g., "CSE")
+  semester: Number,         // Current Semester (e.g., 7)
+  section: String,          // Class Section (e.g., "A")
+  academicStatus: String,   // "REGULAR" | "PROBATION" | "GRADUATED"
+  // --- STUDENT-CONTROLLED PROFILE FIELDS (Customizable) ---
+  bio: String,              // Student personal statement
+  skills: [String],         // Verified technical skills (e.g., ["React", "MongoDB"])
+  githubUrl: String,        // GitHub developer profile
+  websiteUrl: String,       // Personal portfolio URL
+  avatarUrl: String,        // Profile display image
   createdAt: Date,
   updatedAt: Date
 }</div>
@@ -1842,14 +2090,21 @@ Grounded AI Response (Least Privilege &bull; Zero Hallucination)</pre>
       </div>
       <div class="schema-body">{
   _id: ObjectId,
-  userId: ObjectId,       // Reference -> users._id
-  facultyId: String,      // Employee ID
-  fullName: String,
-  department: String,
-  designation: String,    // "Assistant Professor"
-  assignedClassIds: [String], // Dynamically scoped
-  assignedSubjectIds: [String],
-  cabinLocation: String,
+  userId: ObjectId,         // Reference -> users._id
+  // --- INSTITUTION-CONTROLLED FIELDS (Immutable by Faculty) ---
+  facultyId: String,        // Official Employee / Faculty ID
+  fullName: String,         // Official faculty full name
+  officialEmail: String,    // Institutional email address
+  phone: String,            // Institution contact number
+  department: String,       // Academic Department (e.g., "CSE")
+  designation: String,      // "Assistant Professor" | "Professor"
+  assignedClassIds: [String],   // Classes dynamically assigned by Admin
+  assignedSubjectIds: [String], // Subjects dynamically assigned by Admin
+  academicStatus: String,   // "ACTIVE" | "ON_LEAVE" | "RELIEVED"
+  // --- FACULTY-CONTROLLED PROFILE FIELDS ---
+  cabinLocation: String,    // Campus office location (e.g., "Room 304, Tech Block")
+  bio: String,              // Academic & research overview
+  avatarUrl: String,        // Profile display image
   createdAt: Date,
   updatedAt: Date
 }</div>
@@ -2077,15 +2332,15 @@ Grounded AI Response (Least Privilege &bull; Zero Hallucination)</pre>
     <tbody>
       <tr>
         <td><strong>Authentication</strong></td>
-        <td>Login, Profile Password Update</td>
-        <td>Login, Profile Password Update</td>
-        <td>Create Users, Revoke Access, Assign Roles</td>
+        <td>Activate Account (Enrollment + Contact + OTP), Login, Self-service Password Change</td>
+        <td>Activate Account (Employee ID + Contact + OTP), Login, Self-service Password Change</td>
+        <td>Provision Users (Import/Create Student &amp; Staff records), Assign Roles, Revoke Access, Audit Lifecycle State</td>
       </tr>
       <tr>
         <td><strong>Student Profiles</strong></td>
-        <td>Create, Read All, Update Own</td>
-        <td>Read All Students in Assigned Classes</td>
-        <td>Read All, Administrative Edit / Suspend</td>
+        <td>Read All Directory, Update Student-Controlled Fields (Bio, Skills, GitHub, Portfolio). Zero edit access to Institution-Controlled Identity.</td>
+        <td>Read All Students in Assigned Classes/Subjects</td>
+        <td>Read All, Administrative Provisioning, Official Data Updates, Suspend Accounts</td>
       </tr>
       <tr>
         <td><strong>Projects &amp; Likes</strong></td>
@@ -2161,7 +2416,7 @@ Grounded AI Response (Least Privilege &bull; Zero Hallucination)</pre>
       <div style="text-align: center;">
         <div style="font-size: 7.5pt; font-weight: 700; color: #64748b;">STATUS</div>
         <div style="font-size: 8.5pt; font-weight: 700; color: #047857; margin-top: 1px;">🟢 BASELINE LOCKED</div>
-        <div style="font-size: 7pt; color: #94a3b8;">Source of Truth v1.0</div>
+        <div style="font-size: 7pt; color: #94a3b8;">Source of Truth v1.1</div>
       </div>
     </div>
   </div>

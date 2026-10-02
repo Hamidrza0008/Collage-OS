@@ -180,17 +180,31 @@ Before creating collections, understand the existing project requirements and av
 - [ ] Configure environment variables securely.
 - [ ] Never expose database credentials to the frontend.
 
-### 2. Core User System
+### 2. Core User System & Institutional Identity (LOCKED v1.1)
 
-Design the relationship between authentication users and their role-specific profiles.
+Design and lock the relationship between authentication users and their institutional profiles.
 
-Possible structure:
+**Core Principle**: *"Users do not choose their institutional role. The institution provisions and authorizes the user's role."* No public self-registration with arbitrary role selection.
 
-- [ ] users
-- [ ] studentProfiles
-- [ ] facultyProfiles
-
-Do not blindly create these collections if the existing architecture suggests a better structure. First evaluate the requirements and document the final decision.
+- [ ] `users` collection:
+  - `_id`: ObjectId
+  - `institutionId`: ObjectId (Ref -> `collegeProfile._id`)
+  - `email`: String (Unique official institutional email)
+  - `passwordHash`: String (Bcrypt hashed credential created by user during activation)
+  - `role`: String (Enum: `"student"` | `"faculty"` | `"hod"` | `"principal"` | `"vp"` | `"admin"` — assigned by institution, backend-authoritative)
+  - `accountStatus`: String (Enum: `"INVITED"` | `"ACTIVE"` | `"SUSPENDED"` | `"GRADUATED"`)
+  - `isActivated`: Boolean (True once activation completed)
+  - `activatedAt`: Date (Activation timestamp)
+  - `lastLoginAt`: Date
+  - `createdAt`: Date, `updatedAt`: Date
+- [ ] `studentProfiles` collection:
+  - **Institution-Controlled Fields (Immutable by student)**: `userId`, `studentId` (Enrollment Number/PRN), `rollNumber`, `fullName`, `officialEmail`, `phone`, `department`, `semester`, `section`, `academicStatus`
+  - **Student-Controlled Profile Fields (Customizable)**: `bio`, `skills`, `githubUrl`, `websiteUrl`, `avatarUrl`, `interests`
+- [ ] `facultyProfiles` collection:
+  - **Institution-Controlled Fields (Immutable by faculty)**: `userId`, `facultyId` (Employee ID), `fullName`, `officialEmail`, `phone`, `department`, `designation`, `assignedClassIds`, `assignedSubjectIds`, `academicStatus`
+  - **Faculty-Controlled Profile Fields**: `cabinLocation`, `bio`, `avatarUrl`
+- [ ] `collegeProfile` singleton collection:
+  - `institutionName`, `institutionCode`, `establishedYear`, `address`, `contactEmail`, `websiteUrl`, `authorizedAdminIds`, `institutionalBio`
 
 ### 3. Academic Data
 
@@ -198,7 +212,7 @@ Implement the required structured data models.
 
 - [ ] Courses / subjects
 - [ ] Classes / sections
-- [ ] Faculty assignments
+- [ ] Faculty assignments (dynamically binds faculty permissions)
 - [ ] Student-class relationships
 - [ ] Timetable
 - [ ] Attendance
@@ -214,15 +228,13 @@ Implement the required structured data models.
 
 ### 5. Student Ecosystem
 
-- [ ] Student profiles
+- [ ] Student profiles (separation of official academic identity vs showcase portfolio)
 - [ ] GitHub information
 - [ ] Personal website
 - [ ] Skills
 - [ ] Projects
-- [ ] Project members
+- [ ] Project members (multi-member attribution across profiles)
 - [ ] Project likes / engagement
-
-*Important*: A project may contain one or multiple student members. If multiple students are members of the same project, the project must appear appropriately on every member's profile.
 
 ### 6. Other College Features
 
@@ -232,25 +244,22 @@ Implement only features that are part of the finalized College OS scope.
 - [ ] Lost & Found
 - [ ] Other finalized modules
 
-### 7. Roles & Permissions
+### 7. Roles & Permissions (LOCKED v1.1)
 
-Define the database-level role model.
+Define the database-level role model. Roles are **institution-assigned and backend-authoritative**:
 
-Roles should support the finalized College OS structure:
-
-- [ ] Student
-- [ ] Faculty
-- [ ] HOD
-- [ ] Principal/VP
-
-Document what each role is allowed to access.
+- [ ] `student`: Read own academic data, showcase portfolio, explore campus directory, interact via project likes, ask Campus AI (scoped to personal data).
+- [ ] `faculty`: Manage assigned classes/subjects only (attendance, marks, assignments, class notices), ask Campus AI (scoped to assigned data).
+- [ ] `hod`: Department-level oversight (class assignments, attendance/marks audits, department notices).
+- [ ] `principal` / `vp`: Campus-wide institutional visibility, executive announcements, overall audit.
+- [ ] `admin`: Pre-provision student/faculty records, manage lifecycle status, institutional configuration.
 
 ### Phase 2 Completion
 
 - [ ] MongoDB connection works.
-- [ ] Required schemas/models are finalized.
+- [ ] Required schemas/models are finalized according to v1.1 locked architecture.
 - [ ] Relationships are understood and documented.
-- [ ] Role permissions are documented.
+- [ ] Role permissions are documented and enforced via backend.
 - [ ] Database models are tested.
 - [ ] No unnecessary duplicate data structures exist.
 - [ ] Environment/security requirements are satisfied.
@@ -273,77 +282,87 @@ Do not put database logic directly into frontend components.
 - [ ] Add appropriate error handling.
 - [ ] Add secure response handling.
 
-### 2. Authentication
+### 2. Authentication & Institutional Onboarding (LOCKED v1.1)
 
-- [ ] Login
-- [ ] Logout
-- [ ] Session/token handling
-- [ ] Password security if password authentication is used
-- [ ] Role identification
-- [ ] Protected routes
-- [ ] Protected API endpoints
+- [ ] **Student Account Activation API**:
+  - Verification Handshake: `Enrollment Number` + `Official College Email / Verified Phone`
+  - Generate and verify time-bound OTP
+  - Fetch verified institution-controlled student record (Read-Only preview)
+  - Student creates password (Bcrypt hashed, cost factor >= 10)
+  - Transition status from `INVITED` to `ACTIVE`
+- [ ] **Faculty Account Activation API**:
+  - Verification Handshake: `Employee ID` + `Official College Email / Verified Phone`
+  - OTP dispatch & verification
+  - Faculty creates password -> status becomes `ACTIVE`
+- [ ] **HOD / Principal / VP Executive Provisioning**:
+  - No public self-registration endpoints
+  - Provisioned via administrative authority; login through Staff Portal
+- [ ] **Secure Login APIs**:
+  - Student Login (`/api/auth/student/login`): Enrollment No. / Email + Password
+  - Staff Login (`/api/auth/staff/login`): Employee ID / Email + Password (Backend resolves role: Faculty, HOD, Principal, VP)
+- [ ] **Session & Credential Security**:
+  - JWT tokens stored in HttpOnly, Secure, SameSite cookies
+  - Password management (bcrypt hashing, zero plaintext storage, college staff does not maintain passwords)
+  - Account lifecycle guard middleware (`INVITED`, `ACTIVE`, `SUSPENDED`, `GRADUATED`)
+  - Logout and token revocation
 
 ### 3. Student APIs
 
 Implement APIs for:
 
-- [ ] Student profile
-- [ ] Attendance
-- [ ] Marks
-- [ ] Timetable
-- [ ] Assignments
-- [ ] Notices
-- [ ] Announcements
-- [ ] Events
+- [ ] Student profile (edit student-controlled fields only; protect institution-controlled fields)
+- [ ] Attendance (read own records only)
+- [ ] Marks (read own records only)
+- [ ] Timetable (read own class schedule)
+- [ ] Assignments (read assigned, submit files)
+- [ ] Notices & Announcements (permitted circulars)
+- [ ] Events (browse, register)
 - [ ] Internships
-- [ ] Projects
-- [ ] Explore Students
-- [ ] Likes
+- [ ] Projects (create, update own, showcase)
+- [ ] Explore Students & Peer Projects
+- [ ] Project Likes
 
 ### 4. Faculty APIs
 
 Implement APIs for:
 
 - [ ] Faculty profile
-- [ ] Assigned classes
-- [ ] Assigned students
-- [ ] Attendance
+- [ ] Assigned classes (dynamically scoped)
+- [ ] Assigned students in teaching batches
+- [ ] Attendance marking (assigned classes only)
 - [ ] Bulk attendance workflow
-- [ ] Assignments
-- [ ] Marks
-- [ ] Notices
-- [ ] Announcements
+- [ ] Assignments creation and grading
+- [ ] Marks entry and verification
+- [ ] Class and departmental notices
 
 ### 5. HOD APIs
 
-- [ ] Department-level data
-- [ ] Faculty/class management where applicable
-- [ ] Department notices
-- [ ] Department announcements
-- [ ] Department-level academic information
+- [ ] Department-level academic data
+- [ ] Faculty/class assignment audits
+- [ ] Department notices & bulletins
+- [ ] Department-level performance overview
 
 ### 6. Principal / VP APIs
 
 - [ ] College-level overview
-- [ ] College-wide notices
-- [ ] College-wide announcements
-- [ ] Relevant management information
+- [ ] College-wide notices & executive announcements
+- [ ] Cross-department management metrics
 
-### 7. Authorization
+### 7. Authorization & RBAC Guardrails (LOCKED v1.1)
 
-This is extremely important. A logged-in user must not automatically have access to all College OS data. Implement role and ownership checks:
+A logged-in user must not automatically have access to all College OS data. Implement strict backend-authoritative role and ownership checks:
 
-- Student: `Student → own allowed data`
-- Faculty: `Faculty → assigned classes/students`
+- Student: `Student → own allowed data` (Cannot read peers' marks/attendance)
+- Faculty: `Faculty → dynamically bounded to assigned classes/subjects` (Zero access to unassigned batches)
 - HOD: `HOD → department-level allowed data`
 - Principal/VP: `Principal/VP → college-level allowed data`
 
-- [ ] Authorization middleware/utilities
-- [ ] Ownership checks
-- [ ] Role checks
-- [ ] Prevent unauthorized student data access
+- [ ] Authorization middleware/utilities (`requireRole`, `requireAssignmentScope`)
+- [ ] Ownership checks on update/delete endpoints
+- [ ] Backend database role check (Never trust role sent from client payload)
+- [ ] Prevent unauthorized student data exposure
 - [ ] Prevent unauthorized faculty data access
-- [ ] Prevent unauthorized management access
+- [ ] Exclude sensitive credentials, OTPs, and password hashes from all responses and Campus AI context
 
 ### 8. Frontend Integration
 
@@ -361,12 +380,13 @@ Replace important frontend mock/static data with real APIs.
 ### Phase 3 Completion
 
 - [ ] Core APIs are working.
-- [ ] Authentication works.
-- [ ] Authorization works.
+- [ ] Institutional onboarding & activation flows work.
+- [ ] Authentication works (Student Portal & Staff Portal).
+- [ ] Authorization works (dynamically bounded RBAC).
 - [ ] Frontend receives real data.
 - [ ] Role-specific data access works.
 - [ ] API errors are handled properly.
-- [ ] No sensitive secrets are exposed.
+- [ ] No sensitive secrets or credentials are exposed.
 
 ---
 
