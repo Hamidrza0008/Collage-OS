@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Code2, Globe, Database, FlaskConical, Laptop, Star, ArrowUpRight } from "lucide-react";
 import { CURRENT_SEMESTER_SUBJECTS } from "./academicsData";
 
@@ -57,14 +58,19 @@ export default function CurrentSemesterSubjectsCard({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onViewAllSubjects}
+        <Link
+          href="/student/academics/subjects"
+          onClick={(e) => {
+            if (onViewAllSubjects) {
+              e.preventDefault();
+              onViewAllSubjects();
+            }
+          }}
           className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span>View All Subjects</span>
           <ArrowUpRight className="w-3.5 h-3.5" />
-        </button>
+        </Link>
       </div>
 
       {/* 2-Column Grid of 6 Subjects */}

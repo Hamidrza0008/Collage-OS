@@ -334,7 +334,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 **Goal:** Implement the missing Course/Subject Catalog page using real existing subject data across semesters to satisfy the Academics "View All Subjects" action.
 
-### - [ ] P3-T01: Build All Subjects Catalog Page (`/student/academics/subjects`)
+### - [x] P3-T01: Build All Subjects Catalog Page (`/student/academics/subjects`)
 - **Task ID:** P3-T01
 - **Title:** Build All Subjects Catalog Page (`/student/academics/subjects`)
 - **Size:** MEDIUM

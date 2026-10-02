@@ -142,10 +142,7 @@ export default function Academics({ isLoading = false }) {
             <div className="h-full">
               <CurrentSemesterSubjectsCard
                 onViewAllSubjects={() => {
-                  setToastMessage(
-                    "Full subject catalog will be available in a future update."
-                  );
-                  setTimeout(() => setToastMessage(null), 3500);
+                  router.push("/student/academics/subjects");
                 }}
                 onSubjectClick={(sub) => {
                   const slug = SUBJECT_CODE_TO_SLUG[sub.id];
