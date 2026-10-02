@@ -13,6 +13,7 @@ import InternalMarksCard from "./InternalMarksCard";
 import SubjectFacultyCard from "./SubjectFacultyCard";
 import ExamInfoCard from "./ExamInfoCard";
 import AskFacultyModal from "./AskFacultyModal";
+import DocumentViewerModal from "@/components/shared/DocumentViewerModal";
 import SubjectNotFound from "./SubjectNotFound";
 import SubjectDetailsSkeleton from "./SubjectDetailsSkeleton";
 
@@ -26,6 +27,7 @@ export default function SubjectDetailsAssembler({ code, isLoading = false }) {
   // ── Local State ─────────────────────────────────────────────────────────
   const [isSaved, setIsSaved] = useState(false);
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
+  const [activeDocument, setActiveDocument] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
@@ -72,6 +74,22 @@ export default function SubjectDetailsAssembler({ code, isLoading = false }) {
     showToast(`Downloading "${name}"...`);
   };
 
+  const handlePreviewResource = (res) => {
+    const isSupported = (res.type || "").toUpperCase() === "PDF";
+    if (!isSupported) {
+      handleDownloadResource(res.title);
+      return;
+    }
+
+    setActiveDocument({
+      id: res.id || res.title,
+      name: `${res.title}.pdf`,
+      type: "application/pdf",
+      size: res.size || "",
+      url: "/assets/documents/sample-syllabus.pdf",
+    });
+  };
+
   const handleAskFacultySubmit = ({ subject: subj, message }) => {
     showToast(`Question on "${subj}" sent to ${subject.faculty.name}!`);
   };
@@ -102,6 +120,7 @@ export default function SubjectDetailsAssembler({ code, isLoading = false }) {
           <CourseResources
             resources={subject.resources}
             onDownload={handleDownloadResource}
+            onPreview={handlePreviewResource}
           />
 
           {/* 2c. Course Assignments List */}
@@ -147,6 +166,19 @@ export default function SubjectDetailsAssembler({ code, isLoading = false }) {
         facultyName={subject.faculty.name}
         subjectName={subject.name}
         onSubmit={handleAskFacultySubmit}
+      />
+
+      {/* ─── Canonical Document Viewer Modal (MD-08) ────────────────────────── */}
+      <DocumentViewerModal
+        isOpen={Boolean(activeDocument)}
+        onClose={() => setActiveDocument(null)}
+        file={activeDocument}
+        sourceContext={subject.name}
+        onDownload={() => {
+          if (activeDocument?.name) {
+            handleDownloadResource(activeDocument.name);
+          }
+        }}
       />
     </div>
   );

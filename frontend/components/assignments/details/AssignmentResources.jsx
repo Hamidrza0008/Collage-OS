@@ -1,9 +1,20 @@
 "use client";
 
-import { Download, FileText, Paperclip, FileArchive } from "lucide-react";
+import { Download, FileText, Paperclip, FileArchive, Eye } from "lucide-react";
 
-export default function AssignmentResources({ resources, onDownload }) {
+export default function AssignmentResources({ resources, onDownload, onPreview }) {
   if (!resources || resources.length === 0) return null;
+
+  const isPreviewSupported = (fileName = "", fileType = "") => {
+    const ext = fileName.split(".").pop()?.toLowerCase();
+    const type = fileType.toLowerCase();
+    return (
+      ext === "pdf" ||
+      type.includes("pdf") ||
+      ["png", "jpg", "jpeg", "webp", "gif"].includes(ext) ||
+      type.includes("image")
+    );
+  };
 
   const getFileIcon = (fileName = "") => {
     if (fileName.endsWith(".zip") || fileName.endsWith(".pkt")) {
@@ -31,35 +42,50 @@ export default function AssignmentResources({ resources, onDownload }) {
 
       {/* Resources List */}
       <div className="space-y-2">
-        {resources.map((file) => (
-          <div
-            key={file.id}
-            className="flex items-center justify-between p-3 rounded-xl bg-[#F8FAF9] dark:bg-[#041D18] border border-[#E8F1ED] dark:border-[#10372F] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all gap-3 group"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-lg bg-emerald-50/80 dark:bg-[#06241F] border border-emerald-100 dark:border-[#10372F] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                {getFileIcon(file.name)}
+        {resources.map((file) => {
+          const canPreview = isPreviewSupported(file.name, file.type);
+          return (
+            <div
+              key={file.id}
+              className="flex items-center justify-between p-3 rounded-xl bg-[#F8FAF9] dark:bg-[#041D18] border border-[#E8F1ED] dark:border-[#10372F] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all gap-3 group"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-lg bg-emerald-50/80 dark:bg-[#06241F] border border-emerald-100 dark:border-[#10372F] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  {getFileIcon(file.name)}
+                </div>
+                <div className="min-w-0">
+                  <span className="text-xs sm:text-[13px] font-bold text-[#0B3024] dark:text-[#F1FAF6] block truncate">
+                    {file.name}
+                  </span>
+                  <span className="text-[11px] text-[#658278] dark:text-[#8AA89F]">
+                    {file.type} • {file.size}
+                  </span>
+                </div>
               </div>
-              <div className="min-w-0">
-                <span className="text-xs sm:text-[13px] font-bold text-[#0B3024] dark:text-[#F1FAF6] block truncate">
-                  {file.name}
-                </span>
-                <span className="text-[11px] text-[#658278] dark:text-[#8AA89F]">
-                  {file.type} • {file.size}
-                </span>
+
+              <div className="flex items-center gap-2 shrink-0">
+                {canPreview && onPreview && (
+                  <button
+                    type="button"
+                    onClick={() => onPreview(file)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#159B72] hover:bg-[#0E825E] text-white transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Preview</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onDownload(file.name)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-[#082A24] text-emerald-700 dark:text-[#20D39B] border border-[#D8E8E2] dark:border-[#10372F] hover:bg-emerald-50 dark:hover:bg-[#0B352B] transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download</span>
+                </button>
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={() => onDownload(file.name)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-[#082A24] text-emerald-700 dark:text-[#20D39B] border border-[#D8E8E2] dark:border-[#10372F] hover:bg-emerald-50 dark:hover:bg-[#0B352B] transition-colors cursor-pointer shrink-0 shadow-2xs"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download</span>
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

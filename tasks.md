@@ -154,7 +154,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P1-T04: Wire MD-08 DocumentViewerModal into Assignment & Course Resources
+### - [x] P1-T04: Wire MD-08 DocumentViewerModal into Assignment & Course Resources
 - **Task ID:** P1-T04
 - **Title:** Wire MD-08 DocumentViewerModal into Assignment & Course Resources
 - **Size:** MEDIUM

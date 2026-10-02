@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Presentation, Archive, Download, Users } from "lucide-react";
+import { FileText, Presentation, Archive, Download, Users, Eye } from "lucide-react";
 
 const typeConfig = {
   PDF: { icon: FileText, cls: "bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400", label: "PDF" },
@@ -8,7 +8,12 @@ const typeConfig = {
   ZIP: { icon: Archive, cls: "bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400", label: "ZIP" },
 };
 
-export default function CourseResources({ resources, onDownload }) {
+export default function CourseResources({ resources, onDownload, onPreview }) {
+  const isPreviewSupported = (type = "") => {
+    const t = type.toUpperCase();
+    return t === "PDF" || t === "PNG" || t === "JPG" || t === "JPEG" || t === "WEBP" || t === "GIF";
+  };
+
   return (
     <div className="w-full bg-white dark:bg-[#021512] border border-[#D8E8E2] dark:border-[#10372F] rounded-2xl shadow-xs p-5">
       <div className="flex items-center justify-between mb-4">
@@ -26,6 +31,7 @@ export default function CourseResources({ resources, onDownload }) {
         {resources.map((res) => {
           const cfg = typeConfig[res.type] || typeConfig.PDF;
           const Icon = cfg.icon;
+          const canPreview = isPreviewSupported(res.type);
           return (
             <div
               key={res.id}
@@ -50,13 +56,25 @@ export default function CourseResources({ resources, onDownload }) {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => onDownload(res.title)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center bg-white dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#10372F] text-[#5C786E] dark:text-[#8AA89F] hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all cursor-pointer shrink-0"
-              >
-                <Download className="w-3.5 h-3.5" />
-              </button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {canPreview && onPreview && (
+                  <button
+                    type="button"
+                    onClick={() => onPreview(res)}
+                    className="h-8 px-2.5 rounded-lg flex items-center gap-1.5 bg-[#159B72] hover:bg-[#0E825E] text-white text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Preview</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onDownload(res.title)}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center bg-white dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#10372F] text-[#5C786E] dark:text-[#8AA89F] hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all cursor-pointer shrink-0"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           );
         })}

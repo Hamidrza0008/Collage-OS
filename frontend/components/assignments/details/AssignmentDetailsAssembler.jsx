@@ -24,6 +24,7 @@ import SubmitConfirmationModal from "./SubmitConfirmationModal";
 import ReportProblemModal from "./ReportProblemModal";
 import SubmissionHistoryModal from "./SubmissionHistoryModal";
 import MobileSubmissionBar from "./MobileSubmissionBar";
+import DocumentViewerModal from "@/components/shared/DocumentViewerModal";
 import AssignmentNotFound from "./AssignmentNotFound";
 import AssignmentDetailsSkeleton from "./AssignmentDetailsSkeleton";
 
@@ -72,6 +73,7 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [historyModalInitialAttempt, setHistoryModalInitialAttempt] = useState(null);
+  const [activeDocument, setActiveDocument] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
   const handleOpenHistoryModal = (attemptNum = null) => {
@@ -204,6 +206,25 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
     showToast(`Downloading "${name}"...`);
   };
 
+  const handlePreviewResource = (file) => {
+    const fileName = file.name || "Document.pdf";
+    const ext = fileName.split(".").pop()?.toLowerCase();
+    const isSupported = ext === "pdf" || ["png", "jpg", "jpeg", "webp", "gif"].includes(ext);
+
+    if (!isSupported) {
+      handleDownloadResource(fileName);
+      return;
+    }
+
+    setActiveDocument({
+      id: file.id || fileName,
+      name: fileName,
+      type: file.type || (ext === "pdf" ? "application/pdf" : "image/jpeg"),
+      size: file.size || "",
+      url: file.url && file.url !== "#" ? file.url : "/assets/documents/sample-assignment.pdf",
+    });
+  };
+
   const handleDownloadBrief = () => {
     const brief = assignment.resources?.[0]?.name || "Assignment_Brief.pdf";
     showToast(`Downloading "${brief}"...`);
@@ -289,6 +310,7 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
           <AssignmentResources
             resources={assignment.resources}
             onDownload={handleDownloadResource}
+            onPreview={handlePreviewResource}
           />
 
           {/* 7. Central Submission Workspace (Most Important Section) */}
@@ -403,6 +425,19 @@ export default function AssignmentDetailsAssembler({ assignmentId, isLoading = f
         initialAttemptNumber={historyModalInitialAttempt}
         onReopenWorkspace={handleResetForTesting}
         onDownloadAttachment={handleDownloadResource}
+      />
+
+      {/* Canonical Document Viewer Modal (MD-08) */}
+      <DocumentViewerModal
+        isOpen={Boolean(activeDocument)}
+        onClose={() => setActiveDocument(null)}
+        file={activeDocument}
+        sourceContext={assignment.title}
+        onDownload={() => {
+          if (activeDocument?.name) {
+            handleDownloadResource(activeDocument.name);
+          }
+        }}
       />
     </div>
   );
