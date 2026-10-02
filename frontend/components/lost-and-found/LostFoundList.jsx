@@ -12,6 +12,7 @@ export default function LostFoundList({
   onPageChange,
   onViewDetails,
   onContactOwner,
+  onClaimItem,
   activeTab,
   searchQuery,
   onClearFilters,
@@ -67,6 +68,7 @@ export default function LostFoundList({
             item={item}
             onViewDetails={onViewDetails}
             onContactOwner={onContactOwner}
+            onClaimItem={onClaimItem}
           />
         ))}
       </div>

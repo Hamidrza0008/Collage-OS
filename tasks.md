@@ -125,7 +125,7 @@ OPTIONAL PHASE 6: Community Groups Directory Hub (Task OPT-T01)
 
 ---
 
-### - [ ] P1-T03: Wire MD-07 Claim Verification Modal into Main Lost & Found Hub
+### - [x] P1-T03: Wire MD-07 Claim Verification Modal into Main Lost & Found Hub
 - **Task ID:** P1-T03
 - **Title:** Wire MD-07 Claim Verification Modal into Main Lost & Found Hub
 - **Size:** MEDIUM

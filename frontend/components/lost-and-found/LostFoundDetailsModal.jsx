@@ -21,6 +21,7 @@ export default function LostFoundDetailsModal({
   isOpen,
   onClose,
   onContactOwner,
+  onClaimItem,
   onMarkResolved,
 }) {
   useEffect(() => {
@@ -173,17 +174,49 @@ export default function LostFoundDetailsModal({
             )}
 
             {!isOwner && item.status !== "Resolved" && (
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  onContactOwner(item);
-                }}
-                className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold bg-[#159B72] hover:bg-[#0E825E] text-white transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
-              >
-                <span>{isFound ? "Claim / Contact Finder" : "Contact Owner"}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              <>
+                {isFound ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        if (onClaimItem) {
+                          onClaimItem(item);
+                        } else {
+                          onContactOwner(item);
+                        }
+                      }}
+                      className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold bg-[#159B72] hover:bg-[#0E825E] text-white transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                    >
+                      <span>Claim Item</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onContactOwner(item);
+                      }}
+                      className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-semibold border border-[#D8E8E2] dark:border-[#16463D] text-[#36594C] dark:text-[#B5CCC5] hover:bg-[#F1F8F5] dark:hover:bg-[#082A24] transition-all cursor-pointer shadow-2xs flex items-center justify-center gap-1.5"
+                    >
+                      <span>Contact Finder</span>
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onContactOwner(item);
+                    }}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold bg-[#159B72] hover:bg-[#0E825E] text-white transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                  >
+                    <span>Contact Owner</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </>
             )}
 
             {item.status === "Resolved" && (

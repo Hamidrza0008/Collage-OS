@@ -18,6 +18,7 @@ export default function LostFoundCard({
   item,
   onViewDetails,
   onContactOwner,
+  onClaimItem,
 }) {
   const isLost = item.status.toLowerCase() === "lost";
   const isFound = item.status.toLowerCase() === "found";
@@ -121,16 +122,32 @@ export default function LostFoundCard({
         {/* Action Button */}
         <div className="w-full md:w-auto">
           {isFound ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onContactOwner(item);
-              }}
-              className="w-full md:w-auto px-4 py-2 rounded-xl text-xs font-semibold border border-[#159B72] dark:border-[#20D39B] text-[#159B72] dark:text-[#20D39B] hover:bg-[#DDF4EB] dark:hover:bg-[#123F35] transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
-            >
-              <span>Contact Owner</span>
-            </button>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onClaimItem) {
+                    onClaimItem(item);
+                  } else {
+                    onContactOwner(item);
+                  }
+                }}
+                className="w-full md:w-auto px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#159B72] hover:bg-[#0E825E] text-white transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+              >
+                <span>Claim Item</span>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onContactOwner(item);
+                }}
+                className="w-full md:w-auto px-3 py-2 rounded-xl text-xs font-semibold border border-[#D8E8E2] dark:border-[#16463D] text-[#36594C] dark:text-[#B5CCC5] hover:bg-[#F1F8F5] dark:hover:bg-[#082A24] transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+              >
+                <span>Contact</span>
+              </button>
+            </div>
           ) : (
             <button
               type="button"

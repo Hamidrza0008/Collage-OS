@@ -13,6 +13,7 @@ import FoundSomethingCtaCard from "./FoundSomethingCtaCard";
 import LostFoundFilterDrawer from "./LostFoundFilterDrawer";
 import LostFoundDetailsModal from "./LostFoundDetailsModal";
 import ContactOwnerModal from "./ContactOwnerModal";
+import ClaimVerificationModal from "./my-reports/ClaimVerificationModal";
 import ReportLostItemModal from "./ReportLostItemModal";
 import ReportFoundItemModal from "./ReportFoundItemModal";
 import LostFoundSkeleton from "./LostFoundSkeleton";
@@ -20,6 +21,10 @@ import {
   INITIAL_LOST_FOUND_ITEMS,
   filterLostFoundItems,
 } from "./lostFoundData";
+import {
+  loadMyReports,
+  saveMyReports,
+} from "./my-reports/myReportsData";
 import { CheckCircle2 } from "lucide-react";
 
 export default function LostAndFound({ isLoading = false }) {
@@ -46,6 +51,7 @@ export default function LostAndFound({ isLoading = false }) {
   // Modals & Interaction States
   const [selectedItem, setSelectedItem] = useState(null);
   const [itemToContact, setItemToContact] = useState(null);
+  const [claimReportTarget, setClaimReportTarget] = useState(null);
   const [isReportLostOpen, setIsReportLostOpen] = useState(false);
   const [isReportFoundOpen, setIsReportFoundOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -55,6 +61,124 @@ export default function LostAndFound({ isLoading = false }) {
     setTimeout(() => {
       setToastMessage(null);
     }, 3200);
+  };
+
+  // Convert a public catalog Found item to a canonical report object compatible with ClaimVerificationModal
+  const handleInitiateClaim = (item) => {
+    const existingReports = loadMyReports();
+    // Check if user already has an active report or claim for this item
+    const existing = existingReports.find((r) => r.linkedItemId === item.id || r.id === item.id);
+    if (existing) {
+      setClaimReportTarget(existing);
+      return;
+    }
+
+    // Resolve canonical claimable report representation
+    const canonicalReport = {
+      id: `rep-claim-${item.id}`,
+      caseId: `LF-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      linkedItemId: item.id,
+      type: "Claim Request",
+      itemName: item.title,
+      category: item.category || "Others",
+      description: item.description,
+      location: item.location,
+      reportedAt: item.date || new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+      rawReportedAt: item.rawDate || new Date().toISOString(),
+      updatedAt: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+      rawUpdatedAt: new Date().toISOString(),
+      status: "Searching",
+      claimStatus: "Not Claimed",
+      image: item.image,
+      hasImage: Boolean(item.image),
+      distinguishingFeatures: "",
+      serialOrReference: "",
+      contactPreference: "College Email",
+      canEdit: true,
+      canCancel: true,
+      needsAction: false,
+      timeline: [
+        {
+          id: `tl-${Date.now()}`,
+          date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+          title: "Claim Initiated from Catalog",
+          description: `Ownership claim started for catalog item: ${item.title}`,
+          actor: "Hamid Rza (You)",
+        },
+      ],
+    };
+
+    setClaimReportTarget(canonicalReport);
+  };
+
+  const handleSubmitClaimVerification = (reportId, claimData) => {
+    const existingReports = loadMyReports();
+    const existingIndex = existingReports.findIndex(
+      (r) => r.id === reportId || (claimReportTarget && r.linkedItemId === claimReportTarget.linkedItemId)
+    );
+
+    const newTimelineEvent = {
+      id: `tl-${Date.now()}`,
+      date: claimData.submittedAt,
+      title: "Ownership Evidence Submitted",
+      description: `Verification details provided under claim ${claimData.claimId}.`,
+      actor: "Hamid Rza (You)",
+    };
+
+    let updatedList;
+    if (existingIndex >= 0) {
+      updatedList = existingReports.map((r, idx) => {
+        if (idx !== existingIndex) return r;
+        return {
+          ...r,
+          claimId: claimData.claimId,
+          claimSubmittedAt: claimData.submittedAt,
+          claimStatus: "Under Verification",
+          status: "Verification In Progress",
+          needsAction: false,
+          updatedAt: claimData.submittedAt,
+          rawUpdatedAt: new Date().toISOString(),
+          verification: {
+            submittedDetails: claimData.distinguishingFeature,
+            documentName: claimData.mockFileName,
+            purchaseDate: claimData.purchaseOrLossDate,
+            location: claimData.lostLocationDetails,
+            reference: claimData.proofReference,
+            verifiedBy: null,
+            verificationNote: "Review in progress by Campus Custodian Office.",
+            otherClaimActivity: false,
+          },
+          timeline: [...(r.timeline || []), newTimelineEvent],
+        };
+      });
+    } else {
+      const newClaimReport = {
+        ...claimReportTarget,
+        id: reportId,
+        claimId: claimData.claimId,
+        claimSubmittedAt: claimData.submittedAt,
+        claimStatus: "Under Verification",
+        status: "Verification In Progress",
+        needsAction: false,
+        updatedAt: claimData.submittedAt,
+        rawUpdatedAt: new Date().toISOString(),
+        verification: {
+          submittedDetails: claimData.distinguishingFeature,
+          documentName: claimData.mockFileName,
+          purchaseDate: claimData.purchaseOrLossDate,
+          location: claimData.lostLocationDetails,
+          reference: claimData.proofReference,
+          verifiedBy: null,
+          verificationNote: "Review in progress by Campus Custodian Office.",
+          otherClaimActivity: false,
+        },
+        timeline: [...(claimReportTarget.timeline || []), newTimelineEvent],
+      };
+      updatedList = [newClaimReport, ...existingReports];
+    }
+
+    saveMyReports(updatedList);
+    showToast(`Claim ${claimData.claimId} submitted for verification.`);
   };
 
   // Active filter count for badge
@@ -234,6 +358,7 @@ export default function LostAndFound({ isLoading = false }) {
             }}
             onViewDetails={(item) => setSelectedItem(item)}
             onContactOwner={(item) => setItemToContact(item)}
+            onClaimItem={(item) => handleInitiateClaim(item)}
             activeTab={activeTab}
             searchQuery={searchQuery}
             onClearFilters={handleClearFilters}
@@ -287,6 +412,7 @@ export default function LostAndFound({ isLoading = false }) {
         isOpen={Boolean(selectedItem)}
         onClose={() => setSelectedItem(null)}
         onContactOwner={(item) => setItemToContact(item)}
+        onClaimItem={(item) => handleInitiateClaim(item)}
         onMarkResolved={handleMarkResolved}
       />
 
@@ -298,21 +424,29 @@ export default function LostAndFound({ isLoading = false }) {
         onSubmitContact={handleContactSubmit}
       />
 
-      {/* 3. Report Lost Item Modal */}
+      {/* 3. Claim Item Verification Modal (MD-07) */}
+      <ClaimVerificationModal
+        isOpen={Boolean(claimReportTarget)}
+        onClose={() => setClaimReportTarget(null)}
+        report={claimReportTarget}
+        onSubmitClaim={handleSubmitClaimVerification}
+      />
+
+      {/* 4. Report Lost Item Modal */}
       <ReportLostItemModal
         isOpen={isReportLostOpen}
         onClose={() => setIsReportLostOpen(false)}
         onSubmitReport={handleReportLostSubmit}
       />
 
-      {/* 4. Report Found Item Modal */}
+      {/* 5. Report Found Item Modal */}
       <ReportFoundItemModal
         isOpen={isReportFoundOpen}
         onClose={() => setIsReportFoundOpen(false)}
         onSubmitReport={handleReportFoundSubmit}
       />
 
-      {/* 5. Advanced Filter Drawer */}
+      {/* 6. Advanced Filter Drawer */}
       <LostFoundFilterDrawer
         isOpen={isFilterDrawerOpen}
         onClose={() => setIsFilterDrawerOpen(false)}
