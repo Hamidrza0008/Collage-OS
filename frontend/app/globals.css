@@ -88,6 +88,10 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+.font-handwriting {
+  font-family: var(--font-caveat), "Caveat", "Comic Sans MS", cursive;
+}
+
 /* Utility to hide scrollbars on touch horizontally scrolling tab bars while preserving swipe */
 .scrollbar-none::-webkit-scrollbar {
   display: none;

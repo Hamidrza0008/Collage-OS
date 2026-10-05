@@ -1,4 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 export const metadata = {
   title: "Faculty Portal - College OS",
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function FacultyLayout({ children }) {
-  return <AppLayout role="faculty">{children}</AppLayout>;
+  return (
+    <ProtectedRoute allowedRoles={["faculty", "hod", "principal", "admin"]}>
+      <AppLayout role="faculty">{children}</AppLayout>
+    </ProtectedRoute>
+  );
 }

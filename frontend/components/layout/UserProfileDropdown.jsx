@@ -17,6 +17,7 @@ import {
   Pencil,
 } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
+import { useAuth } from "../providers/AuthProvider";
 import { getStoredNotifications } from "@/components/notifications/notificationData";
 import { getSavedItems } from "@/components/saved/savedItemsStore";
 import { loadApplicationsState } from "@/components/internships/applications/applicationsData";
@@ -65,6 +66,7 @@ export default function UserProfileDropdown({
   onToast,
 }) {
   const { isDark, toggleTheme } = useTheme();
+  const { logout } = useAuth();
   const dropdownRef = useRef(null);
 
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
@@ -329,9 +331,7 @@ export default function UserProfileDropdown({
           role="menuitem"
           onClick={() => {
             onClose();
-            if (onToast) {
-              onToast("Session signed out (Demo Mode)");
-            }
+            logout();
           }}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-semibold transition-colors cursor-pointer"
         >
