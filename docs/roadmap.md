@@ -100,12 +100,15 @@ Create a separate Faculty experience.
 
 Do NOT simply reuse the Student Dashboard as the Faculty Dashboard.
 
-- [ ] Faculty dashboard
-  > *Progress: Route `/faculty` established with dedicated navigation config, Campus AI (`/faculty/campus-ai`), and Settings (`/faculty/settings`); full management dashboard pending.*
-- [ ] Assigned classes
+- [x] Faculty dashboard
+  > *Progress: Full management dashboard implemented at `/faculty` matching reference with Dr. Arjun Mehta profile, Hero banner, 4 KPI cards, Today's Classes, Class-wise Overview with circular progress rings, Student Activity, Pending Tasks, Announcements, Upcoming Events, Faculty AI Assistant, Quick Links, and Support.*
+- [x] Assigned classes
+  > *Progress: Full My Classes dashboard implemented at `/faculty/classes` with search, semester filter, 4 detailed class cards, circular attendance gauges, assignment pending boxes, Class details modal, Today's Classes, Quick Actions, and Teaching Resources.*
 - [ ] Assigned students
-- [ ] Attendance management
-- [ ] Bulk attendance workflow
+- [x] Attendance management
+  > *Progress: Full Attendance portal implemented at `/faculty/attendance` with Attendance Hero, 4 KPI cards (Total Students, Present Today, Absent Today, Avg. Attendance), My Classes section with real-time search & filter, circular attendance gauges, roll-call attendance marking modal, Attendance Summary table with progress bars & trends, Attendance Overview donut chart (82% vs 18%), Quick Actions, and Today's Classes schedule.*
+- [x] Bulk attendance workflow
+  > *Progress: Integrated into Attendance portal quick actions and bulk CSV upload modal trigger.*
 - [ ] Assignments management
 - [ ] Marks management
 - [ ] Notices
