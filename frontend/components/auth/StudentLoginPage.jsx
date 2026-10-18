@@ -68,7 +68,7 @@ export default function StudentLoginPage() {
 
   return (
     <AuthShell
-      showFacultyLink={false}
+      showFacultyLink={true}
       topNavAction={{
         label: "New to College OS?",
         actionLabel: "Create an Account",
@@ -228,7 +228,7 @@ export default function StudentLoginPage() {
         </form>
 
         {/* Security Assurance Card */}
-        <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-[#F0FAF5] dark:bg-[#082A24] border border-[#DCEDE4] dark:border-[#16463D] text-[12px]">
+        <div className="mt-3.5 flex items-center gap-3 p-3 rounded-xl bg-[#F0FAF5] dark:bg-[#082A24] border border-[#DCEDE4] dark:border-[#16463D] text-[12px]">
           <div className="w-6 h-6 rounded-full bg-[#159B72]/15 flex items-center justify-center shrink-0">
             <ShieldCheck className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
           </div>
@@ -240,6 +240,18 @@ export default function StudentLoginPage() {
               We use secure encryption to protect your information.
             </span>
           </div>
+        </div>
+
+        {/* Faculty / Staff Portal Switcher Link */}
+        <div className="pt-1.5 text-center text-xs text-[#658278] dark:text-[#789991]">
+          Are you a faculty or staff member?{" "}
+          <Link
+            href="/auth/faculty"
+            className="font-bold text-[#159B72] dark:text-[#20D39B] hover:underline inline-flex items-center gap-1"
+          >
+            <span>Faculty Login</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
         </div>
       </AuthCard>
     </AuthShell>

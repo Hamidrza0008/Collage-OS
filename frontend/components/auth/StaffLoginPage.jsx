@@ -58,7 +58,7 @@ export default function StaffLoginPage() {
     try {
       const res = await login({ identifier, password, role: "faculty" });
       if (res.success) {
-        // Redirection handled by AuthProvider
+        router.push("/faculty");
       }
     } catch (err) {
       setErrors({ form: err.message || "Failed to sign in. Please verify your staff credentials." });

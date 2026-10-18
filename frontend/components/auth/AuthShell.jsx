@@ -34,11 +34,11 @@ export default function AuthShell({
             {showFacultyLink && !isStaffMode ? (
               <Link
                 href="/auth/staff/login"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#36594C] dark:text-[#A7C8BD] hover:text-[#159B72] dark:hover:text-[#20D39B] transition-colors group px-2.5 py-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] text-xs font-semibold text-[#0B3024] dark:text-[#F1FAF6] hover:bg-[#F1F8F5] dark:hover:bg-[#082A24] hover:border-[#159B72]/40 transition-all shadow-2xs group"
               >
                 <Briefcase className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
-                <span>Login as Faculty &amp; College Staff</span>
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                <span>Faculty &amp; Staff Portal</span>
+                <ArrowRight className="w-3 h-3 text-[#159B72] dark:text-[#20D39B] group-hover:translate-x-0.5 transition-transform" />
               </Link>
             ) : isStaffMode ? (
               <Link

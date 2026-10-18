@@ -181,115 +181,160 @@ export default function UserProfileDropdown({
 
       {/* Menu Links */}
       <div className="p-1.5 space-y-0.5 text-xs max-h-[calc(100vh-160px)] overflow-y-auto">
-        {/* Section 1: Profile Navigation */}
-        <div className="space-y-0.5 pb-1 border-b border-[#E8F1ED]/80 dark:border-[#10372F]/80">
-          <Link
-            href="/student/profile"
-            role="menuitem"
-            onClick={onClose}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
-          >
-            <div className="flex items-center gap-2.5">
-              <User className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
-              <span className="font-medium">My Profile</span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-          </Link>
-
-          <Link
-            href={`/student/profile/${publicProfileId}`}
-            role="menuitem"
-            onClick={onClose}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
-          >
-            <div className="flex items-center gap-2.5">
-              <ExternalLink className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
-              <span className="font-medium">View Public Profile</span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-          </Link>
-
-          <Link
-            href="/student/profile/edit"
-            role="menuitem"
-            onClick={onClose}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
-          >
-            <div className="flex items-center gap-2.5">
-              <Pencil className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
-              <span className="font-medium">Edit Profile</span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-          </Link>
-        </div>
-
-        {/* Section 2: Student Workspaces & Counters */}
-        <div className="space-y-0.5 py-1 border-b border-[#E8F1ED]/80 dark:border-[#10372F]/80">
-          <Link
-            href="/student/saved"
-            role="menuitem"
-            onClick={onClose}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
-          >
-            <div className="flex items-center gap-2.5">
-              <Bookmark className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
-              <span className="font-medium">Saved Items</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              {savedCount > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-                  {savedCount}
-                </span>
-              )}
+        {isFaculty ? (
+          /* Faculty Navigation */
+          <div className="space-y-0.5 pb-1 border-b border-[#E8F1ED]/80 dark:border-[#10372F]/80">
+            <Link
+              href="/faculty"
+              role="menuitem"
+              onClick={onClose}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+            >
+              <div className="flex items-center gap-2.5">
+                <User className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                <span className="font-medium">Faculty Dashboard</span>
+              </div>
               <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-            </div>
-          </Link>
+            </Link>
 
-          <Link
-            href="/student/internships/applications"
-            role="menuitem"
-            onClick={onClose}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
-          >
-            <div className="flex items-center gap-2.5">
-              <Briefcase className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
-              <span className="font-medium">My Applications</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              {applicationsCount > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
-                  {applicationsCount}
-                </span>
-              )}
+            <Link
+              href="/faculty/classes"
+              role="menuitem"
+              onClick={onClose}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+            >
+              <div className="flex items-center gap-2.5">
+                <Briefcase className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                <span className="font-medium">My Assigned Classes</span>
+              </div>
               <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-            </div>
-          </Link>
+            </Link>
 
-          <Link
-            href="/student/notifications"
-            role="menuitem"
-            onClick={onClose}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
-          >
-            <div className="flex items-center gap-2.5">
-              <Bell className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
-              <span className="font-medium">Notifications</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              {unreadNotificationsCount > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-[#E5484D] text-white">
-                  {unreadNotificationsCount}
-                </span>
-              )}
+            <Link
+              href="/faculty/notices"
+              role="menuitem"
+              onClick={onClose}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+            >
+              <div className="flex items-center gap-2.5">
+                <Bell className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                <span className="font-medium">Department Notices</span>
+              </div>
               <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+            </Link>
+          </div>
+        ) : (
+          /* Student Navigation */
+          <>
+            <div className="space-y-0.5 pb-1 border-b border-[#E8F1ED]/80 dark:border-[#10372F]/80">
+              <Link
+                href="/student/profile"
+                role="menuitem"
+                onClick={onClose}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <User className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                  <span className="font-medium">My Profile</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              <Link
+                href={`/student/profile/${publicProfileId}`}
+                role="menuitem"
+                onClick={onClose}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <ExternalLink className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                  <span className="font-medium">View Public Profile</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              <Link
+                href="/student/profile/edit"
+                role="menuitem"
+                onClick={onClose}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Pencil className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                  <span className="font-medium">Edit Profile</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+              </Link>
             </div>
-          </Link>
-        </div>
+
+            <div className="space-y-0.5 py-1 border-b border-[#E8F1ED]/80 dark:border-[#10372F]/80">
+              <Link
+                href="/student/saved"
+                role="menuitem"
+                onClick={onClose}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Bookmark className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                  <span className="font-medium">Saved Items</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {savedCount > 0 && (
+                    <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
+                      {savedCount}
+                    </span>
+                  )}
+                  <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                </div>
+              </Link>
+
+              <Link
+                href="/student/internships/applications"
+                role="menuitem"
+                onClick={onClose}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Briefcase className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                  <span className="font-medium">My Applications</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {applicationsCount > 0 && (
+                    <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
+                      {applicationsCount}
+                    </span>
+                  )}
+                  <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                </div>
+              </Link>
+
+              <Link
+                href="/student/notifications"
+                role="menuitem"
+                onClick={onClose}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Bell className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+                  <span className="font-medium">Notifications</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {unreadNotificationsCount > 0 && (
+                    <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-[#E5484D] text-white">
+                      {unreadNotificationsCount}
+                    </span>
+                  )}
+                  <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                </div>
+              </Link>
+            </div>
+          </>
+        )}
 
         {/* Section 3: Preferences */}
         <div className="space-y-0.5 pt-1">
           <Link
-            href="/student/settings"
+            href={isFaculty ? "/faculty/settings" : "/student/settings"}
             role="menuitem"
             onClick={onClose}
             className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#36594C] dark:text-[#B5CCC5] hover:text-[#0B3024] dark:hover:text-[#F1FAF6] hover:bg-[#F7FBF9] dark:hover:bg-[#082A24] transition-colors group"

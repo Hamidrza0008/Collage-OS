@@ -11,7 +11,9 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace(`/auth/student?redirect=${encodeURIComponent(pathname)}`);
+      const isFaculty = pathname?.startsWith("/faculty");
+      const targetAuth = isFaculty ? "/auth/faculty" : "/auth/student";
+      router.replace(`${targetAuth}?redirect=${encodeURIComponent(pathname)}`);
     } else if (!isLoading && isAuthenticated && allowedRoles && user?.role) {
       if (!allowedRoles.includes(user.role)) {
         // If wrong role, redirect to appropriate portal

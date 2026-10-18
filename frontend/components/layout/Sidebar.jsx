@@ -60,7 +60,7 @@ export default function Sidebar({
                   College OS
                 </span>
                 <span className="text-[9.5px] font-medium text-[#658278] dark:text-[#789991] tracking-wider mt-0.5 transition-colors">
-                  Learn &bull; Connect &bull; Grow
+                  {isFaculty ? "Faculty Portal" : "Learn • Connect • Grow"}
                 </span>
               </div>
             </div>

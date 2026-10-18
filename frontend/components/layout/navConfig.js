@@ -32,14 +32,15 @@ export const STUDENT_NAV_ITEMS = [
 
 export const FACULTY_NAV_ITEMS = [
   { label: "Dashboard", icon: Home, href: "/faculty" },
-  { label: "Campus AI", icon: Sparkles, href: "/faculty/campus-ai", badge: "Featured" },
   { label: "My Classes", icon: BookOpen, href: "/faculty/classes" },
   { label: "Attendance", icon: CheckSquare, href: "/faculty/attendance" },
   { label: "Assignments", icon: ClipboardCheck, href: "/faculty/assignments" },
-  { label: "Marks & Grades", icon: Award, href: "/faculty/grades" },
-  { label: "Timetable", icon: Calendar, href: "/faculty/timetable" },
-  { label: "Notices", icon: Bell, href: "/faculty/notices" },
+  { label: "Marks & Results", icon: Award, href: "/faculty/marks" },
+  { label: "Notices & Announcements", icon: Bell, href: "/faculty/notices" },
   { label: "Events", icon: CalendarDays, href: "/faculty/events" },
+  { label: "Student Profiles", icon: LayoutGrid, href: "/faculty/students" },
+  { label: "Resources", icon: Layers, href: "/faculty/resources" },
+  { label: "Campus AI", icon: Sparkles, href: "/faculty/campus-ai", badge: "New" },
 ];
 
 export const STUDENT_USER = {
@@ -50,9 +51,9 @@ export const STUDENT_USER = {
 };
 
 export const FACULTY_USER = {
-  name: "Prof. Sharma",
-  subtitle: "CSE Dept • Assistant Professor",
-  avatar: "/assets/layout/profile-avatar.jpg",
+  name: "Dr. Arjun Mehta",
+  subtitle: "Faculty • Computer Science",
+  avatar: "/assets/profile/dr-arjun-mehta.jpg",
   role: "faculty",
 };
 
@@ -62,6 +63,6 @@ export const STUDENT_QUOTE = {
 };
 
 export const FACULTY_QUOTE = {
-  line1: "Inspiring Minds",
-  line2: "Shaping Tomorrow",
+  line1: "Better Education",
+  line2: "Builds a Brighter Future",
 };

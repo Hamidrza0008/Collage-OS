@@ -162,14 +162,15 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
     }
   };
 
+  const isFaculty = user?.role === "faculty";
   const currentUser = {
     ...user,
-    name: profileState?.name || user?.name || "Hamid Rza",
-    subtitle: profileState?.headline || user?.subtitle || "B.Tech • 7th Sem",
-    headline: profileState?.headline || "Full Stack Engineer & Open Source Builder",
-    username: profileState?.username || "@hamidrza",
-    avatar: profileState?.avatar || user?.avatar || "/assets/profile/avatar.jpg",
-    id: profileState?.id || "student-1",
+    name: isFaculty ? (user?.name || "Dr. Arjun Mehta") : (profileState?.name || user?.name || "Hamid Rza"),
+    subtitle: isFaculty ? (user?.subtitle || "Faculty • Computer Science") : (profileState?.headline || user?.subtitle || "B.Tech • 7th Sem"),
+    headline: isFaculty ? (user?.subtitle || "Faculty • Computer Science") : (profileState?.headline || "Full Stack Engineer & Open Source Builder"),
+    username: isFaculty ? "@arjunmehta" : (profileState?.username || "@hamidrza"),
+    avatar: isFaculty ? (user?.avatar || "/assets/profile/dr-arjun-mehta.jpg") : (profileState?.avatar || user?.avatar || "/assets/profile/avatar.jpg"),
+    id: isFaculty ? "fac_arjun_mehta" : (profileState?.id || "student-1"),
   };
 
   return (
@@ -245,7 +246,7 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
               <Search className="w-4 h-4 text-[#658278] dark:text-[#789991]" strokeWidth={2} />
             </div>
             <span className="truncate">
-              Type a command or search College OS...
+              {isFaculty ? "Search students, classes, assignments, notices..." : "Type a command or search College OS..."}
             </span>
             {/* Keyboard shortcut indicator */}
             <div className="ml-auto flex items-center pointer-events-none gap-1">

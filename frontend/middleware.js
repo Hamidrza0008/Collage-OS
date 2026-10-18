@@ -26,10 +26,11 @@ export function middleware(request) {
   );
 
   // If attempting to access a protected route without an active session:
-  // Immediately redirect to /auth/student before any page HTML is rendered.
+  // Redirect to role-appropriate auth portal (/auth/faculty for faculty, /auth/student for student)
   if (isProtectedRoute && !isAuthenticated) {
-    const authUrl = new URL("/auth/student", request.url);
-    // Optionally preserve the attempted destination for post-login redirect
+    const isFacultyRoute = pathname === "/faculty" || pathname.startsWith("/faculty/");
+    const targetAuth = isFacultyRoute ? "/auth/faculty" : "/auth/student";
+    const authUrl = new URL(targetAuth, request.url);
     authUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(authUrl);
   }

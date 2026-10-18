@@ -25,18 +25,24 @@ const DEFAULT_STUDENT = {
 };
 
 const DEFAULT_FACULTY = {
-  id: "fac_cse_042",
-  name: "Dr. Rajesh Sharma",
-  email: "r.sharma@college.edu",
+  id: "fac_arjun_mehta",
+  name: "Dr. Arjun Mehta",
+  email: "arjun.mehta@college.edu",
   employeeId: "EMP-1042",
   role: "faculty",
-  department: "Computer Science & Engineering",
-  designation: "Associate Professor",
-  assignedClasses: ["CSE-7A", "CSE-5B"],
-  assignedSubjects: ["Distributed Systems", "Database Management"],
+  department: "Computer Science",
+  designation: "Faculty • Computer Science",
+  assignedClasses: [
+    "Data Structures & Algorithms",
+    "Web Development",
+    "Database Management Systems",
+    "Computer Networks",
+  ],
+  assignedSubjects: ["DSA", "Web Dev", "DBMS", "CN"],
   academicStatus: "Active",
   accountStatus: "ACTIVE",
   isActivated: true,
+  avatar: "/assets/profile/dr-arjun-mehta.jpg",
 };
 
 export function AuthProvider({ children }) {
@@ -74,10 +80,12 @@ export function AuthProvider({ children }) {
         setUser(parsed);
         setIsAuthenticated(true);
       } else if (hasCookie && !storedUser) {
-        // Fallback demo student if cookie exists but localStorage was cleared
-        setUser(DEFAULT_STUDENT);
+        // Path-aware fallback demo user if cookie exists but localStorage was cleared
+        const isFacultyPath = typeof window !== "undefined" && window.location.pathname.startsWith("/faculty");
+        const fallbackUser = isFacultyPath ? DEFAULT_FACULTY : DEFAULT_STUDENT;
+        setUser(fallbackUser);
         setIsAuthenticated(true);
-        localStorage.setItem("college_os_auth_user", JSON.stringify(DEFAULT_STUDENT));
+        localStorage.setItem("college_os_auth_user", JSON.stringify(fallbackUser));
       } else {
         setUser(null);
         setIsAuthenticated(false);
@@ -96,10 +104,11 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Helper to set cookie
-  const setAuthCookie = (val = "true") => {
+  // Helper to set cookie with role
+  const setAuthCookie = (val = "true", role = "student") => {
     if (typeof document !== "undefined") {
       document.cookie = `college_os_session=${val}; path=/; max-age=86400; SameSite=Lax`;
+      document.cookie = `college_os_role=${role}; path=/; max-age=86400; SameSite=Lax`;
     }
   };
 
@@ -107,6 +116,7 @@ export function AuthProvider({ children }) {
   const clearAuthCookie = () => {
     if (typeof document !== "undefined") {
       document.cookie = "college_os_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+      document.cookie = "college_os_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
     }
   };
 
@@ -132,7 +142,7 @@ export function AuthProvider({ children }) {
 
     setUser(authUser);
     setIsAuthenticated(true);
-    setAuthCookie("true");
+    setAuthCookie("true", authUser.role);
     localStorage.setItem("college_os_auth_user", JSON.stringify(authUser));
     setIsLoading(false);
 
@@ -147,11 +157,12 @@ export function AuthProvider({ children }) {
 
   // 2. Logout
   const logout = () => {
+    const isFaculty = user?.role === "faculty";
     setUser(null);
     setIsAuthenticated(false);
     clearAuthCookie();
     localStorage.removeItem("college_os_auth_user");
-    router.push("/auth/student");
+    router.push(isFaculty ? "/auth/faculty" : "/auth/student");
   };
 
   // 3. Activation Flow: Step 1 -> Verify Identity
