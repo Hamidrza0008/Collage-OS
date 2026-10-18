@@ -33,7 +33,7 @@ export default function ResourcesSidebarLinks() {
   };
 
   return (
-    <div className="bg-white dark:bg-card-bg rounded-2xl border border-border-light dark:border-border-dark p-5 shadow-2xs space-y-3.5">
+    <div className="bg-white dark:bg-card-bg rounded-2xl border border-gray-200/70 dark:border-gray-800/80 p-5 shadow-2xs space-y-3.5">
       {/* Header */}
       <div className="flex items-center gap-2 pb-0.5">
         <LinkIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />

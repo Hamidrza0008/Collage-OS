@@ -55,7 +55,7 @@ export default function RecentUploadsTable({
   };
 
   return (
-    <div className="bg-white dark:bg-card-bg rounded-2xl border border-border-light dark:border-border-dark p-4 sm:p-5 shadow-2xs space-y-4">
+    <div className="bg-white dark:bg-card-bg rounded-2xl border border-gray-200/70 dark:border-gray-800/80 p-4 sm:p-5 shadow-2xs space-y-4">
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

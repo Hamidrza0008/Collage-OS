@@ -1,11 +1,11 @@
-import CampusAI from "@/components/campus-ai/CampusAI";
+import FacultyCampusAIAssembler from "@/components/faculty/campus-ai/FacultyCampusAIAssembler";
 
 export const metadata = {
-  title: "Campus AI - Faculty Portal - College OS",
+  title: "Campus AI — Faculty Portal | College OS",
   description:
-    "Your college-specific AI assistant. Get accurate answers from your college data, policies, guidelines, and more — powered by MongoDB + RAG.",
+    "Your college assistant — get accurate answers from college data, policies and resources powered by MongoDB + RAG.",
 };
 
 export default function FacultyCampusAIPage() {
-  return <CampusAI />;
+  return <FacultyCampusAIAssembler />;
 }

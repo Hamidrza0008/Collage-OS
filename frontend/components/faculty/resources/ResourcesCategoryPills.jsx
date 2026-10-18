@@ -43,8 +43,8 @@ export default function ResourcesCategoryPills({
   };
 
   return (
-    <div className="w-full overflow-x-auto pb-1 scrollbar-none">
-      <div className="flex items-center gap-3 min-w-max">
+    <div className="w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-2.5 sm:gap-3">
         {RESOURCE_CATEGORIES.map((cat) => {
           const isSelected = activeCategory === cat.id;
 
@@ -53,17 +53,17 @@ export default function ResourcesCategoryPills({
               key={cat.id}
               type="button"
               onClick={() => onSelectCategory(cat.id)}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer group ${
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-2xl text-left transition-all duration-200 cursor-pointer group shadow-2xs ${
                 isSelected
-                  ? "bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-500/70 dark:border-emerald-500/60 shadow-xs ring-1 ring-emerald-500/30"
-                  : "bg-white dark:bg-card-bg border-border-light dark:border-border-dark hover:border-emerald-500/40 hover:bg-emerald-50/30 dark:hover:bg-emerald-950/20"
+                  ? "bg-white dark:bg-card-bg border-2 border-emerald-500 shadow-xs"
+                  : "bg-white dark:bg-card-bg border border-gray-200/70 dark:border-gray-800/80 hover:border-emerald-400/60"
               }`}
             >
               {/* Icon Container */}
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                   isSelected
-                    ? "bg-emerald-500/15 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400"
+                    ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
                     : "bg-gray-50 dark:bg-surface-dark text-text-secondary dark:text-text-secondary-dark group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40"
                 }`}
               >
@@ -71,9 +71,9 @@ export default function ResourcesCategoryPills({
               </div>
 
               {/* Text & Count */}
-              <div className="flex flex-col">
+              <div className="flex flex-col min-w-0">
                 <span
-                  className={`text-xs font-semibold whitespace-nowrap transition-colors ${
+                  className={`text-[11.5px] font-bold truncate leading-tight transition-colors ${
                     isSelected
                       ? "text-emerald-900 dark:text-emerald-200"
                       : "text-text-primary dark:text-text-primary-dark group-hover:text-emerald-600 dark:group-hover:text-emerald-400"
@@ -81,13 +81,7 @@ export default function ResourcesCategoryPills({
                 >
                   {cat.label}
                 </span>
-                <span
-                  className={`text-[11px] font-medium transition-colors ${
-                    isSelected
-                      ? "text-emerald-700 dark:text-emerald-300"
-                      : "text-text-secondary dark:text-text-secondary-dark"
-                  }`}
-                >
+                <span className="text-[11px] font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
                   {cat.count}
                 </span>
               </div>

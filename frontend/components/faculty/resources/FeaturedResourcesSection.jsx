@@ -7,7 +7,6 @@ import {
   FileText,
   Code2,
   Download,
-  CheckCircle2,
 } from "lucide-react";
 import { FEATURED_RESOURCES } from "./facultyResourcesData";
 
@@ -19,30 +18,30 @@ export default function FeaturedResourcesSection({
   const getFormatBadgeStyle = (formatColor) => {
     switch (formatColor) {
       case "red":
-        return "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border-rose-200/60";
+        return "bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300";
       case "blue":
-        return "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 border-blue-200/60";
+        return "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-300";
       case "green":
-        return "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60";
+        return "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300";
       case "purple":
-        return "bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200/60";
+        return "bg-purple-50 text-purple-600 dark:bg-purple-950/40 dark:text-purple-300";
       default:
-        return "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200/60";
+        return "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300";
     }
   };
 
-  const getTopIconStyle = (formatColor) => {
+  const getTopIconColor = (formatColor) => {
     switch (formatColor) {
       case "red":
-        return "text-rose-500 bg-rose-50/70 dark:bg-rose-950/30 border-rose-200/50";
+        return "text-rose-400 dark:text-rose-300";
       case "blue":
-        return "text-blue-500 bg-blue-50/70 dark:bg-blue-950/30 border-blue-200/50";
+        return "text-blue-400 dark:text-blue-300";
       case "green":
-        return "text-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200/50";
+        return "text-emerald-500 dark:text-emerald-400";
       case "purple":
-        return "text-purple-500 bg-purple-50/70 dark:bg-purple-950/30 border-purple-200/50";
+        return "text-purple-400 dark:text-purple-300";
       default:
-        return "text-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200/50";
+        return "text-emerald-500 dark:text-emerald-400";
     }
   };
 
@@ -71,33 +70,30 @@ export default function FeaturedResourcesSection({
         </button>
       </div>
 
-      {/* 4 Cards Grid */}
+      {/* 4 Cards Grid with clean soft borders matching reference */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {FEATURED_RESOURCES.map((item) => (
           <div
             key={item.id}
             onClick={() => onSelectResource(item)}
-            className="group bg-white dark:bg-card-bg rounded-2xl border border-border-light dark:border-border-dark hover:border-emerald-500/50 dark:hover:border-emerald-500/40 p-4 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all duration-200 cursor-pointer"
+            className="group bg-white dark:bg-card-bg rounded-2xl border border-gray-200/70 dark:border-gray-800/80 hover:border-emerald-500/50 dark:hover:border-emerald-500/40 p-4 flex flex-col justify-between shadow-2xs hover:shadow-xs transition-all duration-200 cursor-pointer"
           >
-            {/* Top Row: Format Badge + Outline Icon */}
+            {/* Top Row: Format Badge + Bare Outline Icon (No boxed container) */}
             <div className="flex items-center justify-between mb-3">
               <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-md border tracking-wider uppercase ${getFormatBadgeStyle(
+                className={`text-[10.5px] font-bold px-2 py-0.5 rounded-md tracking-wider uppercase ${getFormatBadgeStyle(
                   item.formatColor
                 )}`}
               >
                 {item.format}
               </span>
 
-              <div
-                className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 ${getTopIconStyle(
-                  item.formatColor
-                )}`}
-              >
+              {/* Clean Icon without boxed container */}
+              <div className={`shrink-0 ${getTopIconColor(item.formatColor)}`}>
                 {item.iconType === "code" ? (
-                  <Code2 className="w-4 h-4" />
+                  <Code2 className="w-5 h-5 stroke-[1.75]" />
                 ) : (
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-5 h-5 stroke-[1.75]" />
                 )}
               </div>
             </div>
@@ -116,7 +112,7 @@ export default function FeaturedResourcesSection({
                 {item.tags.map((tag, idx) => (
                   <span
                     key={idx}
-                    className="text-[10.5px] font-medium px-2 py-0.5 rounded-md bg-gray-100 dark:bg-surface-dark text-text-secondary dark:text-text-secondary-dark"
+                    className="text-[10.5px] font-medium px-2 py-0.5 rounded-md bg-[#F4F7F5] dark:bg-surface-dark text-text-secondary dark:text-text-secondary-dark"
                   >
                     {tag}
                   </span>
@@ -125,7 +121,7 @@ export default function FeaturedResourcesSection({
             </div>
 
             {/* Bottom Row: File Format + Size & Download Icon */}
-            <div className="flex items-center justify-between pt-2 border-t border-border-light/60 dark:border-border-dark/60 text-xs text-text-secondary dark:text-text-secondary-dark">
+            <div className="flex items-center justify-between pt-2.5 border-t border-gray-100 dark:border-gray-800/60 text-xs text-text-secondary dark:text-text-secondary-dark">
               <span className="flex items-center gap-1 font-medium">
                 <FileText className="w-3.5 h-3.5" />
                 {item.format} • {item.size}
@@ -138,7 +134,7 @@ export default function FeaturedResourcesSection({
                   onDownloadResource(item);
                 }}
                 title="Download resource"
-                className="w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 transition-all flex items-center justify-center cursor-pointer shadow-2xs group-hover:scale-105"
+                className="w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 transition-all flex items-center justify-center cursor-pointer shadow-2xs group-hover:scale-105"
               >
                 <Download className="w-3.5 h-3.5" />
               </button>

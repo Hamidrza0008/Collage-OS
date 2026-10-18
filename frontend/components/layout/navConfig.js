@@ -14,6 +14,7 @@ import {
   CheckSquare,
   Award,
   Folder,
+  CalendarDays,
 } from "lucide-react";
 
 export const STUDENT_NAV_ITEMS = [
