@@ -33,8 +33,11 @@ export function FontProvider({ children }) {
     }
 
     styleEl.innerHTML = `
-      body, html, input, button, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a, kbd, label, table, tr, th, td {
+      body, html, input, button, select, textarea, h1, h2, h3, h4, h5, h6, p:not(.font-handwriting):not(.font-handwriting *), span:not(.font-handwriting):not(.font-handwriting *), div:not(.font-handwriting):not(.font-handwriting *), a:not(.font-handwriting):not(.font-handwriting *), kbd, label, table, tr, th, td {
         font-family: ${font.family} !important;
+      }
+      .font-handwriting, .font-handwriting * {
+        font-family: 'Caveat', cursive, sans-serif !important;
       }
     `;
   };
@@ -70,7 +73,7 @@ export function FontProvider({ children }) {
       link.id = "college-os-google-fonts";
       link.rel = "stylesheet";
       link.href =
-        "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Geist:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Sans+3:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap";
+        "https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Geist:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Sans+3:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap";
       document.head.appendChild(link);
     }
 

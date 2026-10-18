@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import {
   Lock,
   CheckCircle2,
-  XCircle,
   ArrowRight,
   ShieldCheck,
   LayoutDashboard,
-  Users,
-  Compass,
-  KeyRound,
+  Zap,
+  Building2,
+  GraduationCap,
   Loader2,
+  Check,
 } from "lucide-react";
 import AuthShell from "./AuthShell";
 import AuthCard from "./AuthCard";
@@ -75,6 +75,8 @@ export default function StudentPasswordPage() {
 
   return (
     <AuthShell
+      showFacultyLink={false}
+      cardMaxWidth="max-w-[460px] lg:max-w-[450px] xl:max-w-[460px]"
       topNavAction={{
         label: "Already have an account?",
         actionLabel: "Login",
@@ -82,36 +84,32 @@ export default function StudentPasswordPage() {
       }}
       brandProps={{
         badgeText: "Account Setup",
-        badgeIcon: KeyRound,
+        badgeIcon: GraduationCap,
         headline: ["Set Your Password", "Almost There!"],
         description:
           "Create a strong and secure password to complete your College OS account setup. Keep your account safe and access all the features.",
-        topHandwrittenText: "Same Campus, Bigger Dreams 🍃",
-        bottomHandwrittenText: "Build Your Future Here ♡",
+        topHandwrittenText: "Same Campus,\nBigger Dreams ♡",
+        bottomHandwrittenText: "Build Your\nFuture Here ♡",
         features: [
           {
             icon: ShieldCheck,
             title: "Secure Access",
-            subtitle: "Your data stays protected",
-            iconBg: "bg-[#159B72] text-white",
+            subtitle: "Your data stays\nprotected",
           },
           {
             icon: LayoutDashboard,
             title: "Personal Dashboard",
-            subtitle: "Manage your academic journey",
-            iconBg: "bg-[#DDF4EB] dark:bg-[#0C3029] text-[#159B72] dark:text-[#20D39B]",
+            subtitle: "Manage your academic\njourney",
           },
           {
-            icon: Users,
+            icon: Zap,
             title: "Stay Connected",
-            subtitle: "With your college community",
-            iconBg: "bg-[#DDF4EB] dark:bg-[#0C3029] text-[#159B72] dark:text-[#20D39B]",
+            subtitle: "With your college\ncommunity",
           },
           {
-            icon: Compass,
+            icon: Building2,
             title: "Better Experience",
-            subtitle: "Designed for a smarter campus",
-            iconBg: "bg-[#DDF4EB] dark:bg-[#0C3029] text-[#159B72] dark:text-[#20D39B]",
+            subtitle: "Designed for a\nsmarter campus",
           },
         ],
       }}
@@ -119,19 +117,20 @@ export default function StudentPasswordPage() {
       <AuthCard
         title="Create Your Password"
         subtitle="Choose a strong password to keep your account secure."
+        maxWidth="max-w-[460px] lg:max-w-[450px] xl:max-w-[460px]"
       >
         {/* Stepper: Step 3 Active */}
-        <div className="mb-4">
+        <div className="mb-2">
           <AuthStepper currentStep={3} />
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-xs text-rose-700 dark:text-rose-300">
+          <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-xs text-rose-700 dark:text-rose-300">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {/* Field 1: New Password */}
           <AuthInput
             id="newPassword"
@@ -148,74 +147,90 @@ export default function StudentPasswordPage() {
           />
 
           {/* Password Strength Criteria Box */}
-          <div className="p-3.5 rounded-xl bg-[#F7FBF9] dark:bg-[#07241E] border border-[#D8E8E2] dark:border-[#16463D] space-y-2 text-xs">
-            <span className="text-[11px] font-bold text-[#36594C] dark:text-[#A7C8BD] uppercase tracking-wider block">
-              Password Requirements
-            </span>
-
+          <div className="p-3 rounded-xl bg-[#F7FBF9] dark:bg-[#07241E] border border-[#D8E8E2] dark:border-[#16463D] space-y-2 text-xs">
             <div className="space-y-1.5">
+              {/* Requirement 1 */}
               <div className="flex items-center gap-2">
-                {hasMinLength ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border border-[#D8E8E2] dark:border-[#16463D] shrink-0" />
-                )}
+                <div
+                  className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                    hasMinLength
+                      ? "bg-[#159B72] text-white"
+                      : "bg-[#D8E8E2] dark:bg-[#16463D] text-[#658278]"
+                  }`}
+                >
+                  <Check className="w-2.5 h-2.5 stroke-[2.5]" />
+                </div>
                 <span
                   className={
                     hasMinLength
-                      ? "text-emerald-700 dark:text-emerald-300 font-semibold"
-                      : "text-[#658278] dark:text-[#789991]"
+                      ? "text-[#0B3024] dark:text-[#F1FAF6] font-medium text-xs"
+                      : "text-[#658278] dark:text-[#789991] text-xs"
                   }
                 >
                   At least 8 characters long
                 </span>
               </div>
 
+              {/* Requirement 2 */}
               <div className="flex items-center gap-2">
-                {hasUpperLower ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border border-[#D8E8E2] dark:border-[#16463D] shrink-0" />
-                )}
+                <div
+                  className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                    hasUpperLower
+                      ? "bg-[#159B72] text-white"
+                      : "bg-[#D8E8E2] dark:bg-[#16463D] text-[#658278]"
+                  }`}
+                >
+                  <Check className="w-2.5 h-2.5 stroke-[2.5]" />
+                </div>
                 <span
                   className={
                     hasUpperLower
-                      ? "text-emerald-700 dark:text-emerald-300 font-semibold"
-                      : "text-[#658278] dark:text-[#789991]"
+                      ? "text-[#0B3024] dark:text-[#F1FAF6] font-medium text-xs"
+                      : "text-[#658278] dark:text-[#789991] text-xs"
                   }
                 >
                   Include uppercase and lowercase letters
                 </span>
               </div>
 
+              {/* Requirement 3 */}
               <div className="flex items-center gap-2">
-                {hasNumber ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border border-[#D8E8E2] dark:border-[#16463D] shrink-0" />
-                )}
+                <div
+                  className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                    hasNumber
+                      ? "bg-[#159B72] text-white"
+                      : "bg-[#D8E8E2] dark:bg-[#16463D] text-[#658278]"
+                  }`}
+                >
+                  <Check className="w-2.5 h-2.5 stroke-[2.5]" />
+                </div>
                 <span
                   className={
                     hasNumber
-                      ? "text-emerald-700 dark:text-emerald-300 font-semibold"
-                      : "text-[#658278] dark:text-[#789991]"
+                      ? "text-[#0B3024] dark:text-[#F1FAF6] font-medium text-xs"
+                      : "text-[#658278] dark:text-[#789991] text-xs"
                   }
                 >
                   Include at least one number
                 </span>
               </div>
 
+              {/* Requirement 4 */}
               <div className="flex items-center gap-2">
-                {hasSpecial ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border border-[#D8E8E2] dark:border-[#16463D] shrink-0" />
-                )}
+                <div
+                  className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                    hasSpecial
+                      ? "bg-[#159B72] text-white"
+                      : "bg-[#D8E8E2] dark:bg-[#16463D] text-[#658278]"
+                  }`}
+                >
+                  <Check className="w-2.5 h-2.5 stroke-[2.5]" />
+                </div>
                 <span
                   className={
                     hasSpecial
-                      ? "text-emerald-700 dark:text-emerald-300 font-semibold"
-                      : "text-[#658278] dark:text-[#789991]"
+                      ? "text-[#0B3024] dark:text-[#F1FAF6] font-medium text-xs"
+                      : "text-[#658278] dark:text-[#789991] text-xs"
                   }
                 >
                   Include at least one special character (e.g. @ # $ % etc.)
@@ -243,7 +258,7 @@ export default function StudentPasswordPage() {
           <button
             type="submit"
             disabled={!allCriteriaMet || !confirmPassword || isSubmitting}
-            className="w-full h-11 sm:h-12 rounded-xl bg-[#159B72] hover:bg-[#0E8561] active:scale-[0.99] text-white font-bold text-sm tracking-wide shadow-md shadow-[#159B72]/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-10 sm:h-10.5 rounded-xl bg-[#159B72] hover:bg-[#0E8561] active:scale-[0.99] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-[#159B72]/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <>
@@ -252,14 +267,14 @@ export default function StudentPasswordPage() {
               </>
             ) : (
               <>
-                <span>Set Password &amp; Activate Account</span>
+                <span>Set Password</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
 
           {/* OR Divider */}
-          <div className="relative flex items-center justify-center my-4">
+          <div className="relative flex items-center justify-center my-2.5">
             <div className="border-t border-[#E2EBE7] dark:border-[#16463D] w-full" />
             <span className="bg-white dark:bg-[#06241F] px-3 text-[11px] font-bold text-[#658278] dark:text-[#789991] uppercase tracking-wider relative">
               OR
@@ -272,7 +287,7 @@ export default function StudentPasswordPage() {
             onClick={() => {
               alert("Google authentication can be linked to your verified account after setting your institutional password.");
             }}
-            className="w-full h-11 sm:h-12 rounded-xl bg-white dark:bg-[#0A2A24] border border-[#D8E8E2] dark:border-[#16463D] hover:bg-[#F7FBF9] dark:hover:bg-[#0E352E] text-[#0B3024] dark:text-[#F1FAF6] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-colors cursor-pointer shadow-2xs"
+            className="w-full h-10 sm:h-10.5 rounded-xl bg-white dark:bg-[#0A2A24] border border-[#D8E8E2] dark:border-[#16463D] hover:bg-[#F7FBF9] dark:hover:bg-[#0E352E] text-[#0B3024] dark:text-[#F1FAF6] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-colors cursor-pointer shadow-2xs"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -297,7 +312,7 @@ export default function StudentPasswordPage() {
         </form>
 
         {/* Security Footer */}
-        <div className="pt-3 flex items-center justify-center gap-1.5 text-[11px] text-[#658278] dark:text-[#789991]">
+        <div className="pt-1.5 flex items-center justify-center gap-1.5 text-[11px] text-[#658278] dark:text-[#789991]">
           <ShieldCheck className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
           <span>Your information is securely verified and encrypted.</span>
         </div>

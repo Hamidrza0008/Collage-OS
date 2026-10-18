@@ -68,42 +68,37 @@ export default function StudentLoginPage() {
 
   return (
     <AuthShell
+      showFacultyLink={false}
       topNavAction={{
         label: "New to College OS?",
-        actionLabel: "Activate Account",
+        actionLabel: "Create an Account",
         href: "/auth/student/activate",
       }}
       brandProps={{
-        badgeText: "Student Academic Portal",
-        badgeIcon: GraduationCap,
         headline: ["Welcome Back,", "Student!"],
         description: "Your campus, your profile, your future — all in one place.",
-        topHandwrittenText: "Learn • Connect Grow 🍃",
-        bottomHandwrittenText: "Same Campus, Bigger Dreams ♡",
+        topHandwrittenText: "Learn • Connect\nGrow 🍃",
+        bottomHandwrittenText: "Same Campus,\nBigger Dreams ♡",
         features: [
           {
             icon: Calendar,
             title: "Timetable",
-            subtitle: "Never miss a class",
-            iconBg: "bg-[#159B72] text-white",
+            subtitle: "Never miss\na class",
           },
           {
             icon: GraduationCap,
             title: "Marks & Attendance",
-            subtitle: "Track your progress",
-            iconBg: "bg-[#DDF4EB] dark:bg-[#0C3029] text-[#159B72] dark:text-[#20D39B]",
+            subtitle: "Track your\nprogress",
           },
           {
             icon: Bell,
             title: "Notices & Events",
-            subtitle: "Stay updated always",
-            iconBg: "bg-[#DDF4EB] dark:bg-[#0C3029] text-[#159B72] dark:text-[#20D39B]",
+            subtitle: "Stay updated\nalways",
           },
           {
             icon: Users,
             title: "Student Profiles",
-            subtitle: "Explore. Connect. Grow.",
-            iconBg: "bg-[#DDF4EB] dark:bg-[#0C3029] text-[#159B72] dark:text-[#20D39B]",
+            subtitle: "Explore. Connect.\nGrow.",
           },
         ],
       }}
@@ -113,21 +108,6 @@ export default function StudentLoginPage() {
         subtitle="Log in to access your dashboard, classes, notices and more."
         badge="Student Login"
       >
-        {/* Quick Demo Pill */}
-        <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#DDF4EB]/60 dark:bg-[#075A43]/30 border border-[#159B72]/20 text-[11.5px] text-[#0B3024] dark:text-[#E8F6F0]">
-          <span className="font-medium flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
-            Test Student Credentials
-          </span>
-          <button
-            type="button"
-            onClick={fillDemoStudent}
-            className="text-[11px] font-bold text-[#159B72] dark:text-[#20D39B] hover:underline cursor-pointer"
-          >
-            Auto-fill (Hamid Rza)
-          </button>
-        </div>
-
         {errors.form && (
           <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-xs text-rose-700 dark:text-rose-300">
             {errors.form}
@@ -168,7 +148,7 @@ export default function StudentLoginPage() {
           />
 
           {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center justify-between text-xs pt-0.5">
             <label className="flex items-center gap-2 cursor-pointer select-none text-[#36594C] dark:text-[#A7C8BD]">
               <input
                 type="checkbox"
@@ -210,7 +190,7 @@ export default function StudentLoginPage() {
           </button>
 
           {/* OR Divider */}
-          <div className="relative flex items-center justify-center my-4">
+          <div className="relative flex items-center justify-center my-3.5">
             <div className="border-t border-[#E2EBE7] dark:border-[#16463D] w-full" />
             <span className="bg-white dark:bg-[#06241F] px-3 text-[11px] font-bold text-[#658278] dark:text-[#789991] uppercase tracking-wider relative">
               OR
@@ -248,28 +228,18 @@ export default function StudentLoginPage() {
         </form>
 
         {/* Security Assurance Card */}
-        <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-[#F1F8F5] dark:bg-[#082A24] border border-[#D8E8E2] dark:border-[#16463D] text-[12px]">
-          <ShieldCheck className="w-5 h-5 text-[#159B72] dark:text-[#20D39B] shrink-0" />
+        <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-[#F0FAF5] dark:bg-[#082A24] border border-[#DCEDE4] dark:border-[#16463D] text-[12px]">
+          <div className="w-6 h-6 rounded-full bg-[#159B72]/15 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+          </div>
           <div className="leading-snug">
-            <strong className="font-semibold text-[#0B3024] dark:text-[#F1FAF6] block">
+            <strong className="font-bold text-[#0B3024] dark:text-[#F1FAF6] block text-xs">
               Your data is safe with us.
             </strong>
-            <span className="text-[#36594C] dark:text-[#A7C8BD] text-[11px]">
-              We use secure institutional encryption to protect your records.
+            <span className="text-[#52796F] dark:text-[#A7C8BD] text-[11px]">
+              We use secure encryption to protect your information.
             </span>
           </div>
-        </div>
-
-        {/* Switch to Activation Link */}
-        <div className="pt-2 text-center text-xs text-[#658278] dark:text-[#789991]">
-          Haven&apos;t activated your account yet?{" "}
-          <Link
-            href="/auth/student/activate"
-            className="font-bold text-[#159B72] dark:text-[#20D39B] hover:underline inline-flex items-center gap-1"
-          >
-            <span>Activate Account</span>
-            <ArrowRight className="w-3 h-3" />
-          </Link>
         </div>
       </AuthCard>
     </AuthShell>

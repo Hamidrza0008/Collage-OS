@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap, Mail, Info, ArrowRight, Lock, Loader2, Sparkles } from "lucide-react";
+import { GraduationCap, Mail, Info, ArrowRight, Lock, Loader2, ShieldCheck, UserCheck } from "lucide-react";
 import AuthShell from "./AuthShell";
 import AuthCard from "./AuthCard";
 import AuthStepper from "./AuthStepper";
@@ -17,13 +17,6 @@ export default function StudentActivationPage() {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Quick helper to fill demo credentials
-  const fillDemoCredentials = () => {
-    setEnrollmentNo("22CS087");
-    setEmail("hamid@college.edu");
-    setErrors({});
-  };
 
   const validate = () => {
     const newErrors = {};
@@ -61,6 +54,8 @@ export default function StudentActivationPage() {
 
   return (
     <AuthShell
+      showFacultyLink={false}
+      cardMaxWidth="max-w-[460px] lg:max-w-[450px] xl:max-w-[460px]"
       topNavAction={{
         label: "Already have an account?",
         actionLabel: "Login",
@@ -72,42 +67,50 @@ export default function StudentActivationPage() {
         headline: ["Activate Your", "College OS Account"],
         description:
           "Your college has already registered your details. Verify your identity using your enrollment number and college email to get started.",
-        topHandwrittenText: "Your College Identity Awaits ♡",
-        bottomHandwrittenText: "Same Campus, Bigger Dreams 🍃",
+        topHandwrittenText: "Your College\nIdentity Awaits ♡",
+        bottomHandwrittenText: "Same Campus,\nBigger Dreams 🍃",
+        features: [
+          {
+            icon: ShieldCheck,
+            title: "Verified Identity",
+            subtitle: "Using your college\nrecords",
+          },
+          {
+            icon: Mail,
+            title: "Secure OTP",
+            subtitle: "Sent to your college\nemail",
+          },
+          {
+            icon: Lock,
+            title: "Create Password",
+            subtitle: "Your account,\nyour control",
+          },
+          {
+            icon: UserCheck,
+            title: "Get Started",
+            subtitle: "Access your campus\ndashboard",
+          },
+        ],
       }}
     >
       <AuthCard
         title="Student Account Activation"
         subtitle="Enter your enrollment number and college email to verify your identity and continue."
+        maxWidth="max-w-[460px] lg:max-w-[450px] xl:max-w-[460px]"
       >
         {/* Stepper: Step 1 Active */}
-        <div className="mb-4">
+        <div className="mb-2">
           <AuthStepper currentStep={1} />
-        </div>
-
-        {/* Demo Helper Pill */}
-        <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#DDF4EB]/60 dark:bg-[#075A43]/30 border border-[#159B72]/20 text-[11.5px] text-[#0B3024] dark:text-[#E8F6F0]">
-          <span className="font-medium flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
-            Demo Student Record Available
-          </span>
-          <button
-            type="button"
-            onClick={fillDemoCredentials}
-            className="text-[11px] font-bold text-[#159B72] dark:text-[#20D39B] hover:underline cursor-pointer"
-          >
-            Auto-fill (22CS087)
-          </button>
         </div>
 
         {/* Form Error Alert */}
         {errors.form && (
-          <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-xs text-rose-700 dark:text-rose-300">
+          <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-xs text-rose-700 dark:text-rose-300">
             {errors.form}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {/* Field 1: Enrollment Number */}
           <AuthInput
             id="enrollmentNo"
@@ -140,7 +143,7 @@ export default function StudentActivationPage() {
           />
 
           {/* Need help? Alert Box */}
-          <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#F1F8F5] dark:bg-[#082A24] border border-[#D8E8E2] dark:border-[#16463D] text-[12px] text-[#36594C] dark:text-[#A7C8BD]">
+          <div className="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-xl bg-[#F1F8F5] dark:bg-[#082A24] border border-[#D8E8E2] dark:border-[#16463D] text-[11.5px] text-[#36594C] dark:text-[#A7C8BD]">
             <Info className="w-4 h-4 text-[#159B72] dark:text-[#20D39B] shrink-0 mt-0.5" />
             <div className="leading-snug">
               <strong className="font-semibold text-[#0B3024] dark:text-[#F1FAF6] block mb-0.5">
@@ -155,7 +158,7 @@ export default function StudentActivationPage() {
           <button
             type="submit"
             disabled={isSubmitting || isLoading}
-            className="w-full h-11 sm:h-12 rounded-xl bg-[#159B72] hover:bg-[#0E8561] active:scale-[0.99] text-white font-bold text-sm tracking-wide shadow-md shadow-[#159B72]/20 flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full h-10 sm:h-10.5 rounded-xl bg-[#159B72] hover:bg-[#0E8561] active:scale-[0.99] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-[#159B72]/20 flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <>
@@ -171,7 +174,7 @@ export default function StudentActivationPage() {
           </button>
 
           {/* OR Divider */}
-          <div className="relative flex items-center justify-center my-4">
+          <div className="relative flex items-center justify-center my-2.5">
             <div className="border-t border-[#E2EBE7] dark:border-[#16463D] w-full" />
             <span className="bg-white dark:bg-[#06241F] px-3 text-[11px] font-bold text-[#658278] dark:text-[#789991] uppercase tracking-wider relative">
               OR
@@ -186,7 +189,7 @@ export default function StudentActivationPage() {
                 "Google institutional authentication requires a matching verified college email domain (@college.edu). Identity verification with your college record remains mandatory."
               );
             }}
-            className="w-full h-11 sm:h-12 rounded-xl bg-white dark:bg-[#0A2A24] border border-[#D8E8E2] dark:border-[#16463D] hover:bg-[#F7FBF9] dark:hover:bg-[#0E352E] text-[#0B3024] dark:text-[#F1FAF6] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-colors cursor-pointer shadow-2xs"
+            className="w-full h-10 sm:h-10.5 rounded-xl bg-white dark:bg-[#0A2A24] border border-[#D8E8E2] dark:border-[#16463D] hover:bg-[#F7FBF9] dark:hover:bg-[#0E352E] text-[#0B3024] dark:text-[#F1FAF6] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-colors cursor-pointer shadow-2xs"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -211,7 +214,7 @@ export default function StudentActivationPage() {
         </form>
 
         {/* Security Footer */}
-        <div className="pt-3 flex items-center justify-center gap-1.5 text-[11px] text-[#658278] dark:text-[#789991]">
+        <div className="pt-1.5 flex items-center justify-center gap-1.5 text-[11px] text-[#658278] dark:text-[#789991]">
           <Lock className="w-3.5 h-3.5 text-[#159B72] dark:text-[#20D39B]" />
           <span>Your information is securely verified with your college.</span>
         </div>
