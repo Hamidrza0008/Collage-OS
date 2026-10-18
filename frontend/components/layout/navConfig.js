@@ -13,7 +13,7 @@ import {
   BookOpen,
   CheckSquare,
   Award,
-  CalendarDays,
+  Folder,
 } from "lucide-react";
 
 export const STUDENT_NAV_ITEMS = [
@@ -39,7 +39,7 @@ export const FACULTY_NAV_ITEMS = [
   { label: "Notices & Announcements", icon: Bell, href: "/faculty/notices" },
   { label: "Events", icon: CalendarDays, href: "/faculty/events" },
   { label: "Student Profiles", icon: LayoutGrid, href: "/faculty/students" },
-  { label: "Resources", icon: Layers, href: "/faculty/resources" },
+  { label: "Resources", icon: Folder, href: "/faculty/resources" },
   { label: "Campus AI", icon: Sparkles, href: "/faculty/campus-ai", badge: "New" },
 ];
 

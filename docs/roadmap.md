@@ -116,6 +116,8 @@ Do NOT simply reuse the Student Dashboard as the Faculty Dashboard.
   > *Progress: Full Notices & Announcements hub implemented at `/faculty/notices` matching reference screenshot with Campus Hero banner, live tabs (All 24, Notices 16, Announcements 8), search & filter bar, 6-card paginated feed with category badges, audience/subject tags, timestamps, status pills & popover menus, Filter & Sort sidebar (Category, Status, Date Range), Quick Actions (Create Notice, Create Announcement, Browse), Community quote card, full Notice Details modal, and Create Notice/Announcement modal with instant broadcast.*
 - [x] Announcements
   > *Progress: Unified within `/faculty/notices` with dedicated announcements tab, megaphone branding, priority badges, and quick compose actions.*
+- [x] Resources repository
+  > *Progress: Full Academic Resources hub implemented at `/faculty/resources` matching reference screenshot with Campus Hero banner, category chips carousel (All Resources 248, Study Material 102, Syllabus 18, Previous Papers 56, Guidelines 24, Forms & Templates 12, Other 36), multi-filter search bar (Categories, Semesters, Sort Order), 4 Featured Resource cards with format badges (PDF, ZIP), Recent Uploads table with format badges, faculty avatar, timestamp & downloads, Quick Actions 2x2 grid, 68% Storage Usage donut meter, Useful Links, Academic Journey quote card, Upload Resource modal with progress simulation, Share with Class modal, and Create Folder modal.*
 - [ ] Faculty profile
 - [ ] Relevant student/project browsing where appropriate
 - [ ] Faculty Campus AI interface/access
