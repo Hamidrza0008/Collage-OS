@@ -3,10 +3,10 @@
 import React from "react";
 import {
   Zap,
-  UploadCloud,
+  Upload,
   Users,
   FolderPlus,
-  DownloadCloud,
+  Download,
 } from "lucide-react";
 
 export default function ResourcesSidebarQuickActions({
@@ -20,7 +20,7 @@ export default function ResourcesSidebarQuickActions({
       id: "upload",
       title: "Upload Resource",
       subtitle: "Add new file",
-      icon: UploadCloud,
+      icon: Upload,
       onClick: onUploadClick,
     },
     {
@@ -41,7 +41,7 @@ export default function ResourcesSidebarQuickActions({
       id: "view-downloads",
       title: "View Downloads",
       subtitle: "Track activity",
-      icon: DownloadCloud,
+      icon: Download,
       onClick: onViewDownloadsClick,
     },
   ];
@@ -50,13 +50,13 @@ export default function ResourcesSidebarQuickActions({
     <div className="space-y-3">
       {/* Header */}
       <div className="flex items-center gap-2 px-1">
-        <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400 fill-emerald-600/20" />
-        <h2 className="text-[14px] font-bold text-text-primary dark:text-text-primary-dark">
+        <Zap className="w-4 h-4 text-[#159B72] dark:text-[#20D39B] fill-[#159B72]/20" />
+        <h2 className="text-[14px] font-bold text-[#0B3024] dark:text-[#F1FAF6]">
           Quick Actions
         </h2>
       </div>
 
-      {/* 2x2 Grid of White Cards (No heavy outer bounding box) */}
+      {/* 2x2 Grid of Cards matching screenshot */}
       <div className="grid grid-cols-2 gap-3">
         {actions.map((act) => {
           const Icon = act.icon;
@@ -65,15 +65,15 @@ export default function ResourcesSidebarQuickActions({
               key={act.id}
               type="button"
               onClick={act.onClick}
-              className="flex flex-col items-start p-4 rounded-2xl border border-gray-200/70 dark:border-gray-800/80 bg-white dark:bg-card-bg hover:border-emerald-500/50 hover:shadow-xs transition-all text-left group cursor-pointer shadow-2xs"
+              className="flex flex-col items-start p-4 rounded-2xl border border-[#D8E8E2] dark:border-[#10372F] bg-white dark:bg-[#06241F] hover:border-[#159B72]/50 dark:hover:border-[#20D39B]/50 hover:shadow-xs transition-all text-left group cursor-pointer shadow-2xs"
             >
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mb-3 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-[#EBF6F1] dark:bg-[#0F4A3B] text-[#159B72] dark:text-[#20D39B] flex items-center justify-center shrink-0 mb-3 group-hover:scale-105 transition-transform">
                 <Icon className="w-4 h-4" />
               </div>
-              <span className="text-xs font-bold text-text-primary dark:text-text-primary-dark group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              <span className="text-xs font-bold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-[#159B72] dark:group-hover:text-[#20D39B] transition-colors">
                 {act.title}
               </span>
-              <span className="text-[11px] text-text-secondary dark:text-text-secondary-dark mt-0.5">
+              <span className="text-[11px] text-[#658278] dark:text-[#789991] mt-0.5">
                 {act.subtitle}
               </span>
             </button>

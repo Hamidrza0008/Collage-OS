@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -87,8 +88,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
 
 .font-handwriting, .font-handwriting * {
   font-family: 'Caveat', var(--font-caveat), cursive, sans-serif !important;

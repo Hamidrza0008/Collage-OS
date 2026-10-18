@@ -14,11 +14,11 @@ export default function ResourcesSidebarStorage({
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="bg-white dark:bg-card-bg rounded-2xl border border-gray-200/70 dark:border-gray-800/80 p-5 shadow-2xs space-y-4">
+    <div className="bg-white dark:bg-[#06241F] rounded-2xl border border-[#D8E8E2] dark:border-[#10372F] p-5 shadow-2xs space-y-4">
       {/* Header */}
       <div className="flex items-center gap-2 pb-0.5">
-        <Database className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-        <h2 className="text-[14px] font-bold text-text-primary dark:text-text-primary-dark">
+        <Database className="w-4 h-4 text-[#159B72] dark:text-[#20D39B]" />
+        <h2 className="text-[14px] font-bold text-[#0B3024] dark:text-[#F1FAF6]">
           Storage Usage
         </h2>
       </div>
@@ -36,7 +36,7 @@ export default function ResourcesSidebarStorage({
               stroke="currentColor"
               strokeWidth="6"
               fill="transparent"
-              className="text-gray-100 dark:text-surface-dark"
+              className="text-[#E8F1ED] dark:text-[#082A24]"
             />
             {/* Value circle */}
             <circle
@@ -49,10 +49,10 @@ export default function ResourcesSidebarStorage({
               strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
               fill="transparent"
-              className="text-[#159B72] transition-all duration-1000 ease-out"
+              className="text-[#159B72] dark:text-[#20D39B] transition-all duration-1000 ease-out"
             />
           </svg>
-          <span className="absolute text-sm font-bold text-text-primary dark:text-text-primary-dark">
+          <span className="absolute text-sm font-bold text-[#0B3024] dark:text-[#F1FAF6]">
             {percentage}%
           </span>
         </div>
@@ -60,18 +60,21 @@ export default function ResourcesSidebarStorage({
         {/* Text and Bar */}
         <div className="flex-1 min-w-0 space-y-1.5">
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-text-primary dark:text-text-primary-dark tracking-tight">
-              {usedGB} GB <span className="text-text-secondary dark:text-text-secondary-dark font-normal">/ {totalGB} GB</span>
+            <span className="text-sm font-bold text-[#0B3024] dark:text-[#F1FAF6] tracking-tight">
+              {usedGB} GB{" "}
+              <span className="text-[#658278] dark:text-[#789991] font-normal">
+                / {totalGB} GB
+              </span>
             </span>
-            <span className="text-xs text-text-secondary dark:text-text-secondary-dark">
+            <span className="text-xs text-[#658278] dark:text-[#789991]">
               Used
             </span>
           </div>
 
           {/* Horizontal mini bar */}
-          <div className="w-full h-2 rounded-full bg-gray-100 dark:bg-surface-dark overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-[#E8F1ED] dark:bg-[#082A24] overflow-hidden">
             <div
-              className="h-full rounded-full bg-[#159B72]"
+              className="h-full rounded-full bg-[#159B72] dark:bg-[#20D39B]"
               style={{ width: `${percentage}%` }}
             />
           </div>
