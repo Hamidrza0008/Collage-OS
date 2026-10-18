@@ -109,10 +109,13 @@ Do NOT simply reuse the Student Dashboard as the Faculty Dashboard.
   > *Progress: Full Attendance portal implemented at `/faculty/attendance` with Attendance Hero, 4 KPI cards (Total Students, Present Today, Absent Today, Avg. Attendance), My Classes section with real-time search & filter, circular attendance gauges, roll-call attendance marking modal, Attendance Summary table with progress bars & trends, Attendance Overview donut chart (82% vs 18%), Quick Actions, and Today's Classes schedule.*
 - [x] Bulk attendance workflow
   > *Progress: Integrated into Attendance portal quick actions and bulk CSV upload modal trigger.*
-- [ ] Assignments management
+- [x] Assignments management
+  > *Progress: Full Assignments management portal implemented at `/faculty/assignments` with Assignments Hero, 4 KPI cards (Total Assignments, Pending Submissions, Submitted, Overdue), reactive tabbed table (All, Pending, Submitted, Overdue) with course filters, search & pagination, Quick Actions (Create New Assignment modal), Upcoming Deadlines, Assignment Analytics donut chart (67%), and interactive Assignment AI assistant.*
 - [ ] Marks management
-- [ ] Notices
-- [ ] Announcements
+- [x] Notices
+  > *Progress: Full Notices & Announcements hub implemented at `/faculty/notices` matching reference screenshot with Campus Hero banner, live tabs (All 24, Notices 16, Announcements 8), search & filter bar, 6-card paginated feed with category badges, audience/subject tags, timestamps, status pills & popover menus, Filter & Sort sidebar (Category, Status, Date Range), Quick Actions (Create Notice, Create Announcement, Browse), Community quote card, full Notice Details modal, and Create Notice/Announcement modal with instant broadcast.*
+- [x] Announcements
+  > *Progress: Unified within `/faculty/notices` with dedicated announcements tab, megaphone branding, priority badges, and quick compose actions.*
 - [ ] Faculty profile
 - [ ] Relevant student/project browsing where appropriate
 - [ ] Faculty Campus AI interface/access
