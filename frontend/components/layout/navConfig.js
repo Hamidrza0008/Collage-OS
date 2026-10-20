@@ -15,6 +15,7 @@ import {
   Award,
   Folder,
   CalendarDays,
+  Megaphone,
 } from "lucide-react";
 
 export const STUDENT_NAV_ITEMS = [
@@ -37,7 +38,7 @@ export const FACULTY_NAV_ITEMS = [
   { label: "Attendance", icon: CheckSquare, href: "/faculty/attendance" },
   { label: "Assignments", icon: ClipboardCheck, href: "/faculty/assignments" },
   { label: "Marks & Results", icon: Award, href: "/faculty/marks" },
-  { label: "Notices & Announcements", icon: Bell, href: "/faculty/notices" },
+  { label: "Notices & Announcements", icon: Megaphone, href: "/faculty/notices" },
   { label: "Events", icon: CalendarDays, href: "/faculty/events" },
   { label: "Student Profiles", icon: LayoutGrid, href: "/faculty/students" },
   { label: "Resources", icon: Folder, href: "/faculty/resources" },

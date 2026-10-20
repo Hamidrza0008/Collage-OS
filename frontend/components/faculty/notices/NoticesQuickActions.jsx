@@ -41,17 +41,17 @@ export default function NoticesQuickActions({
   ];
 
   return (
-    <div className="bg-white dark:bg-card-bg rounded-2xl border border-border-light dark:border-border-dark p-5 shadow-2xs space-y-4">
-      {/* Header */}
+    <div className="bg-white dark:bg-[#06241F] rounded-2xl border border-[#E5ECE8] dark:border-[#10372F] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3">
+      {/* Header matching screenshot */}
       <div className="flex items-center gap-2.5 pb-0.5">
-        <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400 fill-emerald-600/20" />
-        <h2 className="text-[14px] font-bold text-text-primary dark:text-text-primary-dark">
+        <Zap className="w-4 h-4 text-[#159B72]" />
+        <h2 className="text-[14px] font-bold text-[#0B3024] dark:text-[#F1FAF6]">
           Quick Actions
         </h2>
       </div>
 
       {/* Action Rows */}
-      <div className="space-y-2">
+      <div className="space-y-1">
         {actions.map((act) => {
           const Icon = act.icon;
           return (
@@ -59,23 +59,23 @@ export default function NoticesQuickActions({
               key={act.id}
               type="button"
               onClick={act.onClick}
-              className="w-full flex items-center justify-between p-2.5 rounded-xl border border-transparent hover:border-emerald-500/30 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 transition-all text-left group cursor-pointer"
+              className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-[#F1F8F5] dark:hover:bg-[#082A24] transition-colors text-left group cursor-pointer"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <div className="w-9 h-9 rounded-xl bg-[#E8F7F0] dark:bg-[#073629] text-[#159B72] dark:text-[#20D39B] flex items-center justify-center shrink-0">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs sm:text-[13px] font-semibold text-text-primary dark:text-text-primary-dark group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
+                  <h4 className="text-[13px] font-semibold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-[#159B72] transition-colors truncate">
                     {act.title}
                   </h4>
-                  <p className="text-[11px] text-text-secondary dark:text-text-secondary-dark truncate">
+                  <p className="text-[11px] text-[#658278] dark:text-[#789991] truncate">
                     {act.description}
                   </p>
                 </div>
               </div>
 
-              <ChevronRight className="w-4 h-4 text-text-secondary/60 dark:text-text-secondary-dark/60 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              <ChevronRight className="w-4 h-4 text-[#94A3B8] group-hover:text-[#159B72] transition-colors shrink-0 ml-2" />
             </button>
           );
         })}
