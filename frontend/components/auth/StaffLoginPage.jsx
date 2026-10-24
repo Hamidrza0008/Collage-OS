@@ -225,8 +225,20 @@ export default function StaffLoginPage() {
           </div>
         </div>
 
+        {/* Faculty Account Activation Link */}
+        <div className="pt-3 pb-1 text-center text-xs text-[#658278] dark:text-[#789991] border-t border-[#E2EBE7] dark:border-[#16463D]/60 mt-3">
+          First time accessing the portal?{" "}
+          <Link
+            href="/auth/faculty/activate"
+            className="font-bold text-[#159B72] dark:text-[#20D39B] hover:underline inline-flex items-center gap-1"
+          >
+            <span>Activate Faculty Account</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+
         {/* Student Portal Link */}
-        <div className="pt-2 text-center text-xs text-[#658278] dark:text-[#789991]">
+        <div className="pt-1 text-center text-xs text-[#658278] dark:text-[#789991]">
           Are you a student?{" "}
           <Link
             href="/auth/student"

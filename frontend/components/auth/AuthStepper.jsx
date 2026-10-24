@@ -9,11 +9,11 @@ const STEPS = [
   { step: 3, label: "Set Password" },
 ];
 
-export default function AuthStepper({ currentStep = 1 }) {
+export default function AuthStepper({ currentStep = 1, steps = STEPS }) {
   return (
     <div className="w-full py-1">
       <div className="flex items-center justify-between relative">
-        {STEPS.map((item, index) => {
+        {steps.map((item, index) => {
           const isCompleted = currentStep > item.step;
           const isActive = currentStep === item.step;
 
@@ -45,12 +45,16 @@ export default function AuthStepper({ currentStep = 1 }) {
                       : "text-[#658278] dark:text-[#789991]"
                   }`}
                 >
-                  {isCompleted && item.step === 2 ? "✓ Confirm Details" : item.label}
+                  {isCompleted && item.step === 2 && item.label === "Confirm Details"
+                    ? "✓ Confirm Details"
+                    : isCompleted
+                    ? `✓ ${item.label}`
+                    : item.label}
                 </span>
               </div>
 
               {/* Connector line between steps */}
-              {index < STEPS.length - 1 && (
+              {index < steps.length - 1 && (
                 <div className="flex-1 mx-1.5 sm:mx-2.5 h-[2px] bg-[#E2EBE7] dark:bg-[#16463D] relative overflow-hidden">
                   <div
                     className={`h-full bg-[#159B72] dark:bg-[#20D39B] transition-all duration-500 ease-out ${
