@@ -20,6 +20,7 @@ export default function SecurityRegionCard({
   onLanguageChange,
   timeZone,
   onTimeZoneChange,
+  isFaculty = false,
 }) {
   return (
     <div className="rounded-2xl border border-[#D8E8E2] dark:border-[#16463D] bg-white dark:bg-[#06241F] p-4 sm:p-5 shadow-xs space-y-4">
@@ -65,30 +66,58 @@ export default function SecurityRegionCard({
           </button>
 
           {/* Two-Factor Authentication */}
-          <Link
-            href="/student/settings/security"
-            className="w-full text-left py-1.5 px-2 rounded-xl flex items-center justify-between hover:bg-[#F1F8F5] dark:hover:bg-[#0A2A24] transition-colors group cursor-pointer"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
-                <ShieldCheck className="w-3.5 h-3.5" />
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
-                  Two-Factor Authentication
+          {isFaculty ? (
+            <button
+              type="button"
+              onClick={onChangePassword}
+              className="w-full text-left py-1.5 px-2 rounded-xl flex items-center justify-between hover:bg-[#F1F8F5] dark:hover:bg-[#0A2A24] transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <ShieldCheck className="w-3.5 h-3.5" />
                 </div>
-                <div className="text-[10.5px] text-[#658278] dark:text-[#789991]">
-                  Add an extra layer of security
+                <div>
+                  <div className="text-xs font-semibold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+                    Two-Factor Authentication
+                  </div>
+                  <div className="text-[10.5px] text-[#658278] dark:text-[#789991]">
+                    Institutional Faculty 2FA Enforced
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 shrink-0">
-                Configure (Demo)
-              </span>
-              <ChevronRight className="w-3.5 h-3.5 text-[#658278] group-hover:text-emerald-600 dark:group-hover:text-emerald-300 group-hover:translate-x-0.5 transition-all shrink-0" />
-            </div>
-          </Link>
+              <div className="flex items-center gap-1.5">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 shrink-0">
+                  Active (SSO)
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#658278] group-hover:text-emerald-600 dark:group-hover:text-emerald-300 group-hover:translate-x-0.5 transition-all shrink-0" />
+              </div>
+            </button>
+          ) : (
+            <Link
+              href="/student/settings/security"
+              className="w-full text-left py-1.5 px-2 rounded-xl flex items-center justify-between hover:bg-[#F1F8F5] dark:hover:bg-[#0A2A24] transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#0B3024] dark:text-[#F1FAF6] group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+                    Two-Factor Authentication
+                  </div>
+                  <div className="text-[10.5px] text-[#658278] dark:text-[#789991]">
+                    Add an extra layer of security
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 shrink-0">
+                  Configure (Demo)
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#658278] group-hover:text-emerald-600 dark:group-hover:text-emerald-300 group-hover:translate-x-0.5 transition-all shrink-0" />
+              </div>
+            </Link>
+          )}
 
           {/* Login Activity */}
           <button
@@ -134,15 +163,26 @@ export default function SecurityRegionCard({
             <ChevronRight className="w-3.5 h-3.5 text-[#658278] group-hover:text-emerald-600 dark:group-hover:text-emerald-300 group-hover:translate-x-0.5 transition-all shrink-0" />
           </button>
 
-          {/* Manage Full Security & Connected Accounts Button */}
+          {/* Manage Full Security Button */}
           <div className="pt-2">
-            <Link
-              href="/student/settings/security"
-              className="w-full py-2 px-3 rounded-xl border border-emerald-600/20 bg-emerald-50/70 hover:bg-emerald-100/80 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors group shadow-2xs"
-            >
-              <span>Manage Full Security &amp; Connected Accounts</span>
-              <ChevronRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
+            {isFaculty ? (
+              <button
+                type="button"
+                onClick={onViewLoginActivity}
+                className="w-full py-2 px-3 rounded-xl border border-emerald-600/20 bg-emerald-50/70 hover:bg-emerald-100/80 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors group shadow-2xs cursor-pointer"
+              >
+                <span>Review Active Sessions &amp; Security Logs</span>
+                <ChevronRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            ) : (
+              <Link
+                href="/student/settings/security"
+                className="w-full py-2 px-3 rounded-xl border border-emerald-600/20 bg-emerald-50/70 hover:bg-emerald-100/80 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors group shadow-2xs"
+              >
+                <span>Manage Full Security &amp; Connected Accounts</span>
+                <ChevronRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            )}
           </div>
         </div>
       </div>

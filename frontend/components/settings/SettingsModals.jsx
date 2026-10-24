@@ -19,11 +19,16 @@ import { FAQS, LOGIN_SESSIONS } from "./settingsData";
  * 1. Edit Profile Modal
  */
 export function EditProfileModal({ isOpen, onClose, profile, onSave }) {
+  const isFaculty = profile.isFaculty || profile.role?.toLowerCase() === "faculty";
+
   const [formData, setFormData] = useState({
-    name: profile.name,
-    phone: profile.phone,
-    branch: profile.branch,
-    semester: profile.semester,
+    name: profile.name || "",
+    phone: profile.phone || "",
+    branch: profile.branch || profile.department || "",
+    department: profile.department || profile.branch || "",
+    designation: profile.designation || "",
+    cabin: profile.cabin || "",
+    semester: profile.semester || "7th Semester",
   });
 
   if (!isOpen) return null;
@@ -48,7 +53,9 @@ export function EditProfileModal({ isOpen, onClose, profile, onSave }) {
                 Edit Profile
               </h3>
               <p className="text-[11px] text-[#658278]">
-                Update your contact details and branch
+                {isFaculty
+                  ? "Update your faculty contact and departmental details"
+                  : "Update your contact details and branch"}
               </p>
             </div>
           </div>
@@ -89,50 +96,105 @@ export function EditProfileModal({ isOpen, onClose, profile, onSave }) {
             />
           </div>
 
-          <div>
-            <label className="block text-[11px] font-medium text-[#658278] dark:text-[#789991] mb-1">
-              Branch / Department
-            </label>
-            <input
-              type="text"
-              value={formData.branch}
-              onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-              className="w-full px-3 py-2 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#0A2A24] text-[#0B3024] dark:text-[#F1FAF6] outline-none focus:border-emerald-500/60"
-              required
-            />
-          </div>
+          {isFaculty ? (
+            <>
+              <div>
+                <label className="block text-[11px] font-medium text-[#658278] dark:text-[#789991] mb-1">
+                  Department
+                </label>
+                <input
+                  type="text"
+                  value={formData.department}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      department: e.target.value,
+                      branch: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#0A2A24] text-[#0B3024] dark:text-[#F1FAF6] outline-none focus:border-emerald-500/60"
+                  required
+                />
+              </div>
 
-          <div>
-            <label className="block text-[11px] font-medium text-[#658278] dark:text-[#789991] mb-1">
-              Current Semester
-            </label>
-            <select
-              value={formData.semester}
-              onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
-              className="w-full px-3 py-2 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#0A2A24] text-[#0B3024] dark:text-[#F1FAF6] outline-none focus:border-emerald-500/60"
-            >
-              <option value="1st Semester">1st Semester</option>
-              <option value="2nd Semester">2nd Semester</option>
-              <option value="3rd Semester">3rd Semester</option>
-              <option value="4th Semester">4th Semester</option>
-              <option value="5th Semester">5th Semester</option>
-              <option value="6th Semester">6th Semester</option>
-              <option value="7th Semester">7th Semester</option>
-              <option value="8th Semester">8th Semester</option>
-            </select>
-          </div>
+              <div>
+                <label className="block text-[11px] font-medium text-[#658278] dark:text-[#789991] mb-1">
+                  Designation / Academic Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.designation}
+                  onChange={(e) =>
+                    setFormData({ ...formData, designation: e.target.value })
+                  }
+                  placeholder="e.g. Associate Professor"
+                  className="w-full px-3 py-2 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#0A2A24] text-[#0B3024] dark:text-[#F1FAF6] outline-none focus:border-emerald-500/60"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-medium text-[#658278] dark:text-[#789991] mb-1">
+                  Office / Cabin Location
+                </label>
+                <input
+                  type="text"
+                  value={formData.cabin}
+                  onChange={(e) =>
+                    setFormData({ ...formData, cabin: e.target.value })
+                  }
+                  placeholder="e.g. Room 214, A-Block (2nd Floor)"
+                  className="w-full px-3 py-2 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#0A2A24] text-[#0B3024] dark:text-[#F1FAF6] outline-none focus:border-emerald-500/60"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <label className="block text-[11px] font-medium text-[#658278] dark:text-[#789991] mb-1">
+                  Branch / Department
+                </label>
+                <input
+                  type="text"
+                  value={formData.branch}
+                  onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#0A2A24] text-[#0B3024] dark:text-[#F1FAF6] outline-none focus:border-emerald-500/60"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-medium text-[#658278] dark:text-[#789991] mb-1">
+                  Current Semester
+                </label>
+                <select
+                  value={formData.semester}
+                  onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] bg-[#F7FBF9] dark:bg-[#0A2A24] text-[#0B3024] dark:text-[#F1FAF6] outline-none focus:border-emerald-500/60"
+                >
+                  <option value="1st Semester">1st Semester</option>
+                  <option value="2nd Semester">2nd Semester</option>
+                  <option value="3rd Semester">3rd Semester</option>
+                  <option value="4th Semester">4th Semester</option>
+                  <option value="5th Semester">5th Semester</option>
+                  <option value="6th Semester">6th Semester</option>
+                  <option value="7th Semester">7th Semester</option>
+                  <option value="8th Semester">8th Semester</option>
+                </select>
+              </div>
+            </>
+          )}
 
           <div className="pt-2 flex justify-end gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-1.5 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] text-[#0B3024] dark:text-[#F1FAF6] hover:bg-black/5 dark:hover:bg-white/5 font-medium"
+              className="px-3.5 py-1.5 rounded-xl border border-[#D8E8E2] dark:border-[#16463D] text-[#0B3024] dark:text-[#F1FAF6] hover:bg-black/5 dark:hover:bg-white/5 font-medium cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 rounded-xl bg-[#159B72] hover:bg-[#087A5B] text-white font-semibold shadow-xs"
+              className="px-4 py-1.5 rounded-xl bg-[#159B72] hover:bg-[#087A5B] text-white font-semibold shadow-xs cursor-pointer"
             >
               Save Changes
             </button>

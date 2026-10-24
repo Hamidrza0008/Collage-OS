@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function FacultySettingsPage() {
-  return <Settings />;
+  return <Settings role="faculty" />;
 }

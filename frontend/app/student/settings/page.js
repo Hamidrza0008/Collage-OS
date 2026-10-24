@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function StudentSettingsPage() {
-  return <Settings />;
+  return <Settings role="student" />;
 }

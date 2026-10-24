@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useAuth } from "../providers/AuthProvider";
 import SettingsHero from "./SettingsHero";
 import AccountSettingsCard from "./AccountSettingsCard";
 import AppearanceCard from "./AppearanceCard";
@@ -20,33 +22,73 @@ import {
   FeedbackModal,
 } from "./SettingsModals";
 import {
-  INITIAL_USER_PROFILE,
+  INITIAL_STUDENT_PROFILE,
+  INITIAL_FACULTY_PROFILE,
   INITIAL_NOTIFICATIONS,
+  FACULTY_NOTIFICATIONS,
   ACCOUNT_PROGRESS_ITEMS,
+  FACULTY_ACCOUNT_PROGRESS_ITEMS,
 } from "./settingsData";
 import { CheckCircle2 } from "lucide-react";
 
-export default function Settings() {
+export default function Settings({ role: propRole }) {
+  const { user: authUser } = useAuth();
+  const pathname = usePathname();
+
+  // Determine whether current context is faculty or student
+  const isFaculty =
+    propRole === "faculty" ||
+    authUser?.role === "faculty" ||
+    Boolean(pathname?.startsWith("/faculty"));
+
   // Page Loading State (Brief realistic mount shimmer)
   const [isLoading, setIsLoading] = useState(true);
 
-  // User Profile State
-  const [profile, setProfile] = useState(INITIAL_USER_PROFILE);
+  // User Profile State - Resolved with fallback to role-appropriate profile
+  const [profile, setProfile] = useState(() => {
+    // If in faculty context:
+    if (isFaculty) {
+      if (authUser?.role === "faculty") {
+        return {
+          ...INITIAL_FACULTY_PROFILE,
+          ...authUser,
+          role: "Faculty",
+          isFaculty: true,
+        };
+      }
+      return INITIAL_FACULTY_PROFILE;
+    }
+
+    // Student context:
+    if (authUser?.role === "student") {
+      return {
+        ...INITIAL_STUDENT_PROFILE,
+        ...authUser,
+        role: "Student",
+        isFaculty: false,
+      };
+    }
+    return INITIAL_STUDENT_PROFILE;
+  });
 
   // Appearance States
   const [accentColor, setAccentColor] = useState("emerald");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
 
-  // Notification Preferences
-  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
+  // Notification Preferences (role-specific defaults)
+  const [notifications, setNotifications] = useState(() =>
+    isFaculty ? FACULTY_NOTIFICATIONS : INITIAL_NOTIFICATIONS
+  );
 
   // Language & Region
   const [language, setLanguage] = useState("English");
   const [timeZone, setTimeZone] = useState("Asia/Kolkata (IST)");
 
-  // Account Progress Checklist
-  const [progressItems, setProgressItems] = useState(ACCOUNT_PROGRESS_ITEMS);
+  // Account Progress Checklist (role-specific defaults)
+  const [progressItems, setProgressItems] = useState(() =>
+    isFaculty ? FACULTY_ACCOUNT_PROGRESS_ITEMS : ACCOUNT_PROGRESS_ITEMS
+  );
 
   // Modals Visibility
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
@@ -89,7 +131,9 @@ export default function Settings() {
       )
     );
     const item = notifications.find((n) => n.id === id);
-    showToast(`${item.title} notifications ${!item.enabled ? "enabled" : "disabled"}`);
+    if (item) {
+      showToast(`${item.title} notifications ${!item.enabled ? "enabled" : "disabled"}`);
+    }
   };
 
   const handleToggleProgressItem = (id) => {
@@ -175,6 +219,7 @@ export default function Settings() {
                 setTimeZone(val);
                 showToast(`Time zone set to ${val}`);
               }}
+              isFaculty={isFaculty}
             />
           </div>
 

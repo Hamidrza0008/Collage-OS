@@ -23,7 +23,7 @@ export default function AccountProgressCard({ progressItems, onToggleItem }) {
             Account Progress
           </h2>
           <p className="text-[10.5px] text-[#658278] dark:text-[#789991]">
-            Keep going! You're doing great.
+            Keep going! You&apos;re doing great.
           </p>
         </div>
       </div>
