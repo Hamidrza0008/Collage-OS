@@ -66,8 +66,10 @@ export default function UserProfileDropdown({
   onToast,
 }) {
   const { isDark, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { logout, user: authUser } = useAuth();
   const dropdownRef = useRef(null);
+
+  const isFaculty = user?.role === "faculty" || authUser?.role === "faculty";
 
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [savedCount, setSavedCount] = useState(0);
@@ -97,7 +99,8 @@ export default function UserProfileDropdown({
 
   useEffect(() => {
     if (isOpen) {
-      syncStoreCounts();
+      const timer = setTimeout(syncStoreCounts, 0);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, syncStoreCounts]);
 
@@ -141,23 +144,23 @@ export default function UserProfileDropdown({
 
   if (!isOpen) return null;
 
-  const displayName = user.name || "Hamid Rza";
-  const displayHeadline = user.headline || user.subtitle || "Full Stack Engineer & Open Source Builder";
-  const username = user.username || "@hamidrza";
-  const publicProfileId = user.id || "student-1";
+  const displayName = user.name || (isFaculty ? "Dr. Arjun Mehta" : "Hamid Rza");
+  const displayHeadline = user.headline || user.subtitle || (isFaculty ? "Faculty • Computer Science" : "Full Stack Engineer & Open Source Builder");
+  const username = user.username || (isFaculty ? "@arjunmehta" : "@hamidrza");
+  const publicProfileId = user.id || (isFaculty ? "fac_arjun_mehta" : "student-1");
 
   return (
     <div
       ref={dropdownRef}
       role="menu"
-      aria-label="Student Account Menu"
+      aria-label={isFaculty ? "Faculty Account Menu" : "Student Account Menu"}
       aria-orientation="vertical"
       className="absolute top-[calc(100%+8px)] right-0 w-[calc(100vw-24px)] max-w-[310px] sm:w-[310px] rounded-2xl bg-white dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] shadow-[0_20px_50px_rgba(11,48,36,0.18)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.7)] overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150 flex flex-col"
     >
       {/* Identity Header */}
       <div className="p-3.5 border-b border-[#E8F1ED] dark:border-[#10372F] bg-[#F7FBF9] dark:bg-[#082A24] flex items-center gap-3">
         <ProfileAvatar
-          src={user.avatar || "/assets/profile/avatar.jpg"}
+          src={user.avatar || (isFaculty ? "/assets/profile/dr-arjun-mehta.jpg" : "/assets/profile/avatar.jpg")}
           alt={displayName}
           name={displayName}
         />
@@ -173,7 +176,7 @@ export default function UserProfileDropdown({
               {username}
             </span>
             <span className="text-[10px] text-[#85A297] dark:text-[#65857B]">
-              • B.Tech (CSE)
+              • {isFaculty ? "Dept. of Computer Science" : "B.Tech (CSE)"}
             </span>
           </div>
         </div>
