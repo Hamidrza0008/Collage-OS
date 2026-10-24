@@ -35,6 +35,7 @@ export const STUDENT_NAV_ITEMS = [
 export const FACULTY_NAV_ITEMS = [
   { label: "Dashboard", icon: Home, href: "/faculty" },
   { label: "My Classes", icon: BookOpen, href: "/faculty/classes" },
+  { label: "Teaching Timetable", icon: Calendar, href: "/faculty/timetable" },
   { label: "Attendance", icon: CheckSquare, href: "/faculty/attendance" },
   { label: "Assignments", icon: ClipboardCheck, href: "/faculty/assignments" },
   { label: "Marks & Results", icon: Award, href: "/faculty/marks" },
