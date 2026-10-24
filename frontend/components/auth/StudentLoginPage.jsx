@@ -159,15 +159,12 @@ export default function StudentLoginPage() {
               <span>Keep me logged in</span>
             </label>
 
-            <button
-              type="button"
-              onClick={() => {
-                alert("Password reset OTP will be sent to your registered institutional college email address.");
-              }}
+            <Link
+              href="/auth/forgot-password?role=student"
               className="font-semibold text-[#159B72] dark:text-[#20D39B] hover:underline cursor-pointer"
             >
               Forgot Password?
-            </button>
+            </Link>
           </div>
 
           {/* Primary Login Button */}

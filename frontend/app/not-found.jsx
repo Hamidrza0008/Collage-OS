@@ -193,7 +193,7 @@ export default function NotFound() {
                     </Link>
 
                     <Link
-                      href="/student/campus-feed"
+                      href="/student/feed"
                       className="flex items-center justify-between p-3 rounded-xl bg-[#F7FBF9] dark:bg-[#031A16] border border-[#E1ECE7] dark:border-[#10372F] hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 transition-all text-xs font-semibold text-[#0B3024] dark:text-[#E1F1EB] group"
                     >
                       <span className="flex items-center gap-2">

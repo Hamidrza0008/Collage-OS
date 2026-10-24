@@ -182,15 +182,12 @@ export default function StaffLoginPage() {
               <span>Keep me logged in</span>
             </label>
 
-            <button
-              type="button"
-              onClick={() => {
-                alert("Please contact the College IT Administrator to reset your institutional staff password.");
-              }}
+            <Link
+              href="/auth/forgot-password?role=faculty"
               className="font-semibold text-[#159B72] dark:text-[#20D39B] hover:underline cursor-pointer"
             >
               Forgot Password?
-            </button>
+            </Link>
           </div>
 
           {/* Primary Login Button */}
