@@ -162,7 +162,7 @@ export default function CampusAI() {
   }
 
   return (
-    <div className="w-full lg:h-[calc(100dvh-68px-3rem)] flex flex-col min-h-0 overflow-hidden transition-colors">
+    <div className="w-full h-[calc(100dvh-68px-5.5rem)] lg:h-[calc(100dvh-68px-3rem)] flex flex-col min-h-0 overflow-hidden transition-colors">
       {/* ========================================================================= */}
       {/* 2-COLUMN VIEWPORT-AWARE GRID: MAIN 2/3 COLUMN + RIGHT 1/3 SIDEBAR         */}
       {/* ========================================================================= */}

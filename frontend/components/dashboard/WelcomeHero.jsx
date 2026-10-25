@@ -55,10 +55,10 @@ export default function WelcomeHero() {
             </div>
 
             {/* College Location Pill */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/15 text-white text-[11px]">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/15 text-white text-[11px] max-w-full">
               <MapPin className="w-3 h-3 text-rose-300 shrink-0" />
-              <span className="font-medium">XYZ College of Engineering</span>
-              <span className="text-emerald-100/80">&bull; Mumbai</span>
+              <span className="font-medium truncate max-w-[140px] sm:max-w-none">XYZ College of Engineering</span>
+              <span className="text-emerald-100/80 shrink-0">&bull; Mumbai</span>
             </div>
           </div>
         </div>

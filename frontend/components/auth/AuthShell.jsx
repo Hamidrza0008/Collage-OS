@@ -20,8 +20,8 @@ export default function AuthShell({
 
   return (
     <div className="min-h-screen lg:h-screen lg:max-h-screen w-full flex flex-col lg:flex-row bg-[#F7FBF9] dark:bg-[#031A16] transition-colors duration-200 overflow-y-auto lg:overflow-hidden">
-      {/* Left Visual / Branding Column */}
-      <div className="w-full lg:w-[48%] xl:w-[47%] shrink-0 h-full max-h-screen overflow-hidden">
+      {/* Left Visual / Branding Column (Desktop Only) */}
+      <div className="hidden lg:flex w-full lg:w-[48%] xl:w-[47%] shrink-0 h-full max-h-screen overflow-hidden">
         <AuthBrandPanel {...brandProps} />
       </div>
 

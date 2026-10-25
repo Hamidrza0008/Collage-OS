@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import MobileBottomNav from "./MobileBottomNav";
 import {
   STUDENT_NAV_ITEMS,
   STUDENT_USER,
@@ -44,10 +45,16 @@ export default function AppLayout({
         <Navbar onMenuToggle={() => setIsSidebarOpen(true)} user={resolvedUser} />
 
         {/* Main Content Container (Where pages render through children) */}
-        <main className="flex-1 p-3 sm:p-5 md:p-6 max-w-full">
+        <main className="flex-1 p-3 sm:p-5 md:p-6 pb-20 lg:pb-6 max-w-full">
           {children}
         </main>
       </div>
+
+      {/* Modern Native-like Mobile Bottom Navigation Bar */}
+      <MobileBottomNav
+        role={role}
+        onOpenMenu={() => setIsSidebarOpen(true)}
+      />
     </div>
   );
 }

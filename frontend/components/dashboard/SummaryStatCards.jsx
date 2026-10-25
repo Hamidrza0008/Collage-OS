@@ -45,16 +45,16 @@ const STATS = [
 
 export default function SummaryStatCards() {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
       {STATS.map((stat) => {
         const Icon = stat.icon;
         return (
           <div
             key={stat.id}
-            className="p-3 sm:p-3.5 rounded-xl bg-[#FFFFFF] dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] hover:border-[#159B72]/40 dark:hover:border-[#20D39B]/40 shadow-2xs hover:shadow-xs transition-all flex items-center gap-3"
+            className="p-2.5 sm:p-3.5 rounded-xl bg-[#FFFFFF] dark:bg-[#06241F] border border-[#D8E8E2] dark:border-[#16463D] hover:border-[#159B72]/40 dark:hover:border-[#20D39B]/40 shadow-2xs hover:shadow-xs transition-all flex items-center gap-2 sm:gap-3"
           >
             {/* Left Icon */}
-            <div className={`p-2 rounded-lg ${stat.bgLight} ${stat.color} shrink-0`}>
+            <div className={`p-1.5 sm:p-2 rounded-lg ${stat.bgLight} ${stat.color} shrink-0`}>
               <Icon className="w-4 h-4" strokeWidth={2.2} />
             </div>
 

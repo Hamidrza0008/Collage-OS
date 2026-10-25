@@ -308,8 +308,10 @@ export default function Navbar({ onMenuToggle, user = STUDENT_USER }) {
             )}
           </button>
 
-          {/* Global Live Font Switcher Dropdown */}
-          <FontSwitcherDropdown variant="navbar" />
+          {/* Global Live Font Switcher Dropdown (Desktop & Tablet) */}
+          <div className="hidden sm:block">
+            <FontSwitcherDropdown variant="navbar" />
+          </div>
 
           {/* Divider */}
           <div className="h-6 w-[1px] bg-[#D8E8E2] dark:bg-[#16463D] mx-1 hidden sm:block" />

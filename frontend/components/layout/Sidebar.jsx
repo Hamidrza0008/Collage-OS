@@ -41,7 +41,7 @@ export default function Sidebar({
         }`}
       >
         {/* Upper Section: Branding Header + Slim Navigation */}
-        <div className="flex flex-col shrink-0">
+        <div className="flex flex-col shrink-0 lg:shrink">
           {/* Logo & Header */}
           <div className="flex items-center justify-between px-4 pt-4 pb-2.5">
             <div className="flex items-center gap-2.5">
@@ -77,7 +77,7 @@ export default function Sidebar({
           </div>
 
           {/* Navigation Links: Slim and compact */}
-          <nav className="px-3 py-1 space-y-0.5" aria-label="Main Navigation">
+          <nav className="px-3 py-1 space-y-0.5 max-h-[calc(100vh-220px)] lg:max-h-none overflow-y-auto" aria-label="Main Navigation">
             {navItems.map((item) => {
               const isActive = item.isActive !== undefined ? item.isActive : pathname === item.href;
               return (
@@ -108,7 +108,7 @@ export default function Sidebar({
         </div>
 
         {/* Tall Full-Bleed Campus Artwork (~35-40% height) with Dynamic Text & Leaf Overlay */}
-        <div className="relative w-full mt-auto overflow-hidden shrink-0 h-64 sm:h-72">
+        <div className="relative w-full mt-auto overflow-hidden shrink-0 h-40 sm:h-56 lg:h-64">
           {/* Subtle top gradient fade into sidebar background */}
           <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white via-white/60 to-transparent dark:from-[#021512] dark:via-[#021512]/60 dark:to-transparent pointer-events-none z-10 transition-all duration-200" />
 
