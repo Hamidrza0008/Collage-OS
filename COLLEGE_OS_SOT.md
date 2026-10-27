@@ -8,10 +8,10 @@
 ## 1. Document Status
 
 - **Document Name**: College OS — Source of Truth (SOT)
-- **Document Version**: **1.2**
-- **Status**: **LOCKED — SOURCE OF TRUTH (SCOPE AMENDED: ACADEMIC RESOURCES & STUDY MATERIALS APPROVED)**
+- **Document Version**: **1.3**
+- **Status**: **LOCKED — SOURCE OF TRUTH (CROSS-CUTTING DECISIONS RESOLVED)**
 - **Last Updated**: 27 October 2026
-- **Previous Version**: 1.1 (Authentication & Institutional Onboarding locked)
+- **Previous Version**: 1.2 (Academic Resources & Study Materials scope amendment)
 - **Authority**: Authoritative engineering specification governing all backend services, MongoDB database schemas, Next.js frontend interfaces, API endpoints, role-based authorization guards, and Campus AI retrieval pipelines.
 - **Governing Policy**: Core First &rarr; Stabilize &rarr; Expand. All implementations must comply strictly with this document.
 
@@ -329,11 +329,12 @@ A student's profile inside College OS combines verified institutional standing w
 
 Faculty accounts are designed for academic management within strictly bounded parameters:
 - **Profile Data**: Official employee ID, full name, official email, department, designation, cabin location, bio.
-- **Dynamically Scoped Teaching Schedule**: Bounded strictly to `assignedClassIds` and `assignedSubjectIds`.
+- **Dynamically Scoped Teaching Schedule**: Bounded strictly to the faculty member's `teachingAssignments` for the active academic term. `assignedClassIds` and `assignedSubjectIds` are the cached display projection of those assignments (Section 16.6).
 - **Academic Management Capabilities**:
   - Roll-call attendance marking for assigned batches.
   - Grade and assessment score entry for assigned courses.
   - Assignment authoring, deadline management, and submission evaluation.
+  - Study-material upload and management for assigned subjects and classes.
   - Departmental and class-specific notice publication.
 - **Zero Lateral Access**: A faculty member teaching CSE-7A cannot view or modify grades/attendance for CSE-7B or Mechanical Engineering courses.
 
@@ -382,6 +383,19 @@ A subject- and class-scoped repository for study material. It uses the same assi
 - Private storage paths, upload credentials, and unauthorized file references are never exposed to clients, API responses, file URLs, or Campus AI context.
 - Uploads, updates, and removals record the acting faculty member for academic-record auditing.
 
+**Storage, validation, and retention policy (MVP)**
+
+| Rule | MVP policy |
+| :--- | :--- |
+| Allowed file types | **PDF, DOCX, PPTX.** The allowed list is a server-side configuration value, not a client-supplied value. Validation checks both the file extension and the detected MIME type. |
+| File size | A single configurable maximum upload size, enforced server-side. The numeric limit is a deployment setting, not a hard-coded constant. |
+| Storage | Private storage only. Files are never publicly readable. Objects are addressed by an internal key, never by a public URL. |
+| Storage provider | **Not yet selected.** No provider is assumed. Any selected provider must support private objects and time-limited authorized reads, and must fit the project's existing deployment configuration. |
+| Download | Downloads pass through an authorization check against the requesting user's role, enrolled subjects, and faculty assignments, then use a short-lived signed reference or an authorized streaming endpoint. Authorization is re-checked on every request. |
+| Metadata | `title`, `description`, `subjectId`, `classId`, `fileType`, `fileSize`, `checksum`, `uploadedByFacultyId`, `createdAt`, `updatedAt`, plus a private `storageKey` that is never returned to clients. |
+| Deletion and retention | Authorized faculty (own material) and Admin may remove material. Removal immediately takes the item out of student access. Metadata and the audit record are retained. **No automatic expiry** is applied; automatic expiry requires an institutional retention policy that is not yet defined. |
+| Integrity | Uploaded files are hashed at upload time; the checksum is stored with the metadata. |
+
 **Scope boundary**
 - This module is a study-material repository, not a learning-management system.
 - Out of scope: live classes, online tests, automated grading, discussion forums, attendance-by-video, and general course-delivery tooling.
@@ -390,11 +404,39 @@ A subject- and class-scoped repository for study material. It uses the same assi
 
 ## 12. Notices & Institutional Communication
 
-- **Multi-Level Broadcast Architecture**:
-  - `college`: Official campus-wide notices (published only by authorized administrative personnel).
-  - `hod`: Departmental bulletins (published by HODs).
-  - `faculty`: Class-level notices (published by faculty for their assigned classes).
-- **Attributes**: Title, markdown content, priority flag (`urgent` vs `normal`), target audience, attachments, timestamp.
+Publishing authority and recipient scope are separate concerns and are stored as separate fields. Publishing authority always comes from the authenticated role and the RBAC matrix (Section 18); it is never taken from a client-supplied value.
+
+### 12.1 Publishing authority
+
+| Role | Permitted publishing scope |
+| :--- | :--- |
+| Student | None. Read-only. |
+| Faculty | Class-level notices, restricted to assigned classes only. |
+| HOD | Departmental bulletins within the HOD's own department. |
+| Principal / VP | Campus-wide official circulars. |
+| Admin | System-wide moderation and deletion. An admin listed in `collegeProfile.authorizedAdminIds` may also publish campus-wide notices on behalf of the institutional College Profile. |
+
+### 12.2 Recipient scope model
+
+| Field | Values | Meaning |
+| :--- | :--- | :--- |
+| `scopeType` | `college` \| `department` \| `class` | The level at which the notice is published. |
+| `scopeRef` | `null` \| department code \| class-section ID | The exact target for department and class scopes. Must be `null` for `college`. |
+| `audienceRole` | `all` \| `students` \| `faculty` | Optional role filter applied inside the chosen scope. |
+
+### 12.3 Mapping to the legacy notice levels
+
+The earlier `college` / `hod` / `faculty` naming described *who publishes and at what level*, while the earlier `targetAudience` enum (`all` / `students` / `faculty`) described *who receives*. They are two different axes and are now stored as two different fields:
+
+| Legacy level | `scopeType` | `scopeRef` | Typical `audienceRole` | Publisher |
+| :--- | :--- | :--- | :--- | :--- |
+| `college` | `college` | `null` | `all` | Principal / VP, or an authorized admin acting for the College Profile |
+| `hod` | `department` | Department code | `all`, `students`, or `faculty` | HOD |
+| `faculty` | `class` | Class-section ID | `students` | Faculty (assigned classes) |
+
+This resolves the previous enum mismatch without weakening the original three-level model.
+
+- **Attributes**: Title, markdown content, priority flag (`urgent` vs `normal`), scope fields above, attachments, timestamp, author role.
 
 ---
 
@@ -409,7 +451,7 @@ A subject- and class-scoped repository for study material. It uses the same assi
 ## 14. Student Projects & Explore Directory
 
 - **Showcase**: Students can publish technical projects featuring title, markdown description, tech stack tags, live demo links, repository URLs, and screenshot carousels.
-- **Multi-Member Attribution**: Projects can link multiple student contributors; the project appears on each collaborator's profile.
+- **Multi-Member Attribution**: Every project has exactly one creator and one or more student contributors. The creator is always a contributor. The project appears on the profile of every contributor, and each contributor is attributed by name. A single student reference is explicitly insufficient (see Section 16.5).
 - **Explore Directory**: Filterable directory enabling students and faculty to explore peers by skills, branch, or semester.
 - **Project Likes**: Interactive engagement mechanism allowing authenticated campus users to star/like student projects.
 
@@ -453,12 +495,25 @@ The Campus AI Assistant is **not a generic, open-ended chatbot**. It is an insti
 - **Zero Hallucination Mandate**: If official college records or RAG handbooks do not contain the answer, the assistant responds: *"This information is currently unavailable in official college records"* rather than speculating.
 - **Strict Credential Exclusion**: Passwords, bcrypt hashes, OTPs, session secrets, and database connection strings are permanently excluded from LLM context prompts.
 - **Privacy Isolation**: Students cannot query private records belonging to other students or faculty members.
+- **Faculty Scope Equals Feature Scope**: Faculty AI may retrieve only data the same faculty member is already authorized to read through the corresponding academic feature, bounded by assigned classes and subjects. It must not aggregate across departments, must not read unassigned classes, and must not infer restricted records from counts or summaries.
+- **No Privilege Escalation Through AI**: Individual student records returned by AI follow exactly the same role, ownership, and assignment rules as the underlying feature. If a record is denied in the UI or API, it is denied to the AI. Authentication secrets and unrelated private student data are never included in context, prompts, or responses.
+- **Assistant Actions Are Bounded**: The assistant may perform a write action only where the role is already authorized to perform that action directly and the action itself is an approved feature. Answering is the default; acting is the exception.
 
 ---
 
 ## 16. MongoDB Data Model
 
 The database architecture utilizes **MongoDB Atlas** as the primary operational store with Mongoose ODM:
+
+### 16.0 Identity Model
+
+- **One person, one account.** Every institutional person has exactly one `users` record, identified by a unique official institutional email.
+- **One account, one profile.** Each `users` record links to exactly one profile appropriate to its role. The `userId` reference on the profile is unique, so a user cannot own two profiles and a profile cannot be claimed by two users.
+- **Student roles** (`student`) link to `studentProfiles`.
+- **Staff roles** (`faculty`, `hod`, `principal`, `vp`, `admin`) link to the staff profile. The existing `facultyProfiles` collection is retained as the single staff profile model for all non-student roles, rather than introducing a competing collection. Its `designation` field distinguishes teaching and administrative staff, and teaching assignments remain optional for roles that do not teach.
+- **Role determines profile type.** A `student` record cannot hold a staff profile and a staff record cannot hold a student profile. Role is assigned by the institution and enforced by the backend.
+- **Access is server-enforced.** HOD, Principal/VP, and Admin scopes are resolved from the authoritative role and its assigned scope, not from client values. The absence of dedicated dashboards for these roles does not remove their permission requirements; the permissions are enforced by the API and apply to the shared features they can reach.
+- **No duplicate models.** Profile corrections update the existing record. A second parallel profile collection is not permitted.
 
 ### 16.1 Collection: `users`
 Represents the core authenticated account across all roles:
@@ -548,15 +603,39 @@ Represents faculty teaching profiles and dynamic class assignments:
 ```
 
 ### 16.5 Other Operational Collections
-- `projects`: `studentId` (ref: studentProfiles), `title`, `tagline`, `description`, `techStack`, `githubUrl`, `liveDemoUrl`, `screenshotUrls`, `likesCount`.
+- `projects`: `creatorStudentId` (ref: studentProfiles), `contributorStudentIds` ([ref: studentProfiles], always includes the creator), `title`, `tagline`, `description`, `techStack`, `githubUrl`, `liveDemoUrl`, `screenshotUrls`, `likesCount`. Contributor attribution must not rely on a single `studentId` field.
 - `projectLikes`: Compound unique index `{ projectId, studentId }`.
 - `timetables`: `department`, `semester`, `section`, `academicYear`, `dayOfWeek`, `slots: [{ startTime, endTime, subjectCode, subjectName, facultyId, classroom }]`.
 - `attendance`: `studentId`, `classId`, `subjectId`, `date`, `status` (`present`|`absent`|`late`), `markedByFacultyId`.
 - `marks`: `studentId`, `subjectId`, `semester`, `examType`, `maxMarks`, `marksObtained`, `enteredByFacultyId`.
 - `assignments`: `title`, `description`, `subjectId`, `classId`, `assignedByFacultyId`, `dueDate`, `maxScore`, `submissions: [{ studentId, submittedAt, fileUrl, score }]`.
-- `resources`: `title`, `description`, `subjectId`, `classId`, `fileUrl`, `fileType`, `fileSize`, `uploadedByFacultyId`, `createdAt`, `updatedAt` (Section 11.5).
-- `notices`: `title`, `content`, `publishedByRole`, `authorId`, `targetAudience`, `department`, `priority`, `attachmentUrls`.
+- `resources`: `title`, `description`, `subjectId`, `classId`, `fileType`, `fileSize`, `checksum`, `uploadedByFacultyId`, `createdAt`, `updatedAt`, plus a private internal storage key that is never returned to clients (Section 11.5).
+- `notices`: `title`, `content`, `publishedByRole`, `authorId`, `scopeType` (`college`|`department`|`class`), `scopeRef` (null | department code | class-section ID), `audienceRole` (`all`|`students`|`faculty`), `priority`, `attachmentUrls` (Section 12).
 - `events`: `title`, `description`, `eventType`, `organizer`, `venue`, `startDateTime`, `endDateTime`, `registrationUrl`, `bannerImageUrl`.
+
+### 16.6 Academic Relationship Model
+
+Every faculty permission and every student academic read depends on the same set of relationships. They are defined once here so attendance, marks, assignments, timetables, academic resources, and Campus AI all resolve scope the same way.
+
+| Entity | Key fields | Purpose |
+| :--- | :--- | :--- |
+| `departments` | `code` (e.g. `CSE`), `name` | Institutional department. Matches the existing `department` string used on profiles. |
+| `programs` | `programId`, `code`, `name`, `departmentCode`, `durationSemesters` | The course a student is enrolled in (e.g. B.Tech CSE). A department may run more than one program. |
+| `academicTerms` | `academicTermId`, `academicYear` (e.g. `2025-2026`), `termType` (`ODD`\|`EVEN`), `semester`, `startDate`, `endDate`, `isCurrent` | The time boundary for enrollments, teaching assignments, timetables, and results. Prevents last year's assignment from granting access this year. |
+| `classes` | `classId` (e.g. `CSE-7A`), `programId`, `departmentCode`, `semester`, `section`, `academicTermId` | A teaching group. `classId` is the same string already used by `assignedClassIds`, `attendance.classId`, and `resources.classId`, so existing fields keep their meaning. |
+| `subjects` | `subjectId` (e.g. `CS-701`), `code`, `name`, `departmentCode`, `semester`, `credits`, `syllabus` | A subject offered to one or more classes in a term. `subjectId` matches the existing `assignedSubjectIds` and `subjectId` fields. |
+| `enrollments` | `studentId`, `classId`, `academicTermId`, `status` (`ACTIVE`\|`COMPLETED`\|`WITHDRAWN`) | Authoritative link between a student and a class for a term. |
+| `teachingAssignments` | `facultyId`, `subjectId`, `classId`, `academicTermId`, `role` (`PRIMARY`\|`ASSISTANT`) | Authoritative link between a faculty member and the subject/class they teach. |
+
+**Scoping rules**
+
+- **Faculty scope** is the set of `teachingAssignments` for the faculty member in the active academic term. A faculty member may read and act on students and records only for those `classId` + `subjectId` pairs.
+- `facultyProfiles.assignedClassIds` and `assignedSubjectIds` remain as a denormalized cache of the current term's teaching assignments, used for display and fast filtering. The backend authorizes from `teachingAssignments`, and the cached arrays are recomputed when assignments change. The two must never be allowed to disagree.
+- **Student scope** is the student's active `enrollment` for the term, plus the subjects attached to that class. A student reads only their own records and material for those subjects and classes.
+- **Department scope** (HOD) is every class and subject whose `departmentCode` matches the HOD's department. **Campus scope** (Principal/VP) is the institution. **Admin** is system configuration and storage, not academic authority.
+- **Term boundary**: records are always resolved for a specific `academicTermId`. Historical records stay readable to their owner and to audit roles, but do not grant current write access.
+- `studentProfiles.department`, `semester`, and `section` are the display snapshot of the student's current enrollment. The `enrollments` record is authoritative where they differ.
+- Timetables, attendance, marks, assignments, academic resources, and Campus AI all scope through these relationships. No feature defines its own parallel notion of "my class".
 
 ---
 
@@ -577,6 +656,10 @@ The authentication architecture coordinates between user records, OTP tokens, an
           ↓
 [ Issue Session: JWT HttpOnly Cookie { userId, role, institutionId } ]
 ```
+
+**Target session design (locked).** The session is a server-issued JWT delivered in a cookie with `HttpOnly`, `Secure`, and an explicit `SameSite` policy, scoped to the site path. The token carries `userId`, `role`, and `institutionId`. The role is re-resolved against the database on protected requests; a token claim is a hint, not authority. Logout clears the cookie server-side.
+
+**Current implementation gap (not a design change).** The current frontend sets a client-readable `college_os_session=true` cookie from `AuthProvider.jsx`, and `middleware.js` treats that value as authentication. This is a demo placeholder and is **not** access control: any client can set the cookie by hand. It must be replaced with the server-issued cookie above during the backend/authentication work. Until then, route protection in the running app is cosmetic. The target design in this section is unchanged and must not be weakened to match the placeholder.
 
 ---
 
@@ -634,7 +717,7 @@ To protect engineering resources and maintain project discipline, College OS exp
 
 ## 22. Locked Decisions Registry
 
-The following decisions are **PERMANENTLY LOCKED** as of Version 1.2:
+The following decisions are **PERMANENTLY LOCKED** as of Version 1.2 and unchanged in Version 1.3:
 
 1. **College-Controlled Identity**: Users do not choose their institutional role. The institution provisions and authorizes the user's role.
 2. **No Open Registration**: Unrestricted public self-registration with arbitrary role selection is strictly rejected across all user levels.
@@ -660,6 +743,18 @@ The following design decisions are intentionally deferred to subsequent mileston
 - **Payment Gateway Integration (Tuition / Exam Fees)**: Deferred to post-MVP integration.
 - **Physical Library Barcode Scanning**: Deferred to post-MVP utility integrations.
 - **Permanent Product Brand Name**: Working title remains "College OS" until pre-defense branding review.
+
+### 23.1 Open implementation decisions
+
+These are provider or formula choices that do not block architecture but must be fixed before the affected code ships. They are not design conflicts and do not reopen the decisions in Section 26.
+
+| Item | Why it is open | Fixed by |
+| :--- | :--- | :--- |
+| OTP delivery provider | No email or SMS provider is configured in the repository. | Authentication implementation |
+| GPA / grade formula | Grade bands, credit weighting, and rounding are not defined. | Academic records implementation, with the institution |
+| Attendance granularity | Per-lecture versus per-day calculation, and late weighting, are undefined. | Attendance implementation |
+| File storage provider | No storage provider or credentials exist in the project configuration. The MVP storage policy in Section 11.5 is provider-independent. | Shared file handling implementation |
+| AI provider, embedding model, vector store | Deliberately unselected until the AI phase. | Campus AI implementation |
 
 ---
 
@@ -692,16 +787,35 @@ All developers and AI coding agents working on College OS must strictly adhere t
 
 ---
 
-## 26. Change History
+## 26. Cross-cutting Design Decisions (v1.3)
+
+These seven items were previously tracked as open questions. They are resolved below. They are recorded once here so the same question is not reopened inside separate feature documents.
+
+| # | Decision | Resolution | Recorded in |
+| :--- | :--- | :--- | :--- |
+| 1 | **Session security** | The session is a server-issued JWT in a cookie with `HttpOnly`, `Secure`, and an explicit `SameSite` policy. Role is re-resolved server-side on every protected request. The current client-set `college_os_session=true` cookie is an **implementation gap to fix**, not a permitted alternative or a reason to weaken the target design. | Section 17 |
+| 2 | **Identity model** | One institutional account per person, linked to exactly one profile: `studentProfiles` for the `student` role; the existing `facultyProfiles` collection for every staff role (`faculty`, `hod`, `principal`, `vp`, `admin`). No duplicate profile model. Role and scope are enforced server-side, and HOD/Principal/VP/Admin permission requirements remain in the RBAC matrix even without dedicated dashboards. | Sections 16.0–16.3, 18 |
+| 3 | **Academic relationships** | Minimum model: department, program/course, academic term, class/section, subject, student enrollment, and faculty teaching assignment. Faculty scope derives from `teachingAssignments`; `assignedClassIds` and `assignedSubjectIds` are a recomputable cache of the current term, never the authority. | Section 16.6 |
+| 4 | **Project contributors** | A project has one `creatorStudentId` and `contributorStudentIds` with the creator always included. A single `studentId` field is explicitly insufficient. Attribution appears on every contributor's profile. | Sections 14, 16.5 |
+| 5 | **Notice audience** | Publishing authority comes only from the authenticated role and the RBAC matrix. Recipient scope is stored separately as `scopeType` (`college`/`department`/`class`), `scopeRef`, and optional `audienceRole` (`all`/`students`/`faculty`). The legacy `college`/`hod`/`faculty` levels map onto this model. | Sections 12.1–12.3, 16.5 |
+| 6 | **Faculty AI data boundary** | Faculty AI may retrieve only data the same faculty member is already authorized to read through the corresponding feature, bounded by assigned classes and subjects. Individual student records follow the same ownership and assignment rules as the underlying feature. Credentials, OTPs, session secrets, and unrelated private student data are never included. The assistant may act only where the role is already authorized to act directly. | Section 15.3 |
+| 7 | **Academic Resources storage** | Approved MVP policy: **PDF, DOCX, PPTX**; configurable server-side size limit; private storage with internal keys; metadata plus checksum; authorization re-checked on every download with a short-lived reference; retention on removal without automatic expiry. The storage provider is **not selected**. | Sections 11.5, 16.5 |
+
+These decisions make existing locked requirements implementable. They do not alter any authentication, RBAC, or Phase 2 decision. Where a decision depends on a provider or formula that has not been chosen, the dependency is listed in Section 23 rather than invented here.
+
+---
+
+## 27. Change History
 
 | Version | Date | Change |
 | :--- | :--- | :--- |
 | **1.0** | October 2026 | Initial locked foundation: vision, problem statement, institutional model, 11 core MVP modules, Phase 2 boundary, Campus AI architecture, MongoDB data model, and RBAC matrix. |
 | **1.1** | October 2026 | Authentication and institutional onboarding locked: institution-controlled provisioning, OTP activation for students and faculty, executive provisioning, authoritative backend roles, account lifecycle states, expanded RBAC matrix, locked decision registry, and engineering rules. |
 | **1.2** | 27 October 2026 | **Scope amendment: Academic Resources & Study Materials approved as Core MVP Module 12.** Added Section 11.5 (purpose, faculty and student capabilities, access rules, scope boundary). Updated the module list and count in Section 4, the `resources` collection in Section 16.5, the RBAC matrix in Section 18, the Phase 1 boundary in Section 19, and the locked decision registry in Section 22 (new decision 13). No authentication, RBAC, AI, or Phase 2 decision was altered by this amendment. |
+| **1.3** | 27 October 2026 | **Cross-cutting decisions resolved.** Added Section 16.0 (identity model) and Section 16.6 (academic relationship model: department, program, academic term, class/section, subject, enrollment, teaching assignment). Extended Section 11.5 with the MVP storage, validation, and retention policy. Rewrote Section 12 to separate publishing authority from recipient scope, with a legacy mapping. Strengthened Section 14 and Section 16.5 for multi-contributor projects. Extended Section 15.3 for the faculty AI boundary and bounded assistant actions. Added the target session design and the current client-cookie implementation gap to Section 17. Added Section 26, the cross-cutting decision register. Renumbered Change History to Section 27. No module count, Phase 2 boundary, or locked authentication decision changed. |
 
-### 26.1 Project Plan alignment note
+### 27.1 Project Plan alignment note
 
-The locked Project Plan (`College_OS_Project_Plan_Source_of_Truth.pdf`, together with its `.docx` and `.html` companions) still describes **11 MVP modules** and does not contain Academic Resources & Study Materials. Those files are locked source documents and were deliberately **not** regenerated, rewritten, or overwritten by this amendment.
+The locked Project Plan (`College_OS_Project_Plan_Source_of_Truth.pdf`, together with its `.docx` and `.html` companions) still describes **11 MVP modules** and does not contain Academic Resources & Study Materials. Those files are locked source documents and were deliberately **not** regenerated, rewritten, or overwritten by the v1.2 amendment or this v1.3 revision.
 
-Until the Project Plan is formally reissued, this SOT v1.2 entry is the authoritative record of the approved Academic Resources scope. The difference between the SOT and the Project Plan is recorded here rather than hidden. Rule 10 of Section 25 applies only to authentication changes and is therefore unaffected by this scope amendment.
+Until the Project Plan is formally reissued, this SOT is the authoritative record of the approved Academic Resources scope. The difference between the SOT and the Project Plan is recorded here rather than hidden. Rule 10 of Section 25 applies only to authentication changes and is therefore unaffected by this scope amendment.
