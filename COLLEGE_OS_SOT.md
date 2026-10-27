@@ -8,9 +8,10 @@
 ## 1. Document Status
 
 - **Document Name**: College OS — Source of Truth (SOT)
-- **Document Version**: **1.1**
-- **Status**: **LOCKED — SOURCE OF TRUTH (FOUNDATION UPDATED: AUTHENTICATION & INSTITUTIONAL ONBOARDING LOCKED)**
-- **Last Updated**: October 2026
+- **Document Version**: **1.2**
+- **Status**: **LOCKED — SOURCE OF TRUTH (SCOPE AMENDED: ACADEMIC RESOURCES & STUDY MATERIALS APPROVED)**
+- **Last Updated**: 27 October 2026
+- **Previous Version**: 1.1 (Authentication & Institutional Onboarding locked)
 - **Authority**: Authoritative engineering specification governing all backend services, MongoDB database schemas, Next.js frontend interfaces, API endpoints, role-based authorization guards, and Campus AI retrieval pipelines.
 - **Governing Policy**: Core First &rarr; Stabilize &rarr; Expand. All implementations must comply strictly with this document.
 
@@ -52,9 +53,9 @@ Higher education institutions suffer from severe digital fragmentation across un
 
 ---
 
-## 4. Core MVP Scope (The 11 Foundational Modules)
+## 4. Core MVP Scope (The 12 Foundational Modules)
 
-The Phase 1 Core MVP consists strictly of **11 interconnected modules**:
+The Phase 1 Core MVP consists strictly of **12 interconnected modules**:
 
 1. **Authentication, Institutional Identity & RBAC**: Institution-controlled user provisioning, student multi-factor activation, faculty onboarding, executive provisioning, secure login, bcrypt hashing, JWT session lifecycle, and backend RBAC authorization.
 2. **Student Profile**: Professional campus portfolio featuring verified academic credentials, bio, tech skills, GitHub repository links, personal website, and badges.
@@ -67,6 +68,9 @@ The Phase 1 Core MVP consists strictly of **11 interconnected modules**:
 9. **Notices & Bulletins**: Official institutional broadcast hub with department/category filtering, priority flags, and attachment downloads.
 10. **Campus Events**: University-wide event directory for symposiums, workshops, and hackathons with registration modals and calendars.
 11. **Campus AI Assistant**: Context-grounded natural language intelligence engine answering queries against operational MongoDB data and RAG institutional documents.
+12. **Academic Resources & Study Materials**: Subject- and class-scoped study material published by authorized faculty and available to students for their permitted subjects and classes (added in v1.2; see Section 11.5).
+
+The **Official College Profile** is additionally part of the core scope as the singleton institutional entity. It is counted separately from the 12 modules and is defined in Section 16.4.
 
 ---
 
@@ -353,6 +357,35 @@ Faculty accounts are designed for academic management within strictly bounded pa
 - Faculty create assignments with rubrics, file attachments, and deadlines.
 - Students upload submissions, track pending deadlines, and view instructor feedback.
 
+### 11.5 Academic Resources & Study Materials
+
+A subject- and class-scoped repository for study material. It uses the same assignment-based permission model as attendance and marks: access follows the classes and subjects a person is actually attached to.
+
+**Purpose**
+- Give students one official place to find the notes, PDFs, and reference material for their own subjects, instead of scattered chat groups and shared drives.
+- Give faculty a controlled way to publish material to the classes they teach.
+
+**Faculty capabilities**
+- Upload approved study material (PDFs, notes, and other permitted document types) for a subject and class or batch.
+- Associate each item with the relevant subject and class.
+- View and manage the material they uploaded for their assigned subjects and classes.
+- Update or remove material they are authorized to manage.
+
+**Student capabilities**
+- Browse study material for their own enrolled subjects and classes.
+- View and download only the material permitted for those subjects and classes.
+
+**Access rules**
+- Faculty management is strictly bounded to `assignedSubjectIds` and `assignedClassIds`. There is zero lateral access to other departments, classes, or subjects.
+- Student access is bounded to their own enrolled subjects and classes. A student cannot enumerate another class's material.
+- File type, size, and ownership are validated on upload. Each download is authorized at request time.
+- Private storage paths, upload credentials, and unauthorized file references are never exposed to clients, API responses, file URLs, or Campus AI context.
+- Uploads, updates, and removals record the acting faculty member for academic-record auditing.
+
+**Scope boundary**
+- This module is a study-material repository, not a learning-management system.
+- Out of scope: live classes, online tests, automated grading, discussion forums, attendance-by-video, and general course-delivery tooling.
+
 ---
 
 ## 12. Notices & Institutional Communication
@@ -521,6 +554,7 @@ Represents faculty teaching profiles and dynamic class assignments:
 - `attendance`: `studentId`, `classId`, `subjectId`, `date`, `status` (`present`|`absent`|`late`), `markedByFacultyId`.
 - `marks`: `studentId`, `subjectId`, `semester`, `examType`, `maxMarks`, `marksObtained`, `enteredByFacultyId`.
 - `assignments`: `title`, `description`, `subjectId`, `classId`, `assignedByFacultyId`, `dueDate`, `maxScore`, `submissions: [{ studentId, submittedAt, fileUrl, score }]`.
+- `resources`: `title`, `description`, `subjectId`, `classId`, `fileUrl`, `fileType`, `fileSize`, `uploadedByFacultyId`, `createdAt`, `updatedAt` (Section 11.5).
 - `notices`: `title`, `content`, `publishedByRole`, `authorId`, `targetAudience`, `department`, `priority`, `attachmentUrls`.
 - `events`: `title`, `description`, `eventType`, `organizer`, `venue`, `startDateTime`, `endDateTime`, `registrationUrl`, `bannerImageUrl`.
 
@@ -557,6 +591,7 @@ The authentication architecture coordinates between user records, OTP tokens, an
 | **Attendance** | Read own attendance records | Mark/Update assigned classes | Audit department attendance | Audit campus-wide attendance | System-level attendance overrides |
 | **Marks** | Read own marks & CGPA | Enter/Update assigned subjects | Audit department grades | Audit campus-wide academic performance | Grade lock / administrative sign-off |
 | **Assignments** | Read assigned; Submit files | Create, update, grade assigned classes | Audit department assignments | Read assignments overview | Administrative archiving |
+| **Academic Resources** | Browse and download materials for permitted subjects and classes | Upload and manage materials for assigned classes and subjects | Audit departmental materials | Read campus-wide materials overview | System-level storage management and overrides |
 | **Notices** | Read permitted circulars | Post class/dept notices | Post department bulletins | Publish campus-wide circulars | Publish/delete all notices |
 | **Campus Events** | Browse, register | Post authorized dept events | Post department events | Authorize campus events | Full CRUD on all events |
 | **Campus AI** | Natural language queries (personal scope) | Natural language queries (assigned scope) | Department queries (dept scope) | Executive queries (campus scope) | Retrieval audit & system metrics |
@@ -565,11 +600,12 @@ The authentication architecture coordinates between user records, OTP tokens, an
 
 ## 19. Phase 1 / MVP Boundary
 
-Phase 1 focuses exclusively on delivering a robust, complete **Core MVP (11 Modules)**:
+Phase 1 focuses exclusively on delivering a robust, complete **Core MVP (12 Modules)**:
 - Complete frontend UI and responsive layouts for Student and Faculty workspaces.
 - Institutional identity onboarding, activation, and secure session management.
 - Complete operational schemas in MongoDB Atlas.
 - Full CRUD workflows for attendance, timetable, marks, and assignments.
+- Subject- and class-scoped academic resources and study materials.
 - Grounded Campus AI assistant.
 
 ---
@@ -598,7 +634,7 @@ To protect engineering resources and maintain project discipline, College OS exp
 
 ## 22. Locked Decisions Registry
 
-The following decisions are **PERMANENTLY LOCKED** as of Version 1.1:
+The following decisions are **PERMANENTLY LOCKED** as of Version 1.2:
 
 1. **College-Controlled Identity**: Users do not choose their institutional role. The institution provisions and authorizes the user's role.
 2. **No Open Registration**: Unrestricted public self-registration with arbitrary role selection is strictly rejected across all user levels.
@@ -611,7 +647,8 @@ The following decisions are **PERMANENTLY LOCKED** as of Version 1.1:
 9. **Identity vs. Profile Boundary**: Institution-controlled academic fields (immutable by user) are strictly separated from user-controlled showcase portfolio fields.
 10. **Account Lifecycle Model**: Formal lifecycle states enforced: `INVITED/NOT_ACTIVATED` &rarr; `ACTIVE` &rarr; `SUSPENDED` &rarr; `GRADUATED/INACTIVE`.
 11. **Campus AI Authorization Guard**: AI authorization derives strictly from backend-authenticated institutional role; passwords, credentials, and secrets are permanently excluded.
-12. **Scope Philosophy**: *Core First &rarr; Stabilize &rarr; Expand*. Phase 2 features shall not delay delivery of the 11 Core MVP modules.
+12. **Scope Philosophy**: *Core First &rarr; Stabilize &rarr; Expand*. Phase 2 features shall not delay delivery of the 12 Core MVP modules.
+13. **Academic Resources Scope (v1.2)**: Academic Resources & Study Materials is an approved Core MVP module. It is strictly a subject- and class-scoped study-material repository and shall not expand into a learning-management system, live classes, online tests, or automated grading.
 
 ---
 
@@ -652,3 +689,19 @@ All developers and AI coding agents working on College OS must strictly adhere t
 - **RULE 8**: Faculty authorization must remain dynamically assignment-scoped to allocated classes and subjects.
 - **RULE 9**: Campus AI must respect authenticated RBAC and enforce least-privilege retrieval.
 - **RULE 10**: Any future authentication change must update the PDF, HTML, documentation and `COLLEGE_OS_SOT.md` together.
+
+---
+
+## 26. Change History
+
+| Version | Date | Change |
+| :--- | :--- | :--- |
+| **1.0** | October 2026 | Initial locked foundation: vision, problem statement, institutional model, 11 core MVP modules, Phase 2 boundary, Campus AI architecture, MongoDB data model, and RBAC matrix. |
+| **1.1** | October 2026 | Authentication and institutional onboarding locked: institution-controlled provisioning, OTP activation for students and faculty, executive provisioning, authoritative backend roles, account lifecycle states, expanded RBAC matrix, locked decision registry, and engineering rules. |
+| **1.2** | 27 October 2026 | **Scope amendment: Academic Resources & Study Materials approved as Core MVP Module 12.** Added Section 11.5 (purpose, faculty and student capabilities, access rules, scope boundary). Updated the module list and count in Section 4, the `resources` collection in Section 16.5, the RBAC matrix in Section 18, the Phase 1 boundary in Section 19, and the locked decision registry in Section 22 (new decision 13). No authentication, RBAC, AI, or Phase 2 decision was altered by this amendment. |
+
+### 26.1 Project Plan alignment note
+
+The locked Project Plan (`College_OS_Project_Plan_Source_of_Truth.pdf`, together with its `.docx` and `.html` companions) still describes **11 MVP modules** and does not contain Academic Resources & Study Materials. Those files are locked source documents and were deliberately **not** regenerated, rewritten, or overwritten by this amendment.
+
+Until the Project Plan is formally reissued, this SOT v1.2 entry is the authoritative record of the approved Academic Resources scope. The difference between the SOT and the Project Plan is recorded here rather than hidden. Rule 10 of Section 25 applies only to authentication changes and is therefore unaffected by this scope amendment.

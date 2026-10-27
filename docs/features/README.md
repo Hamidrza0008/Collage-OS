@@ -29,8 +29,7 @@ docs/features/
 ├── student/
 ├── faculty/
 ├── shared/
-├── ai/
-└── future/                 ← features agreed but not being built yet
+└── ai/
 ```
 
 File names are lowercase with hyphens, and match the feature name. For example:
@@ -39,7 +38,7 @@ File names are lowercase with hyphens, and match the feature name. For example:
 - `faculty/attendance-management.md`
 - `ai/faculty-campus-ai.md`
 
-The file name is how we refer to a feature. We do not need extra ID codes.
+Each feature also has a short stable ID, such as `STU-04` or `FAC-08`, used when discussing and cross-referencing it. The ID appears in the inventory and in the feature document heading. IDs are never reassigned, so adding or removing a feature does not disturb the others.
 
 ---
 
