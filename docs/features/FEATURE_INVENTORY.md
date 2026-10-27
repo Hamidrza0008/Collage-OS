@@ -1,408 +1,593 @@
-# College OS — Master Feature Inventory
+# College OS — Feature Inventory
 
-> **Document status:** DRAFT FOR REVIEW
-> **Inventory version:** 0.1
-> **Date:** 27 October 2026
-> **Scope:** Product planning and documentation only
-> **Authority:** Subordinate to `COLLEGE_OS_SOT.md` (locked v1.1)
-> **Implementation authorization:** **NONE.** This document does not authorize backend or frontend changes.
+**Status:** draft for review
 
----
+**Last updated:** 27 October 2026
 
-## 1. Purpose and Method
+**Purpose:** a plain list of every feature we plan to support, so we can review and approve the scope before writing detailed feature documents.
 
-This inventory identifies the unique feature domains of College OS, assigns stable feature IDs, records what exists in the repository today, and flags the dependencies and decisions that must be resolved before individual feature specifications are written.
-
-It is deliberately **not** a copy of the sidebar or route tree. A feature may span several routes, and a single route may support more than one feature. Features are grouped by domain, actor, and purpose.
-
-### 1.1 Sources inspected
-
-| Source | Role in this inventory |
-| :--- | :--- |
-| `COLLEGE_OS_SOT.md` v1.1 (LOCKED) | Primary source for intended scope, roles, authentication, RBAC, data model, AI guardrails, and phase boundaries |
-| `Project Plan/College_OS_Project_Plan_Source_of_Truth.html` (and its `.docx` and `.pdf` companions) | Approved project plan; sections 11, 12, 14, 16, 18, 21, Appendices A and C were read. Adds "Official College Profile" to core scope |
-| `docs/AI_INSTRUCTIONS.md` | Master UI and repository working rules |
-| `docs/roadmap.md` | Reported implementation status; treated as a claim to verify |
-| `README.md` | Reported product overview and status; treated as a claim to verify |
-| `docs/UI_IMPLEMENTATION_STATUS_AUDIT.md` | Baseline audit dated 24 October 2026 |
-| `docs/FINAL_UI_PHASE_AUDIT.md` | Later audit dated 24 October 2026 |
-| `frontend/AGENTS.md`, `frontend/CLAUDE.md` | Repository-specific agent instructions |
-| Repository inspection | 53 `page.js`/`page.jsx` route entry files, layouts, navigation, auth provider, middleware, components, mock datasets, and `backend/server.js` |
-
-### 1.2 What was inspected in the repository
-
-- The complete App Router tree under `frontend/app`, including all route entry files and loading/error boundaries.
-- Navigation configuration (`components/layout/navConfig.js`) and command palette data.
-- Authentication provider, middleware, protected-route guard, login, activation, and reset screens.
-- Student and faculty feature components, mock datasets, modals, stores, and local-storage usage.
-- Campus AI workspaces and their mock response engines.
-- The backend workspace: `backend/package.json` and `backend/server.js`.
-
-### 1.3 Important boundary
-
-All data dependencies listed below are **provisional**. They identify likely entities and shared capabilities only. They are not final schemas and must not be implemented from this document. Final models belong in the relevant feature specification and the cross-feature data review.
+This is a feature list, not a technical design. No database schemas, API contracts, or code are defined here.
 
 ---
 
-## 2. Evidence Reconciliation
+## How to read this
 
-### 2.1 Source hierarchy applied
+- **Backend needed** means: does this feature need real server work before it can actually function?
+  Today the backend is an empty Express stub (`backend/server.js`), so almost everything needs server work.
+  - **Yes** = real server logic has to be built.
+  - **Partly** = some parts already work in the browser, the rest needs a server.
+  - **No** = already works without a server.
+- **Phase 2** means the locked source of truth (`COLLEGE_OS_SOT.md`) lists the feature as optional expansion, not part of the core MVP. Some of these already have UI built.
+- **Pending** lists open questions. None of these are decided yet.
 
-1. Locked SOT requirements.
-2. Approved project-plan decisions.
-3. Current repository implementation evidence.
-4. Roadmap and audit claims, verified against the repository.
-
-### 2.2 Document conflicts recorded (not resolved)
-
-| ID | Conflict | Evidence | Inventory treatment |
-| :--- | :--- | :--- | :--- |
-| `CONFLICT-01` | SOT Section 20 classifies Internships, Hackathons, Campus Community Feed, and Lost & Found as Phase 2, but full UI implementations already exist. | SOT Section 20; `frontend/app/student/internships`, `feed`, `lost-and-found`; `FINAL_UI_PHASE_AUDIT.md` Section 3.1 | Classified as **Documented expansion** with **Verified UI** status. Not reclassified as MVP. |
-| `CONFLICT-02` | `roadmap.md` says Marks and Timetable are unchecked or missing, but routes and components now exist. | `docs/roadmap.md` lines 108–120; `frontend/app/faculty/marks`, `frontend/app/faculty/timetable` | Treated as a stale roadmap claim. Inventory records the routes as implemented. |
-| `CONFLICT-03` | `README.md` says Phase 1 is about 70% and lists Events, Projects, Internships, and Faculty modules as unchecked, while the repository contains full routes. | `README.md` lines 49–64 and 351–368; repository route tree | Treated as stale documentation. Inventory uses repository evidence. |
-| `CONFLICT-04` | `FINAL_UI_PHASE_AUDIT.md` claims 52 unique routes and 100% completion; the repository contains 53 route entry files when the root redirect and `/auth/forgot-password` are counted. | Audit Section 4; `frontend/app` file scan | Treated as a definitional counting difference, not a product defect. |
-| `CONFLICT-05` | SOT Module 4 requires an "Explore Directory", but there is no `/student/explore` route. Discovery is distributed across search, public profiles, projects, feed, and faculty students. | SOT Section 4; absence of `frontend/app/student/explore`; `globalSearchData.js`; `PublicStudentProfileAssembler` | `SHARED-05` is classified **Partial UI**. |
-| `CONFLICT-06` | SOT requires faculty to grade assignment submissions; the faculty assignment detail "Evaluate" action is an `alert()` placeholder, while marks entry is implemented separately. | `components/faculty/assignments/AssignmentDetailsModal.jsx` line 138; SOT Section 11.4 | `FAC-05` is **Verified UI** for authoring and review, with grading workflow marked incomplete in notes. |
-| `CONFLICT-07` | SOT says events are managed by authorized faculty, HODs, and administrative staff; the faculty events page has browse/detail but no create or publish action. | SOT Section 13; `components/faculty/events/FacultyEventsAssembler.jsx`; no event-create component found | `SHARED-04` records the publishing gap. |
-| `CONFLICT-08` | SOT v1.1 defines HOD, Principal, VP, and Admin permissions, but no `/hod`, `/principal`, `/vp`, or `/admin` routes exist; Appendix C of the project plan contains only Student, Faculty, and Admin columns. | SOT Sections 5, 7, 18; `middleware.js`; project plan Appendix C | `ADMIN-01` to `ADMIN-03` are **Documented expansion / Missing UI**. |
-| `CONFLICT-09` | SOT Section 14 requires multi-member project attribution, but the `projects` schema contains a single `studentId`. | SOT Sections 14 and 16.5 | Recorded as `DEC-02` and `CONFLICT-09`; not resolved. |
-| `CONFLICT-10` | SOT Phase 2 includes hackathon team formation and internship referral matching; the UI provides hackathon browsing, applications, and a resume builder, but no team matcher or referral matching. | SOT Section 20; `components/internships` | `STU-09` and `STU-10` note the missing sub-capabilities. |
-| `CONFLICT-11` | SOT Section 12 defines notice levels as `college`, `hod`, and `faculty`, while the `notices` schema defines `targetAudience` as `all`, `students`, or `faculty`. | SOT Sections 12 and 16.5 | Recorded as `DEC-07`; audience model requires reconciliation. |
-| `CONFLICT-12` | SOT requires JWT in HttpOnly, Secure, SameSite cookies and forbids open registration; the frontend sets a readable `college_os_session=true` cookie and the student login screen says "Create an Account". | SOT Sections 6.6, 6.7, 22; `AuthProvider.jsx`; `StudentLoginPage.jsx` line 74 | Recorded as a security and copy gap; not silently changed. |
-| `CONFLICT-13` | Notification Center, Global Search, 2FA, and Academic Resources are implemented but are not explicit SOT modules. | SOT Sections 4 and 20; routes `/student/notifications`, `/student/search`, `/student/settings/security`, `/faculty/resources` | Classified **Unclear** scope. |
-| `CONFLICT-14` | SOT defines INVITED, ACTIVE, SUSPENDED, and GRADUATED states; the frontend only exercises ACTIVE and has no lifecycle-management UI. | SOT Section 6.8; `AuthProvider.jsx`; no admin route | `AUTH-01` records the missing lifecycle implementation. |
+Every route listed below exists in the app today unless it says "no page yet".
 
 ---
 
-## 3. How to Read the Inventory
+## Summary
 
-### 3.1 Column definitions
-
-| Column | Meaning |
-| :--- | :--- |
-| Feature ID | Stable unique identifier. Never reused or renumbered. |
-| Feature domain | Authentication, Shared, Student, Faculty, Administrative, AI, or System. |
-| Feature name | User-facing or architectural capability name. |
-| Primary actors | Role or roles that own the primary value of the feature. Shared means multiple roles. |
-| Purpose | The problem the feature solves. |
-| Scope classification | Core MVP, Documented expansion, Future / deferred, or Unclear. |
-| Related routes | Actual route patterns discovered in `frontend/app`, or explicitly marked planned. |
-| UI evidence | Components or files inspected, or documented absence. |
-| Current implementation status | Verified UI, Partial UI, Missing UI, Mock-only, Missing backend, Existing backend, or Unverified. |
-| Key workflows | Major actions and state transitions supported or required. |
-| Data dependencies | Provisional entities and shared capabilities. Not final schemas. |
-| Feature dependencies | Features that must be specified or implemented first. |
-| Priority | P0, P1, or P2 with rationale. |
-| Specification path | Proposed future `.md` path. The file does not exist yet. |
-| Open questions | Unresolved product, data, security, or scope decisions. |
-| Evidence and notes | Repository files and source documents supporting the row. |
-
-### 3.2 Priority definitions
-
-| Priority | Meaning |
-| :--- | :--- |
-| **P0** | Foundational. Must be specified and approved before backend implementation begins because it gates authentication, authorization, shared data, or a core academic workflow. |
-| **P1** | Core experience. Should be specified immediately after P0 foundations; needed for a coherent MVP. |
-| **P2** | Expansion, deferred, or unclear scope. Specify after the MVP is stable and its scope is confirmed. |
-
-### 3.3 Status definitions
-
-The full vocabulary is defined in `docs/features/README.md`. In summary:
-
-- **Verified UI** — the interface exists and was inspected; data may be mock.
-- **Partial UI** — some screens or workflows exist; material parts are missing.
-- **Missing UI** — no user-facing surface exists.
-- **Mock-only** — the end-to-end workflow is simulated on the client.
-- **Missing backend** — no server, database, or API implementation exists for a backend or data-layer capability.
-- **Existing backend** — a real backend was verified. None was found.
-- **Unverified** — claimed but not confirmed.
-
----
-
-## 4. Master Feature Inventory
-
-The master inventory is presented as seven domain tables. Together they form one continuous inventory with a single ID space. Feature counts at the end are counts of feature domains, not pages, routes, components, or collections.
-
-### 4.1 Authentication and Institutional Access
-
-| Feature ID | Feature domain | Feature name | Primary actors | Purpose | Scope classification | Related routes | UI evidence | Current implementation status | Key workflows | Data dependencies (provisional) | Feature dependencies | Priority | Specification path | Open questions | Evidence and notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `AUTH-01` | Authentication | Institutional User Provisioning & Account Lifecycle | Administrator, Institution | Ensure every account pre-exists in official records with an institution-assigned role and lifecycle state before any login is possible. | Core MVP | Planned `/admin/**`; middleware already guards `/admin`, `/hod`, `/principal`, `/vp` | No provisioning UI. `AuthProvider.jsx` hardcodes demo student and faculty records with `accountStatus: "ACTIVE"`. `middleware.js` lists protected prefixes. | Missing UI | Bulk import students; create faculty/staff; assign role, department, classes, subjects; invite; suspend; reactivate; graduate or offboard; audit state changes. | `users`; `studentProfiles`; `facultyProfiles`; `collegeProfile`; OTP tokens; audit log. | `SHARED-01`; `SHARED-02`; `AUTH-02`; `AUTH-04` | P0 — without provisioning there is no legitimate identity and no enforceable role. | `docs/features/authentication/AUTH-01-institutional-user-provisioning-and-account-lifecycle.md` | Who owns the provisioning UI? What bulk-import format is approved? Who may create HOD, Principal, and VP records? How are duplicates detected? What are suspension and re-activation rules? | SOT 6.1, 6.8, 16.1–16.4, 18, 22.1–22.10; roadmap Phase 2 and 3; no `app/admin` route; backend is a stub. |
-| `AUTH-02` | Authentication | Student Account Activation | Student | Activate a pre-provisioned student record using enrollment number, official contact, OTP, read-only identity confirmation, and a user-owned password. | Core MVP | `/auth/student/activate`; `/auth/student/confirm`; `/auth/student/password` | `StudentActivationPage.jsx`; `StudentConfirmPage.jsx`; `StudentPasswordPage.jsx`; `AuthProvider.verifyIdentity`, `confirmDetails`, `setPasswordAndActivate`; `sessionStorage` flow state. | Mock-only | Verify enrollment and official email; dispatch and verify 6-digit OTP; display read-only institutional fields; set password with live policy checklist; transition to ACTIVE; establish session; redirect to dashboard. | `users`; `studentProfiles`; OTP token; session. | `AUTH-01`; `SHARED-01`; `AUTH-07` | P0 — activation is the only legitimate student account-entry path. | `docs/features/authentication/AUTH-02-student-account-activation.md` | Which OTP provider and channel? OTP expiry and resend limits? Activation-token binding? What prevents duplicate activation? Is the current password policy final? | SOT 6.2, 6.7, 17, 22.3–22.5; audit AUTH-03 to AUTH-05; no backend OTP service. |
-| `AUTH-03` | Authentication | Student Login & Session Establishment | Student | Authenticate an activated student and establish a scoped session for student data access. | Core MVP | `/auth/student` | `StudentLoginPage.jsx`; `AuthProvider.login`; demo autofill and error alerts. | Verified UI | Enter enrollment number or email plus password; optional remember me; demo autofill; validation errors; redirect to `/student`; no lockout or rate limiting. | `users`; session/JWT. | `AUTH-01`; `AUTH-02`; `AUTH-07`; `SHARED-02` | P0 — primary entry point for all student data. | `docs/features/authentication/AUTH-03-student-login-and-session-establishment.md` | Identifier normalization? Lockout policy? Remember-me semantics? Generic versus specific error messages? Session-establishment contract? | SOT 6.6; roadmap `/api/auth/student/login`; frontend cookie simulation. |
-| `AUTH-04` | Authentication | Faculty & Staff Account Activation | Faculty, Staff | Activate a pre-provisioned faculty or staff record using employee ID, official contact, OTP, and a user-owned password. | Core MVP | `/auth/faculty/activate` | `FacultyActivationPage.jsx`; three-step UI; no faculty activation method in `AuthProvider.jsx`. | Mock-only | Verify employee ID and official email; OTP; confirm department and designation; set password; transition to ACTIVE; proceed to staff login. | `users`; `facultyProfiles`; OTP token; session. | `AUTH-01`; `SHARED-01`; `AUTH-05`; `AUTH-07` | P0 — faculty cannot enter management workflows without it. | `docs/features/authentication/AUTH-04-faculty-and-staff-account-activation.md` | How is the role anchored as faculty versus HOD? Which department record is authoritative? Should assignments be visible during activation? OTP provider? | SOT 6.3; audit P1-02 now built; no backend. |
-| `AUTH-05` | Authentication | Staff Login & Institutional Role Resolution | Faculty, HOD, Principal/VP, Admin | Authenticate all non-student institutional users and resolve the authoritative role to the correct workspace. | Core MVP | `/auth/faculty`; `/auth/staff/login` alias | `StaffLoginPage.jsx`; `AuthProvider.login` always returns a faculty demo user. | Verified UI | Enter employee ID or email plus password; backend role resolution; redirect to faculty, HOD, Principal/VP, or Admin workspace; demo redirects only to `/faculty`. | `users`; roles; session/JWT. | `AUTH-01`; `SHARED-02`; `ADMIN-01`; `ADMIN-02`; `ADMIN-03` | P0 — single staff entry point for every management role. | `docs/features/authentication/AUTH-05-staff-login-and-role-resolution.md` | Role-to-route map? Multi-role users? Canonicalization of `/auth/staff/login` versus `/auth/faculty`? Error responses? HOD/Principal/Admin routes are absent. | SOT 6.4–6.6; middleware; audit AUTH-06 and AUTH-07. |
-| `AUTH-06` | Authentication | Password Recovery & Reset | Student, Faculty, Staff | Let users recover access through verified institutional contact and OTP without exposing or resetting passwords administratively. | Core MVP | `/auth/forgot-password` | `ForgotPasswordPage.jsx`; role toggle; three-step flow; demo OTP `849201`; password policy checklist. | Mock-only | Choose role; enter identifier and official email; verify OTP; set and confirm new password; success; return to login. | `users`; OTP token; session; notification delivery. | `AUTH-01`; `AUTH-03`; `AUTH-05`; `AUTH-07` | P1 — required by SOT, but not a first-run blocker. | `docs/features/authentication/AUTH-06-password-recovery-and-reset.md` | OTP provider? Reset-token TTL? Are all sessions revoked after reset? Rate limits and enumeration protection? Behavior for INVITED or SUSPENDED accounts? | SOT 6.7; route exists but is absent from the 52-route audit count. |
-| `AUTH-07` | Authentication | Session Lifecycle, Logout & Route Protection | Shared | Maintain authenticated session state, protect routes, and terminate sessions safely. | Core MVP | Global via `frontend/middleware.js`, `ProtectedRoute.jsx`, `UserProfileDropdown.jsx`; no standalone route | Middleware checks `college_os_session`; `AuthProvider` sets and clears cookies plus `localStorage`; `ProtectedRoute` redirects unauthenticated or wrong-role users; logout menu exists. | Verified UI | Login writes a client-readable cookie and local storage; middleware redirects unauthenticated users; role guard redirects wrong roles; logout clears state; no expiry, refresh, server revocation, or cross-tab synchronization. | Session/JWT; `users`; roles. | `AUTH-03`; `AUTH-05`; `SHARED-02` | P0 — every protected workflow depends on session correctness. | `docs/features/authentication/AUTH-07-session-lifecycle-logout-and-route-protection.md` | JWT HttpOnly/Secure/SameSite design? Refresh and expiry? Revocation? Suspended-account behavior? Redirect-parameter sanitization? SSR-safe session resolution? | SOT 6.8 and 17; `middleware.js`; the frontend sets `college_os_session=true` directly, conflicting with the locked HttpOnly requirement. |
-| `AUTH-08` | Authentication | Account Security & Two-Factor Authentication | Student, Shared | Provide account-security controls beyond login: 2FA, active-session review, and security-activity visibility. | Unclear | `/student/settings/security` | `SecurityAssembler.jsx`; `TwoFactorAuthCard.jsx`; `TwoFactorSetupModal.jsx`; `ActiveSessionsCard.jsx`; `RevokeSessionModal.jsx`; `SecurityAuditLogCard.jsx`; `securityData.js`. | Mock-only | Enable or disable 2FA with a QR/mock secret; view and revoke sessions; view security activity; link to password change. | `users`; 2FA secret and recovery codes; sessions; audit log. | `AUTH-03`; `AUTH-07`; `SHARED-10`; `SHARED-07` | P1 — security hardening after core authentication. | `docs/features/authentication/AUTH-08-account-security-and-two-factor-authentication.md` | 2FA is not mandated by the SOT. TOTP or SMS? Recovery codes? Faculty and admin parity? How is the audit log made trustworthy? | Roadmap Settings 2FA; `securityData.js`; no backend TOTP or session registry. |
-
-### 4.2 Shared and Cross-Cutting Capabilities
-
-| Feature ID | Feature domain | Feature name | Primary actors | Purpose | Scope classification | Related routes | UI evidence | Current implementation status | Key workflows | Data dependencies (provisional) | Feature dependencies | Priority | Specification path | Open questions | Evidence and notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `SHARED-01` | Shared | Institutional Identity & Profile Data Foundation | Shared | Define one canonical identity model linking authenticated users to institution-controlled student and faculty profiles, and separate immutable institutional fields from user-controlled portfolio fields. | Core MVP | No dedicated route; consumed by `/student/profile*`, `/faculty/settings`, and every auth flow | `AuthProvider.jsx` demo defaults; `profileData.js`; `publicStudentProfileData.js`; role-aware `Settings.jsx`; no Mongoose models in `backend/`. | Missing backend | Create user and profile; resolve profile by `userId`; enforce read-only institutional fields; update user-controlled fields; prevent role/profile mismatch. | `users`; `studentProfiles`; `facultyProfiles`; `collegeProfile`. | `AUTH-01`; `SHARED-02` | P0 — every academic and profile feature depends on it. | `docs/features/shared/SHARED-01-institutional-identity-and-profile-data-foundation.md` | One-to-one or embedded profiles? Unique indexes? Soft delete? Profile correction workflow? Role/profile integrity? Multi-institution support? | SOT 8, 16.1–16.3, 22.9; `backend/server.js` is an 8-line Express stub. |
-| `SHARED-02` | Shared | Role-Based Authorization & Assignment Scoping | Shared | Enforce backend-authoritative role, ownership, and faculty class/subject scope on every read and write. | Core MVP | No direct route; applies to all `/student/**` and `/faculty/**`; client guards in `middleware.js` and `ProtectedRoute.jsx` | `middleware.js`; `ProtectedRoute.jsx`; `navConfig.js`; `AuthProvider.jsx` role; no server authorization middleware. | Partial UI | Resolve role from the database; allow or deny by role; enforce student ownership; enforce faculty assignment scope; HOD department scope; Principal campus scope; Admin system scope; deny and audit. | `users`; faculty assignments; `studentProfiles`; enrollments. | `SHARED-01`; `AUTH-07`; `DEC-02`; `DEC-03` | P0 — all sensitive data access depends on it. | `docs/features/shared/SHARED-02-role-based-authorization-and-assignment-scoping.md` | Canonical assignment model? 403 versus 404? Denial auditing? Caching? Frontend hiding versus backend enforcement? HOD/Principal matrix? | SOT 7, 18, 25 rules 3, 4, 8, 9; audit notes direct-route authorization is deferred. |
-| `SHARED-03` | Shared | Notices & Announcements Broadcast | Student, Faculty, HOD, Principal/VP, Admin | Provide one official broadcast channel for campus, department, and class notices with priority, audience targeting, attachments, and read/detail views. | Core MVP | `/student/notices`; `/student/notices/[id]`; `/faculty/notices` | `Notices.jsx`; `noticesData.js`; `NoticeReaderAssembler.jsx`; `FacultyNoticesAssembler.jsx`; `CreateNoticeModal.jsx`; `CreateAnnouncementModal.jsx`; `DeleteConfirmModal.jsx`; `NoticeDetailsModal.jsx`. | Verified UI | Browse, filter, paginate; read detail and attachments; faculty create, edit, and delete class or department notices; HOD department bulletin; Principal/Admin campus circular; priority and pinning; notification trigger. | `notices`; `users`; `collegeProfile`; attachments; notifications. | `SHARED-01`; `SHARED-02`; `SHARED-08`; `SHARED-07` | P0 — official communication is a core institutional requirement. | `docs/features/shared/SHARED-03-notices-and-announcements-broadcast.md` | Audience enum versus class targeting? Notice versus announcement distinction? Edit/delete audit? Pinning rules? HOD/Principal publishing UI is absent. | SOT 12, 16.5, 18; faculty UI supports create and delete; no HOD or Principal route. |
-| `SHARED-04` | Shared | Campus Events Directory & Registration | Student, Faculty, HOD, Principal/VP, Admin | Centralize event discovery, detail, registration, and authorized publishing for campus events. | Core MVP | `/student/events`; `/student/events/[id]`; `/faculty/events` | `Events.jsx`; `EventDetailsAssembler.jsx`; `RegistrationModal.jsx`; `SubmitProposalModal.jsx`; `EventsCalendar.jsx`; `FacultyEventsAssembler.jsx`. | Verified UI | Browse and calendar filters; event detail; registration; student proposal; faculty, HOD, and Principal publishing; capacity; notifications. | `events`; registrations; `users`; banners and files; notifications. | `SHARED-01`; `SHARED-02`; `SHARED-07`; `SHARED-08` | P1 — core communication, dependent on notices and notification foundations. | `docs/features/shared/SHARED-04-campus-events-directory-and-registration.md` | Event ownership and approval? Registration entity? Capacity and waitlist? Proposal workflow? Faculty create UI is missing. | SOT 13, 16.5; faculty events page has browse and detail only. |
-| `SHARED-05` | Shared | Explore Directory & Peer Discovery | Student, Faculty | Enable discovery of peers, skills, branches, semesters, and projects, with project likes and profile inspection. | Core MVP | `/student/profile/[id]`; `/student/search`; `/faculty/students`; no dedicated `/student/explore` | `PublicStudentProfileAssembler.jsx`; `publicStudentProfileData.js`; `SearchCategoryTabs.jsx`; project contributor cards; `peerConnectionStore.js`; `FacultyStudentsAssembler.jsx`. | Partial UI | Search and filter peers; view public profile; connect/message modal as mock; like projects; faculty view assigned students. | `studentProfiles`; `projects`; `projectLikes`; skills; connections. | `SHARED-01`; `SHARED-02`; `SHARED-06`; `STU-07`; `STU-08` | P1 — core MVP module 4, but delivered through distributed surfaces. | `docs/features/shared/SHARED-05-explore-directory-and-peer-discovery.md` | Dedicated explore route or search only? Visibility and privacy fields? Faculty scope? Connection semantics? Direct messaging remains deferred. | SOT Module 4; README says discovery is integrated; no `/student/explore` route. |
-| `SHARED-06` | Shared | Global Search & Command Palette | Shared | Provide unified search across campus entities and fast command navigation. | Unclear | `/student/search`; global `⌘K` palette | `GlobalSearchAssembler.jsx`; `globalSearchData.js`; `NavbarSearchModal.jsx`; `commandPaletteData.js`. | Verified UI | Query; category tabs; filters; pagination; discovery rail; empty state; command navigation. | Cross-entity search index; permissions per entity. | `SHARED-02`; `SHARED-05`; `STU-08` | P1 — high-value utility, but not an explicit SOT module. | `docs/features/shared/SHARED-06-global-search-and-command-palette.md` | Atlas Search or application search? Permission filtering? Index freshness? Faculty parity? Command-palette authorization? | README and UI; SOT is silent on global search. |
-| `SHARED-07` | Shared | Notification Delivery Infrastructure | Shared | Deliver in-app notifications for deadlines, notices, events, applications, and account events with unread state. | Unclear | Global `NotificationPanel`; `/student/notifications` | `NotificationPanel.jsx`; `NotificationCenterAssembler.jsx`; `notificationData.js`; `ClearReadConfirmModal.jsx`; filters. | Partial UI | Generate notification; fan-out; read/unread; clear; filter; deep links; preferences. | `notifications`; `users`; preferences; source events. | `SHARED-02`; `SHARED-03`; `SHARED-04`; `STU-06` | P1 — improves core workflows, but the SOT does not define it as a module. | `docs/features/shared/SHARED-07-notification-delivery-infrastructure.md` | In-app only or email/SMS/push? Triggers? Read model? Retention? Realtime? Faculty notification center is absent. | Roadmap mentions websocket/polling; student UI is complete. |
-| `SHARED-08` | Shared | File Upload, Attachment Storage & Secure Download | Shared | Store and authorize assignment submissions, notice attachments, resources, project media, event banners, and profile images. | Core MVP | Used by `/student/assignments/[id]`; `/student/notices/[id]`; `/faculty/resources`; `/faculty/assignments`; `/faculty/notices` | `UploadAssignmentModal.jsx`; `NoticeAttachmentCard.jsx`; `DocumentViewerModal.jsx`; `UploadResourceModal.jsx`; `ShareWithClassModal.jsx`; `resourcesStore.js`; project media components. | Partial UI | Select; validate type and size; upload; store metadata; authorize download; scan; retention. | File metadata; storage provider; submissions; notices; resources; media. | `SHARED-02`; `SHARED-09` | P0 — submissions, circulars, and resources cannot work without it. | `docs/features/shared/SHARED-08-file-upload-attachment-storage-and-secure-download.md` | Storage provider? Signed URLs? Role-based download rules? Size and type limits? Malware scanning? Orphan cleanup? Retention? | SOT assignment and notice schemas; audit says simulated; `resourcesStore.js` stores metadata in localStorage. |
-| `SHARED-09` | Shared | API Validation, Error Handling & Response Contracts | Shared | Define consistent request validation, error envelopes, status codes, and safe response handling for all APIs. | Core MVP | No UI; future `/api/**` | No API layer. Frontend loading, empty, and error states exist in assemblers; `app/error.jsx` handles render errors. | Missing backend | Validate; reject; normalize errors; sanitize responses; correlate logs; map client errors. | Error codes; validation schemas; correlation IDs. | `SHARED-02`; `SHARED-01` | P0 — every API depends on it. | `docs/features/shared/SHARED-09-api-validation-error-handling-and-response-contracts.md` | Error envelope shape? Validation library? Correlation IDs? Localization? Sensitive-field redaction? | SOT 25 rules 6 and 7; roadmap Phase 3; backend stub only. |
-| `SHARED-10` | Shared | Audit Logging & Accountability | Shared | Record security-sensitive and academic actions for accountability and institutional audit. | Unclear | `/student/settings/security` shows a mock audit card; no admin audit view | `SecurityAuditLogCard.jsx`; `securityData.recordDemoAuditLog`. | Missing backend | Log login, activation, reset, grade change, attendance edit, notice publish, role change; query and export; retention. | `auditLogs`; `users`. | `SHARED-02`; `AUTH-07` | P2 — important governance, not required to start the MVP. | `docs/features/shared/SHARED-10-audit-logging-and-accountability.md` | Which events are required? Immutable storage? Retention? Who may view? PII handling? Tamper evidence? | SOT problem statement and RBAC audit permissions; no audit schema. |
-| `SHARED-11` | Shared | Official College Profile & Institutional Identity | Shared, Administrator | Represent the institution itself through branding, accreditation, address, official contacts, and authorized publishers, separately from individual admin accounts. | Core MVP | No dedicated public page; branding appears in auth, sidebar, and 404; future `/college` or `/admin/college-profile` | `AuthBrandPanel.jsx`; `Sidebar.jsx` campus artwork; `not-found.jsx` branding; institutional quotes; `collegeProfile` schema documented only. | Partial UI | View institutional identity; admin edit; authorize notice publishers; associate official circulars and events. | `collegeProfile`; `users`; `notices`; `events`. | `SHARED-01`; `ADMIN-03` | P1 — core institutional identity, but current UI only consumes branding. | `docs/features/shared/SHARED-11-official-college-profile-and-institutional-identity.md` | Dedicated public page? Who edits? Asset storage? Multi-campus support? Versioning? | Project Plan sections 11, 12, 18; SOT 16.4. |
-
-### 4.3 Student Features
-
-| Feature ID | Feature domain | Feature name | Primary actors | Purpose | Scope classification | Related routes | UI evidence | Current implementation status | Key workflows | Data dependencies (provisional) | Feature dependencies | Priority | Specification path | Open questions | Evidence and notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `STU-01` | Student | Student Dashboard & Academic Snapshot | Student | Answer the daily questions: what class is next, what work is due, what is my attendance buffer, and what official information changed. | Core MVP | `/student` | `Dashboard.jsx`; `components/dashboard/*` including `WelcomeHero`, `SummaryStatCards`, `TodayTimetable`, `UpcomingAssignments`, `RecentNotices`, `UpcomingEvents`, `CampusAICard`, `QuickActions`, `StudentProjects`, `RecommendedOpportunities`. | Verified UI | View greeting and KPIs; today's timetable; deadlines; notices; events; AI quick ask; quick actions; recommended opportunities. | `studentProfiles`; attendance; marks; assignments; timetables; notices; events. | `STU-04`; `STU-05`; `STU-06`; `SHARED-03`; `SHARED-04`; `AI-01` | P1 — primary student landing experience after foundations. | `docs/features/student/STU-01-student-dashboard-and-academic-snapshot.md` | Which KPI formulas are authoritative? What is the backlog source? Refresh/polling strategy? Personalization rules? | SOT Section 3 gap 1; README Section 2. |
-| `STU-02` | Student | Academic Performance & Grade Cards | Student | Show semester performance, internal assessment breakdowns, SGPA/CGPA, and downloadable grade records. | Core MVP | `/student/academics`; `/student/academics/grade-card` | `Academics.jsx`; `AcademicOverviewCard.jsx`; `PerformanceTrendCard.jsx`; `SemesterGradesCard.jsx`; `ResultsAndGradeCard.jsx`; `grade-card/*` including `GradeCardAssembler`, `GradeTable`, `SemesterPerformanceChart`, `PrintableGradeCard`, `FullTranscriptModal`, `SubjectMarksModal`. | Verified UI | View CGPA and SGPA; semester selector; performance trend; subject grades; internal marks; transcript; print and download grade card. | `marks`; `studentProfiles`; courses; semesters; credits. | `FAC-06`; `STU-03`; `SHARED-01` | P1 — core academic visibility; depends on the marks source. | `docs/features/student/STU-02-academic-performance-and-grade-cards.md` | GPA formula? Grade scale? Who authorizes an official transcript? PDF generation? When are marks visible? | SOT 11.3; UI download and print are simulated. |
-| `STU-03` | Student | Subject Catalog & Course Details | Student | Let students inspect enrolled courses, syllabi, faculty, resources, attendance, internal marks, and related assignments. | Core MVP | `/student/academics/subjects`; `/student/academics/subjects/[code]` | `SubjectCatalogAssembler.jsx`; `subjectCatalogData.js`; `SubjectDetailsAssembler.jsx`; `SyllabusBrowser.jsx`; `CourseResources.jsx`; `InternalMarksCard.jsx`; `AttendanceCard.jsx`; `SubjectFacultyCard.jsx`; `AskFacultyModal.jsx`. | Verified UI | Browse and filter; view syllabus; faculty; resources; attendance; internal marks; assignments; ask faculty. | Courses and subjects; `facultyProfiles`; timetable; attendance; marks; resources. | `SHARED-01`; `FAC-02`; `FAC-06` | P1 — supports academics and AI retrieval. | `docs/features/student/STU-03-subject-catalog-and-course-details.md` | The SOT defines no course master. What is the syllabus source? How are resources linked? How is cross-section course identity handled? | SOT uses `subjectCode` strings but defines no `courses` collection. |
-| `STU-04` | Student | Timetable & Academic Calendar | Student | Give students a reliable personal class schedule and academic calendar across day, week, month, and agenda views. | Core MVP | `/student/academics/timetable` | `AcademicTimetableAssembler.jsx`; `WeekView.jsx`; `DayView.jsx`; `MonthView.jsx`; `AgendaView.jsx`; `TodayScheduleCard.jsx`; `NextClassCard.jsx`; `NextDeadlineCard.jsx`; `CalendarFilters.jsx`; `AddReminderModal.jsx`. | Verified UI | Weekly, daily, monthly, and agenda views; filters; class detail; reminders; exams and deadlines. | `timetables`; courses; `facultyProfiles`; exams; holidays. | `SHARED-01`; `FAC-07` | P0 — daily scheduling is a core MVP promise. | `docs/features/student/STU-04-timetable-and-academic-calendar.md` | Timetable identity model? Room and conflict resolution? Exam and holiday source? Timezone? Academic-year rollover? | SOT 11.1; audit STU-06. |
-| `STU-05` | Student | Attendance Monitoring | Student | Show real-time subject-wise attendance percentages, trends, and shortage risk against institutional thresholds. | Core MVP | Integrated in `/student/academics` Attendance tab and `/student/academics/subjects/[code]`; no dedicated route | `AttendanceOverview.jsx`; academics tabs; `AttendanceCard.jsx`; `QuickActionsCard.jsx`. | Partial UI | View per-subject percentage; threshold alerts; trend; shortage state; no dispute or correction request. | `attendance`; `studentProfiles`; courses. | `FAC-04`; `STU-04` | P0 — core MVP module 6, but only partially surfaced. | `docs/features/student/STU-05-attendance-monitoring.md` | Is 75% the only threshold? How is condonation handled? Does late count as present? Is there a dispute workflow? Realtime or batch? | SOT 11.2; roadmap marks attendance as integrated. |
-| `STU-06` | Student | Assignments & Submissions | Student | Give students a single hub for assignment details, deadlines, file submissions, history, and instructor feedback. | Core MVP | `/student/assignments`; `/student/assignments/[id]` | `Assignments.jsx`; `AssignmentCard.jsx`; `AssignmentDetailsModal.jsx`; `UploadAssignmentModal.jsx`; `SubmissionHistory.jsx`; `SubmissionWorkspace.jsx`; `SubmitConfirmationModal.jsx`; `details/*`. | Mock-only | Filter, search, paginate; view details and rubric; upload; submit; view history and feedback; overdue states. | `assignments`; submissions; files; marks; `studentProfiles`. | `FAC-05`; `SHARED-08`; `STU-02` | P0 — core MVP module 8. | `docs/features/student/STU-06-assignments-and-submissions.md` | Embedded or separate submission model? Resubmission policy? Late policy? File limits? Grading feedback? Plagiarism checks? | SOT 11.4; `UploadAssignmentModal.handleSubmit` is client-side. |
-| `STU-07` | Student | Student Profile & Portfolio | Student | Combine verified institutional identity with a student-controlled professional portfolio, skills, links, projects, and badges. | Core MVP | `/student/profile`; `/student/profile/edit` | `Profile.jsx`; `ProfileHero.jsx`; `AboutMeCard.jsx`; `SkillsCard.jsx`; `ProfileProjectsCard.jsx`; `BadgesAchievementsCard.jsx`; `SocialLinksCard.jsx`; `ProfileCompletionCard.jsx`; `EditProfileAssembler.jsx` and section editors; `MobileEditProfileActionBar.jsx`. | Verified UI | View and edit user-controlled fields; preview; visibility; completion; project links; badges. | `studentProfiles`; `projects`; marks; attendance; skills; badges. | `SHARED-01`; `STU-08` | P1 — core identity feature; needs the data foundation. | `docs/features/student/STU-07-student-profile-and-portfolio.md` | How are institutional fields locked? Avatar storage? Badge source? Visibility model? Completion formula? | SOT 8, 9, 22.9; edit UI exists. |
-| `STU-08` | Student | Projects Showcase & Engagement | Student | Let students publish technical projects, showcase repositories and demos, attribute contributors, and engage with peer work. | Core MVP | `/student/projects`; `/student/projects/[id]` | `Projects.jsx`; `ProjectCard.jsx`; `CreateProjectModal.jsx`; `EditProjectModal.jsx`; `ProjectDetailsAssembler.jsx`; `ProjectTeam.jsx`; `ProjectDiscussion.jsx`; `RequestJoinTeamModal.jsx`; `projectsStore.js`. | Verified UI | Create, edit, delete own projects; browse, filter, search; like and unlike; view detail; comment; request to join team; media. | `projects`; `projectLikes`; `studentProfiles`; project members; comments; media. | `SHARED-01`; `SHARED-05`; `SHARED-08` | P1 — core MVP module 3. | `docs/features/student/STU-08-projects-showcase-and-engagement.md` | Multi-member attribution conflicts with the single `studentId` schema. How are likes made unique? Moderation? Are comments in scope? How does team join work? | SOT 14, 16.5; `projectsStore.js` persists to localStorage. |
-| `STU-09` | Student | Internships & Hackathons Discovery | Student | Discover internships and hackathons, inspect details, apply or register, and submit opportunities. | Documented expansion | `/student/internships`; `/student/internships/[id]` | `InternshipsHackathons.jsx`; `InternshipsSection.jsx`; `HackathonsSection.jsx`; `OpportunityCard.jsx`; `OpportunityDetailsModal.jsx`; `ApplyRegisterModal.jsx`; `SubmitOpportunityModal.jsx`; filters. | Verified UI | Browse; search and filter; detail; apply or register; submit opportunity. | Opportunities; companies; applications; `studentProfiles`; resume. | `STU-10`; `STU-11`; `SHARED-08` | P2 — SOT Phase 2. | `docs/features/student/STU-09-internships-and-hackathons-discovery.md` | Who curates and verifies listings? External or internal? Eligibility rules? Hackathon team formation? Referral matching? | SOT Sections 16 and 20; UI built ahead of phase. |
-| `STU-10` | Student | Application Tracking | Student | Track internship applications, statuses, notes, documents, and withdrawals in one place. | Documented expansion | `/student/internships/applications` | `ApplicationsTrackerAssembler.jsx`; `ApplicationCard.jsx`; `ApplicationDetailDrawer.jsx`; `ApplicationNotesModal.jsx`; `WithdrawApplicationModal.jsx`; metrics and filters. | Verified UI | List and filter; status pipeline; notes; withdraw; documents. | Applications; opportunities; `studentProfiles`; resume versions. | `STU-09`; `STU-11` | P2 — SOT Phase 2 application tracking. | `docs/features/student/STU-10-application-tracking.md` | Status taxonomy? Who updates status? Duplicate applications? Withdrawal rules? Employer integration? | SOT Phase 2. |
-| `STU-11` | Student | Resume Builder | Student | Help students build, review, version, and export a campus resume. | Unclear | `/student/internships/resume-builder` | `ResumeBuilderAssembler.jsx`; section editors; `LiveResumePreview.jsx`; `JobDescriptionAnalyzer.jsx`; `SmartAssistantPanel.jsx`; `ResumeQualityCard.jsx`; version modals. | Mock-only | Edit sections; live preview; quality score; job-description analysis; save versions; export. | Resume; `studentProfiles`; projects; skills; education; experience. | `STU-07`; `STU-08`; `SHARED-08` | P2 — not an explicit SOT Phase 2 deliverable. | `docs/features/student/STU-11-resume-builder.md` | Is this approved scope? PDF export? What are the AI-assistance boundaries? Version storage? Template ownership? | Audit notes it as Phase 2 built; SOT only names application tracking and referral matching. |
-| `STU-12` | Student | Lost & Found | Student | Provide structured reporting, discovery, matching, and claim handling for lost and found campus items. | Documented expansion | `/student/lost-and-found`; `/student/lost-and-found/my-reports` | `LostAndFound.jsx`; `LostFoundCard.jsx`; `ReportLostItemModal.jsx`; `ReportFoundItemModal.jsx`; `ContactOwnerModal.jsx`; `LostFoundDetailsModal.jsx`; `MyReportsAssembler.jsx`; `ClaimVerificationModal.jsx`; `PossibleMatchModal.jsx`. | Verified UI | Browse and filter; report lost or found; contact owner; my reports; edit or cancel; claim verification; match. | Lost and found items; claims; `users`; files. | `SHARED-01`; `SHARED-08`; `SHARED-07` | P2 — SOT Phase 2. | `docs/features/student/STU-12-lost-and-found.md` | Who holds custody? How is verification proven? Anonymity? Moderation? Retention? How are disputes resolved? | SOT Phase 2; full UI built. |
-| `STU-13` | Student | Campus Community Feed & Groups | Student | Provide an authenticated campus discussion feed and community groups for academic and co-curricular interaction. | Documented expansion | `/student/feed`; `/student/feed/[id]`; `/student/feed/groups/[id]` | `CampusFeed.jsx`; `CreatePostComposer.jsx`; `FeedPostCard.jsx`; comments; `JoinCommunityModal.jsx`; `ReportPostModal.jsx`; `CommunityGroupAssembler.jsx`; members, projects, and events sections. | Verified UI | Create post; like, comment, share, bookmark; report; join group; group feed, members, events, projects. | Posts; comments; reactions; communities; memberships; reports. | `SHARED-01`; `SHARED-08`; `SHARED-07`; `STU-08` | P2 — SOT Phase 2. | `docs/features/student/STU-13-campus-community-feed-and-groups.md` | Moderation policy? Anonymous posts? Group roles? Media storage? Faculty participation? Direct messaging is still deferred. | SOT Phase 2; student-only routes. |
-| `STU-14` | Student | Saved Items & Bookmarks | Student | Let students save and organize projects, opportunities, events, notices, and campus content for later. | Unclear | `/student/saved` | `SavedItemsAssembler.jsx`; `SavedItemCard.jsx`; `SavedCategoryTabs.jsx`; `ManageCollectionsModal.jsx`; `SavedBulkActionBar.jsx`; `savedItemsStore.js`. | Verified UI | Save and unsave across entities; filter; collections; bulk actions; pagination. | Bookmarks; collections; entity references; `users`. | `SHARED-01`; `STU-08`; `STU-09`; `STU-12`; `STU-13` | P2 — supporting UX, not an SOT module. | `docs/features/student/STU-14-saved-items-and-bookmarks.md` | Polymorphic model? Which entities are saveable? Are collections shareable? Device sync? | UI and localStorage store; SOT silent. |
-| `STU-15` | Student | Notification Center | Student | Give students a consolidated view of academic, campus, and application notifications with unread state. | Unclear | `/student/notifications` | `NotificationCenterAssembler.jsx`; `NotificationSummaryCards.jsx`; `NotificationFilters.jsx`; `NotificationList.jsx`; `ClearReadConfirmModal.jsx`. | Verified UI | View all and unread; filter; mark read; clear; deep-link. | Notifications; preferences. | `SHARED-07` | P1 — needed for deadlines and notices usability. | `docs/features/student/STU-15-notification-center.md` | Categories? Realtime? Read semantics? Retention? Faculty parity? | UI exists; backend missing. |
-| `STU-16` | Student | Student Settings & Preferences | Student | Let students manage account information, appearance, notification preferences, security entry points, and support. | Core MVP | `/student/settings` | `Settings.jsx`; `AccountSettingsCard.jsx`; `AppearanceCard.jsx`; `NotificationSettingsCard.jsx`; `SecurityRegionCard.jsx`; `HelpSupportCard.jsx`; `SettingsModals.jsx`. | Verified UI | Edit account and profile; theme and high contrast; notification preferences; security entry; help, FAQ, ticket, feedback; clear cache. | User preferences; `studentProfiles`; notifications. | `SHARED-01`; `AUTH-08`; `SYS-02` | P1 — required for profile and account control. | `docs/features/student/STU-16-student-settings-and-preferences.md` | Which settings persist server-side? Theme and font are local only. Where do support tickets go? Is high contrast fully supported? | Roadmap Settings; SOT profile edit. |
-
-### 4.4 Faculty Features
-
-| Feature ID | Feature domain | Feature name | Primary actors | Purpose | Scope classification | Related routes | UI evidence | Current implementation status | Key workflows | Data dependencies (provisional) | Feature dependencies | Priority | Specification path | Open questions | Evidence and notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `FAC-01` | Faculty | Faculty Dashboard & Teaching Overview | Faculty | Give faculty a daily management view of assigned classes, student activity, pending tasks, announcements, events, and AI assistance. | Core MVP | `/faculty` | `FacultyDashboardAssembler.jsx`; `FacultyHeroBanner.jsx`; `FacultyKPICards.jsx`; `FacultyTodaysClasses.jsx`; `FacultyClassOverview.jsx`; `FacultyStudentActivity.jsx`; `FacultyPendingTasks.jsx`; `FacultyRecentAnnouncements.jsx`; `FacultyUpcomingEvents.jsx`; `FacultyAIAssistant.jsx`; `FacultyQuickLinks.jsx`. | Verified UI | View KPIs; today's classes; class overview; student activity; pending tasks; announcements; events; AI card; quick links. | `attendance`; `assignments`; `marks`; `timetables`; `notices`; `events`; `facultyProfiles`. | `FAC-02`; `FAC-04`; `FAC-05`; `FAC-06`; `FAC-07`; `SHARED-03`; `SHARED-04`; `AI-02` | P1 — primary faculty landing experience. | `docs/features/faculty/FAC-01-faculty-dashboard-and-teaching-overview.md` | KPI formulas? Activity-feed source? Pending-task rules? | SOT Section 10; audit FAC-01. |
-| `FAC-02` | Faculty | Assigned Classes & Class Roster | Faculty | Show only the classes, sections, and subjects dynamically assigned to the authenticated faculty member, with roster and summary context. | Core MVP | `/faculty/classes` | `FacultyClassesAssembler.jsx`; `AssignedClassesList.jsx`; `ClassesKPICards.jsx`; `ClassDetailModal` via timetable components; `ClassesTeachingResources.jsx`; `ClassesSidebarToday.jsx`. | Verified UI | View assigned classes and subjects; search and filter; class detail; attendance and assignment summaries; teaching resources. | `facultyProfiles.assignedClassIds`; `assignedSubjectIds`; courses; enrollments; attendance; assignments. | `SHARED-01`; `SHARED-02`; `DEC-03` | P0 — faculty scope is the foundation of every faculty write action. | `docs/features/faculty/FAC-02-assigned-classes-and-class-roster.md` | Canonical class and subject model? Roster source? What happens when assignments change? Multi-section handling? | SOT Section 10; RBAC rule 8; audit FAC-02. |
-| `FAC-03` | Faculty | Assigned Students Directory | Faculty | Let faculty inspect students in their assigned classes, including academic context and projects, without lateral access. | Core MVP | `/faculty/students` | `FacultyStudentsAssembler.jsx`; `StudentCard.jsx`; `StudentProfileModal.jsx`; `StudentsFilterSidebar.jsx`; `TopStudentProjectsCard.jsx`. | Verified UI | Search and filter assigned students; view profile, academics, and contact; view projects; enforce scope. | `studentProfiles`; enrollments; `projects`; attendance; marks. | `FAC-02`; `SHARED-02`; `SHARED-05` | P1 — core faculty visibility, dependent on authorization. | `docs/features/faculty/FAC-03-assigned-students-directory.md` | Which PII is visible? Only assigned students? Are contact details included? Cross-class access? Sorting rules? | SOT zero-lateral-access rule; audit FAC-10. |
-| `FAC-04` | Faculty | Attendance Management & Roll-Call | Faculty | Let faculty mark, update, and review attendance for assigned classes through a rapid roll-call workflow. | Core MVP | `/faculty/attendance` | `FacultyAttendanceAssembler.jsx`; `AttendanceMarkModal.jsx`; `AttendanceSummaryTable.jsx`; `AttendanceOverviewCard.jsx`; `AttendanceKPICards.jsx`; `AttendanceQuickActions.jsx`; `AttendanceClassesList.jsx`. | Verified UI | Select class; mark present, absent, or late; summary and trend; override; bulk CSV action is an alert placeholder. | `attendance`; enrollments; `timetables`; `facultyProfiles`. | `FAC-02`; `SHARED-02`; `DEC-04` | P0 — core MVP module 6 and source for student attendance. | `docs/features/faculty/FAC-04-attendance-management-and-roll-call.md` | Record granularity: lecture, period, or day? How does late count? Correction and audit workflow? Bulk import format? Offline support? | SOT 11.2; audit FAC-03; bulk CSV is not implemented. |
-| `FAC-05` | Faculty | Assignment Authoring, Review & Grading | Faculty | Let faculty create assignments with rubrics and deadlines, review submissions, and grade them. | Core MVP | `/faculty/assignments` | `FacultyAssignmentsAssembler.jsx`; `CreateAssignmentModal.jsx`; `AssignmentsTableSection.jsx`; `AssignmentsAnalyticsCard.jsx`; `AssignmentsUpcomingDeadlines.jsx`; `AssignmentDetailsModal.jsx` with submission list. | Verified UI | Create, edit, delete assignment; set deadline, rubric, attachments; view submissions; download all; evaluate is an alert placeholder; analytics. | `assignments`; submissions; files; courses; enrollments; marks. | `FAC-02`; `SHARED-08`; `DEC-06` | P0 — core MVP module 8. | `docs/features/faculty/FAC-05-assignment-authoring-review-and-grading.md` | Grading UI and score persistence? Rubric model? Late policy? Regrade? Feedback release? Embedded or separate submissions? | SOT 11.4; `AssignmentDetailsModal.jsx` line 138 uses `alert()` for Evaluate. |
-| `FAC-06` | Faculty | Marks Entry & Results Publishing | Faculty | Let faculty enter, validate, compute, publish, and lock marks for assigned subjects and assessments. | Core MVP | `/faculty/marks` | `FacultyMarksAssembler.jsx`; `MarksEntryTable.jsx`; `MarksFilterBar.jsx`; `MarksKPICards.jsx`; `MarksAnalyticsSidebar.jsx`; `MarksPublishModal.jsx`; `facultyMarksData.js`. | Verified UI | Select class, subject, exam; enter marks; validate; auto-grade; mark absent; quick fill; publish and lock as mock. | `marks`; enrollments; courses; `facultyProfiles`; verification and lock state. | `FAC-02`; `SHARED-02`; `DEC-05` | P0 — core MVP module 7 and source for student results. | `docs/features/faculty/FAC-06-marks-entry-and-results-publishing.md` | Exam types and max marks? Grade formula? Who may publish and lock? Correction workflow? Admin sign-off? Transcript integration? | SOT 11.3; schema has `verifiedStatus` but no publish or lock model. |
-| `FAC-07` | Faculty | Teaching Timetable & Schedule Change Requests | Faculty | Show faculty their personal teaching schedule and provide a controlled path to request reschedules or substitutes. | Core MVP | `/faculty/timetable` | `FacultyTimetableAssembler.jsx`; `TimetableWeeklyView.jsx`; `TimetableDailyView.jsx`; `TimetableControls.jsx`; `TimetableKPICards.jsx`; `ClassDetailModal.jsx`; `ScheduleChangeModal.jsx`. | Verified UI | View weekly and daily teaching schedule; filter; class detail; request reschedule or substitute; export. | `timetables`; `facultyProfiles`; rooms; change requests. | `FAC-02`; `SHARED-02`; `DEC-02` | P0 — core MVP module 5. | `docs/features/faculty/FAC-07-teaching-timetable-and-schedule-change-requests.md` | Who approves schedule changes? How are substitutes assigned? Room conflicts? Who owns timetable writes? | SOT 11.1; RBAC gives timetable writes to Admin, faculty only read plus request. |
-| `FAC-08` | Faculty | Academic Resources Repository | Faculty | Let faculty upload, organize, search, and share academic resources with assigned classes. | Unclear | `/faculty/resources` | `FacultyResourcesAssembler.jsx`; `FeaturedResourcesSection.jsx`; `RecentUploadsTable.jsx`; `UploadResourceModal.jsx`; `ShareWithClassModal.jsx`; `CreateFolderModal.jsx`; `resourcesStore.js`. | Verified UI | Upload resource; categorize; share with class; create folders; search and filter; download; storage usage. | Resources; files; courses; classes; `facultyProfiles`. | `SHARED-08`; `FAC-02` | P2 — not in the SOT core modules. | `docs/features/faculty/FAC-08-academic-resources-repository.md` | Is this approved scope? Storage quota? Is there a student access route? Versioning? Permissions? | Documented only in roadmap and UI; `resourcesStore.js` uses localStorage metadata. |
-| `FAC-09` | Faculty | Faculty Settings & Profile | Faculty | Let faculty manage faculty-controlled profile fields, preferences, security entry points, and support. | Core MVP | `/faculty/settings` | `Settings.jsx` with `role="faculty"`; role-aware account card; appearance, notification, security, and support cards. | Verified UI | View and edit faculty-controlled fields such as cabin, bio, and avatar; preferences; security; support. | `facultyProfiles`; user preferences. | `SHARED-01`; `AUTH-08`; `SYS-02` | P1 — needed for faculty account control. | `docs/features/faculty/FAC-09-faculty-settings-and-profile.md` | Institutional field locking? Faculty 2FA parity? Notification preferences? | Audit previously marked this partial; current code is role-aware. |
-
-### 4.5 Administrative Roles and Expansion Scope
-
-| Feature ID | Feature domain | Feature name | Primary actors | Purpose | Scope classification | Related routes | UI evidence | Current implementation status | Key workflows | Data dependencies (provisional) | Feature dependencies | Priority | Specification path | Open questions | Evidence and notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `ADMIN-01` | Administrative | HOD Departmental Oversight | HOD | Give the Head of Department department-wide visibility and audit authority over classes, faculty, students, attendance, marks, and departmental notices. | Documented expansion | Planned `/hod` and `/hod/**`; `middleware.js` already guards `/hod` | No UI. No `frontend/app/hod` directory. | Missing UI | Department dashboard; class and faculty visibility; attendance and marks audit; departmental notices; faculty and class allocation; departmental AI. | `facultyProfiles.department`; `studentProfiles.department`; attendance; marks; notices. | `SHARED-02`; `ADMIN-03`; `FAC-*`; `SHARED-03` | P2 — role documented, but no approved current UI scope. | `docs/features/admin/ADMIN-01-hod-departmental-oversight.md` | Is HOD in the current MVP? Can HOD reassign faculty? What audit depth is required? Which notices can HOD publish? What is the AI scope? | SOT Sections 5, 7, 18; roadmap HOD items unchecked; no routes. |
-| `ADMIN-02` | Administrative | Principal / VP Executive Governance | Principal, VP | Give executive leadership campus-wide academic visibility, cross-department metrics, official circulars, and governance controls. | Documented expansion | Planned `/principal` and `/vp`; `middleware.js` already guards both | No UI. No `frontend/app/principal` or `frontend/app/vp` directory. | Missing UI | Campus dashboard; cross-department metrics; campus-wide notices; academic audit; policy broadcast. | `collegeProfile`; all academic collections; aggregate metrics. | `SHARED-02`; `SHARED-03`; `ADMIN-01` | P2 — role documented, but no approved current UI scope. | `docs/features/admin/ADMIN-02-principal-vp-executive-governance.md` | Is this in the current MVP? What differs between Principal and VP? Are there approval workflows? How is aggregate privacy preserved? | SOT Sections 5, 7, 18; roadmap Principal/VP items unchecked; no routes. |
-| `ADMIN-03` | Administrative | System Administration & Institutional Configuration | Admin | Provide controlled technical administration for provisioning, lifecycle, institutional settings, timetable and grade overrides, and audit. | Documented expansion | Planned `/admin/**`; `middleware.js` already guards `/admin` | No UI. No `frontend/app/admin` directory. | Missing UI | Manage users and lifecycle; edit college profile; manage timetables; grade locks and overrides; system configuration; audit. | `users`; `collegeProfile`; `timetables`; `auditLogs`. | `AUTH-01`; `SHARED-01`; `SHARED-02`; `SHARED-10` | P2 — administrative tooling follows the core academic MVP. | `docs/features/admin/ADMIN-03-system-administration-and-institutional-configuration.md` | How are Admin, HOD, and Principal separated? Least privilege? Destructive-action safeguards? Admin MFA? | SOT Sections 5, 7, 18; RBAC Admin column; no route. |
-
-### 4.6 AI and Intelligent-Assistant Features
-
-| Feature ID | Feature domain | Feature name | Primary actors | Purpose | Scope classification | Related routes | UI evidence | Current implementation status | Key workflows | Data dependencies (provisional) | Feature dependencies | Priority | Specification path | Open questions | Evidence and notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `AI-01` | AI | Student Campus AI Assistant | Student | Answer student questions using only the student's own academic records and approved institutional documents, with source attribution and an explicit refusal boundary. | Core MVP | `/student/campus-ai` | `CampusAI.jsx`; `AIComposer.jsx`; `AIConversation.jsx`; `AIModeTabs.jsx`; `KnowledgePanel.jsx`; `QuickPrompts.jsx`; `RecentQueries.jsx`; `AIDataSourceFooter.jsx`; `campusAIData.js` keyword responder. | Mock-only | Ask a question; mode tabs; quick prompts; source badges; copy, regenerate, and feedback; stop; empty and error states; recent queries. | `studentProfiles`; attendance; marks; timetables; assignments; notices; events; RAG documents. | `AI-03`; `AI-04`; `AUTH-07`; `SHARED-02` | P1 — core AI surface, dependent on auth, data, and retrieval foundations. | `docs/features/ai/AI-01-student-campus-ai-assistant.md` | LLM provider and model? Streaming? Conversation persistence? Prompt taxonomy? Exact refusal copy? Attachment support? | SOT Section 15; project plan Appendix A; `campusAIData.js` is a keyword mock. |
-| `AI-02` | AI | Faculty Campus AI Assistant | Faculty | Answer faculty questions within assigned classes and subjects, including attendance, students, assignments, marks, notices, and policies. | Core MVP | `/faculty/campus-ai` | `FacultyCampusAIAssembler.jsx`; `FacultyAIChatArea.jsx`; `FacultyAIModeBar.jsx`; `FacultyAIDataGuarantee.jsx`; `FacultyAIRecentQueries.jsx`; `FacultyAISidebarQuickActions.jsx`; `facultyCampusAIData.js` keyword responder. | Mock-only | College and general modes; assigned-class queries; find students; policies; notices; events; source badges. | `facultyProfiles` assignments; attendance; marks; assignments; assigned `studentProfiles`; notices; RAG. | `AI-03`; `AI-04`; `FAC-02`; `SHARED-02` | P1 — core AI surface for faculty. | `docs/features/ai/AI-02-faculty-campus-ai-assistant.md` | What student PII may the AI see? Row-level or aggregate? May the AI perform actions such as create an assignment, or only answer? Is faculty usage audited? | SOT Section 15 and Appendix A.2; project plan says one common engine. |
-| `AI-03` | AI | Campus AI Retrieval, Routing & Guardrail Infrastructure | Shared | Provide one common Campus AI engine that authenticates the user, resolves the authoritative role, routes structured and document queries, assembles least-privilege context, and refuses unsupported claims. | Core MVP | Planned `/api/ai/chat` | No backend. Source badges and guardrail UI exist in `AI-01` and `AI-02`. | Missing backend | Authenticate; resolve role; route to MongoDB, RAG, or hybrid; assemble context; exclude secrets; synthesize; cite; refuse when unavailable. | `users`; all academic collections; RAG index; audit logs. | `AUTH-07`; `SHARED-02`; `SHARED-09`; `AI-04` | P0 — design must precede any AI implementation because it enforces privacy and RBAC. | `docs/features/ai/AI-03-campus-ai-retrieval-routing-and-guardrail-infrastructure.md` | LLM provider and model are deferred. What is the router contract? What is the refusal taxonomy? How are citations represented? How is prompt injection mitigated? | SOT 15 and 18; project plan Appendix A; roadmap Phase 4. |
-| `AI-04` | AI | Institutional Document RAG Knowledge Base | Shared | Ingest, chunk, embed, index, version, and retrieve official college documents with role-appropriate access and citations. | Core MVP | No route; future ingestion and admin tooling | `KnowledgePanel.jsx` and AI document tabs are mock only; no ingestion UI. | Missing backend | Upload document; extract text; chunk; embed; index; retrieve; cite; update; delete; access-control by role and department. | Document store; chunks; embeddings; vector index; `collegeProfile`. | `AI-03`; `SHARED-08`; `ADMIN-03` | P1 — required for policy and handbook answers. | `docs/features/ai/AI-04-institutional-document-rag-knowledge-base.md` | Who owns the corpus? Which embedding model? Which vector store? Chunking strategy? Are department documents isolated? What is the citation format? | SOT 15.2; project plan Appendix A; roadmap 4.4. |
-| `AI-05` | AI | Institutional Leadership AI Access | HOD, Principal/VP, Admin | Provide department- and campus-scoped AI queries for leadership, plus retrieval audit and system metrics for administrators. | Documented expansion | Planned `/hod/campus-ai`; `/principal/campus-ai`; `/admin/ai-audit` | No UI. | Missing UI | Department queries; campus queries; policy questions; retrieval audit; system metrics. | Department and campus aggregates; RAG index; audit logs. | `AI-03`; `AI-04`; `ADMIN-01`; `ADMIN-02`; `ADMIN-03`; `SHARED-02` | P2 — leadership roles are not in the current UI scope. | `docs/features/ai/AI-05-institutional-leadership-ai-access.md` | Is leadership AI in scope? Aggregate or raw records? What does the Admin AI audit show? How is privacy preserved? | SOT Section 18 AI row; roadmap AI tests for HOD and Principal; no routes. |
-
-### 4.7 Supporting System Capabilities
-
-| Feature ID | Feature domain | Feature name | Primary actors | Purpose | Scope classification | Related routes | UI evidence | Current implementation status | Key workflows | Data dependencies (provisional) | Feature dependencies | Priority | Specification path | Open questions | Evidence and notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `SYS-01` | System | Role-Aware Application Shell & Navigation | Shared | Provide a consistent, role-specific application shell with sidebar, navbar, mobile navigation, global search, notifications, profile menu, and logout. | Core MVP | All `/student/**` and `/faculty/**`; `app/student/layout.js`; `app/faculty/layout.js` | `AppLayout.jsx`; `Sidebar.jsx`; `Navbar.jsx`; `MobileBottomNav.jsx`; `NavItem.jsx`; `navConfig.js`; `UserProfileDropdown.jsx`; `NotificationPanel.jsx`; `NavbarSearchModal.jsx`. | Verified UI | Role-specific navigation; mobile drawer; sticky navbar; search; notifications; profile menu; logout. | User role; navigation config; notifications. | `AUTH-07`; `SHARED-02` | P1 — presentation layer for every feature. | `docs/features/system/SYS-01-role-aware-application-shell-and-navigation.md` | HOD, Principal, and Admin shells? Is navigation hiding sufficient? Command-palette scope? | Audit sections 9 and 10; `navConfig.js`. |
-| `SYS-02` | System | Theme, Typography & Responsive Presentation System | Shared | Maintain consistent light and dark themes, typography choices, responsive layouts, and theme-aware assets across the product. | Core MVP | Global | `ThemeProvider.jsx`; `FontProvider.jsx`; `FontSwitcherDropdown.jsx`; `fontList.js`; `globals.css`; page-wise light and dark assets. | Verified UI | Toggle theme; select from 12 fonts; persist locally; responsive breakpoints; theme-aware assets. | User preferences stored locally. | `SYS-01` | P2 — important quality layer, but not a functional blocker. | `docs/features/system/SYS-02-theme-typography-and-responsive-presentation-system.md` | Should preferences sync server-side? Are contrast ratios verified? Font licensing? | `AI_INSTRUCTIONS.md` asset and theme rules; README. |
-| `SYS-03` | System | Error Handling, 404 & Recovery Boundaries | Shared | Recover gracefully from invalid routes and runtime errors without exposing internals or trapping the user. | Core MVP | `app/not-found.jsx`; `app/error.jsx`; `app/global-error.jsx` | Branded 404; route error boundary with retry and incident code; global error boundary with reload. | Verified UI | Role-aware 404 recovery; retry after route error; incident reference and copy; global reload. | User role for recovery links; incident logging. | `SYS-01`; `AUTH-07` | P1 — required for a production-quality experience. | `docs/features/system/SYS-03-error-handling-404-and-recovery-boundaries.md` | Where do incident codes go? Is telemetry stored? The 404 quick link to `/student/campus-feed` is a known dead link. | `FINAL_UI_PHASE_AUDIT.md` sections 9 and 11.2. |
-
----
-
-## 5. Cross-Feature Architecture Risks
-
-These risks are flagged for later decisions. They are not resolved here, and no architecture should be invented from this list.
-
-| Risk ID | Risk | Affected features | Why it matters | Required decision |
-| :--- | :--- | :--- | :--- | :--- |
-| `RISK-01` | Student and faculty identity ownership is ambiguous if `users` and profile collections are not strictly one-to-one. | `AUTH-01`; `SHARED-01`; `STU-07`; `FAC-09` | Duplicate or orphan profiles would break authorization, profile edits, and academic joins. | `DEC-01` |
-| `RISK-02` | Role resolution and authorization boundaries can drift between frontend guards and backend enforcement. | `AUTH-07`; `SHARED-02`; all features | Hidden navigation is not security. A single unprotected endpoint can expose marks or attendance. | `DEC-03`; `DEC-17` |
-| `RISK-03` | Course, class, section, enrollment, and academic-year relationships are not fully modeled in the SOT. | `STU-03`; `STU-04`; `FAC-02`; `FAC-07`; `SHARED-02` | String identifiers such as `CSE-7A` and `CS-701` cannot safely enforce scope or resolve rosters. | `DEC-02`; `DEC-03` |
-| `RISK-04` | Attendance and marks access rules differ across student, faculty, HOD, Principal, and Admin roles. | `STU-02`; `STU-05`; `FAC-04`; `FAC-06`; `ADMIN-01`; `ADMIN-02` | Over-broad reads expose private academic records; over-broad writes corrupt official data. | `DEC-04`; `DEC-05` |
-| `RISK-05` | Assignment submission ownership and faculty grading ownership are not separated in the current schema. | `STU-06`; `FAC-05`; `SHARED-08` | An embedded submissions array makes audit, resubmission, and grading permissions harder to enforce. | `DEC-06` |
-| `RISK-06` | Notices and events have different ownership and publishing rules across roles, but no unified audience model. | `SHARED-03`; `SHARED-04`; `STU-15` | A faculty member must not publish campus-wide notices; an event must have an accountable owner. | `DEC-07`; `DEC-08` |
-| `RISK-07` | File storage and download authorization are undefined. | `SHARED-08`; `STU-06`; `FAC-05`; `FAC-08`; `SHARED-03` | Direct file URLs could leak submissions, private attachments, or student documents. | `DEC-09` |
-| `RISK-08` | Search and notifications depend on cross-entity data and permission filters. | `SHARED-06`; `SHARED-07`; `SHARED-05` | A search result or notification deep link can become an authorization bypass if it exposes private records. | `DEC-10`; `DEC-11` |
-| `RISK-09` | Campus AI could retrieve unauthorized institutional data if context assembly is not enforceably scoped. | `AI-01`; `AI-02`; `AI-03`; `AI-04` | The AI must never become a side channel around RBAC or a source of fabricated policy. | `DEC-13`; `DEC-14`; `DEC-16` |
-| `RISK-10` | Faculty AI access to sensitive student information is not bounded. | `AI-02`; `AI-03`; `FAC-03` | Faculty may need aggregate class insight without receiving unnecessary row-level PII. | `DEC-16` |
-| `RISK-11` | Higher-level institutional approvals and role boundaries are undefined. | `ADMIN-01`; `ADMIN-02`; `ADMIN-03`; `AUTH-05` | HOD, Principal, VP, and Admin powers can overlap or conflict, especially for grade locks, notices, and provisioning. | `DEC-17` |
-| `RISK-12` | Mock behavior has no production equivalent and may be mistaken for working functionality. | `AUTH-02`; `AUTH-04`; `AUTH-06`; `AUTH-07`; `STU-06`; `STU-08`; `STU-11`; `STU-14`; `FAC-08`; `AI-01`; `AI-02` | localStorage, sessionStorage, alert placeholders, and keyword responders cannot satisfy security, durability, or audit requirements. | `DEC-20` |
-
----
-
-## 6. Decision Register
-
-All decisions below are unresolved at the time of this inventory.
-
-| Decision ID | Decision required | Affected features | Why it blocks progress | Review gate | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `DEC-01` | Canonical identity model: strict one-to-one `users` to `studentProfiles` or `facultyProfiles`, with role and institution ownership rules. | `AUTH-01`; `SHARED-01`; `STU-07`; `FAC-09` | Every profile read, edit, and authorization check depends on it. | Data architecture review | Open |
-| `DEC-02` | Canonical academic hierarchy: Course, Subject, Class, Section, Academic Year, and Enrollment. | `SHARED-01`; `SHARED-02`; `STU-03`; `STU-04`; `FAC-02`; `FAC-07` | Current string identifiers cannot safely resolve rosters, scope, or timetables. | Data architecture review | Open |
-| `DEC-03` | Source of truth for faculty assignments: arrays on `facultyProfiles` or a separate teaching-assignment collection with effective dates. | `SHARED-02`; `FAC-02`; `FAC-04`; `FAC-05`; `FAC-06`; `FAC-07`; `AI-02` | Faculty write permissions and AI context depend on an authoritative assignment record. | Data and authorization review | Open |
-| `DEC-04` | Attendance granularity, late weighting, correction workflow, uniqueness constraint, and audit requirements. | `STU-05`; `FAC-04`; `AI-01`; `AI-02` | One record per day and one per lecture produce different percentages and audit needs. | Academic workflow review | Open |
-| `DEC-05` | Marks and grade model: exam types, max marks, grade computation, verification, publish, lock, and administrative sign-off. | `STU-02`; `FAC-06`; `AI-01` | Student results and transcripts cannot be correct without one formula and one publication state. | Academic workflow review | Open |
-| `DEC-06` | Assignment submission model: embedded array or separate submission collection; resubmission, late policy, grading, and feedback release. | `STU-06`; `FAC-05`; `SHARED-08` | Submission ownership, grading audit, and file authorization depend on it. | Academic workflow and storage review | Open |
-| `DEC-07` | Notice audience and level model: `college`, `hod`, `faculty` versus `all`, `students`, `faculty`; class and department targeting; pinning; edit and delete audit. | `SHARED-03`; `STU-15`; `AI-01` | Publishing authority and audience correctness depend on one model. | Communication review | Open |
-| `DEC-08` | Event ownership, approval, registration, capacity, waitlist, and cancellation rules. | `SHARED-04`; `STU-15` | Events cannot be published or registered safely without owner and capacity rules. | Communication review | Open |
-| `DEC-09` | File storage provider, upload validation, signed download, retention, malware scanning, and orphan cleanup. | `SHARED-08`; `STU-06`; `FAC-05`; `FAC-08`; `SHARED-03`; `STU-08`; `STU-12`; `STU-13` | Files are central to submissions, notices, resources, and media. | Infrastructure and security review | Open |
-| `DEC-10` | Notification channels, trigger catalogue, fan-out rules, read model, retention, and realtime strategy. | `SHARED-07`; `STU-15`; `AUTH-06` | Deadline, notice, and event value depends on timely delivery. | Communication and infrastructure review | Open |
-| `DEC-11` | Search scope, indexing engine, permission filtering, freshness, and cross-role parity. | `SHARED-06`; `SHARED-05` | Search can leak private records or return stale results. | Data and security review | Open |
-| `DEC-12` | Saved-item model: polymorphic bookmark versus per-entity save flags; collections, sharing, and sync. | `STU-14` | Prevents five competing save implementations. | Data architecture review | Open |
-| `DEC-13` | AI provider, model, streaming, deployment, and cost controls. Explicitly deferred; no provider is selected. | `AI-01`; `AI-02`; `AI-03` | AI implementation cannot begin without a provider and data-processing agreement. | AI architecture review | Open, deferred |
-| `DEC-14` | RAG corpus ownership, document ingestion, chunking, embedding, vector store, citation format, access control, and deletion. | `AI-03`; `AI-04` | Policy answers must be grounded, cited, and permission-safe. | AI and institutional content review | Open |
-| `DEC-15` | AI conversation persistence, retention, user access, and deletion. | `AI-01`; `AI-02` | The UI shows recent queries; the SOT is silent on storage. | AI privacy review | Open |
-| `DEC-16` | Faculty AI student-data boundary: row-level, aggregate, or summary-only; which fields are excluded. | `AI-02`; `AI-03`; `FAC-03` | Prevents faculty AI from becoming a PII disclosure channel. | AI privacy and RBAC review | Open |
-| `DEC-17` | HOD, Principal, VP, and Admin MVP boundary, route ownership, and permission differences. | `ADMIN-01`; `ADMIN-02`; `ADMIN-03`; `AI-05`; `AUTH-05` | The roles are documented, but no UI or API scope is approved. | Product scope review | Open |
-| `DEC-18` | Account-security scope: whether 2FA is required, TOTP or SMS, recovery codes, faculty and admin parity. | `AUTH-08` | The SOT mandates password reset but is silent on 2FA. | Security review | Open |
-| `DEC-19` | Provisioning and bulk-import contract: file format, validation, duplicate handling, error reporting, and approval. | `AUTH-01`; `SHARED-01` | The entire onboarding chain depends on clean institutional data. | Data and operations review | Open |
-| `DEC-20` | Mock-to-production replacement contract for localStorage, sessionStorage, client cookies, alert placeholders, and keyword AI responses. | `AUTH-02`; `AUTH-04`; `AUTH-06`; `AUTH-07`; `STU-06`; `STU-08`; `STU-11`; `STU-14`; `FAC-08`; `AI-01`; `AI-02` | Prevents demo behavior from being mistaken for production behavior. | Cross-feature review | Open |
-
-**Unresolved decisions logged:** 20.
-
----
-
-## 7. Summary Counts
-
-### 7.1 Total unique features
-
-| Metric | Count |
+| Group | Features |
 | :--- | ---: |
-| Unique feature domains identified | **55** |
-
-### 7.2 Count by domain
-
-| Domain | Feature count | IDs |
-| :--- | ---: | :--- |
-| Authentication | 8 | `AUTH-01` to `AUTH-08` |
-| Shared | 11 | `SHARED-01` to `SHARED-11` |
-| Student | 16 | `STU-01` to `STU-16` |
-| Faculty | 9 | `FAC-01` to `FAC-09` |
-| Administrative | 3 | `ADMIN-01` to `ADMIN-03` |
-| AI | 5 | `AI-01` to `AI-05` |
-| System | 3 | `SYS-01` to `SYS-03` |
-| **Total** | **55** | |
-
-### 7.3 Count by primary actor or role
-
-| Primary actor | Feature count | Notes |
-| :--- | ---: | :--- |
-| Student | 20 | Includes student auth, all student features, and Student Campus AI |
-| Faculty | 12 | Includes faculty activation, staff login, all faculty features, and Faculty Campus AI |
-| Shared | 18 | Cross-role authentication, shared platform, shared AI infrastructure, and system capabilities |
-| Administrator | 5 | Provisioning, HOD, Principal/VP, Admin, and leadership AI |
-| **Total** | **55** | |
-
-### 7.4 Count by scope classification
-
-| Scope | Feature count | IDs |
-| :--- | ---: | :--- |
-| Core MVP | 39 | `AUTH-01` to `AUTH-07`; `SHARED-01` to `SHARED-05`, `SHARED-08`, `SHARED-09`, `SHARED-11`; `STU-01` to `STU-08`, `STU-16`; `FAC-01` to `FAC-07`, `FAC-09`; `AI-01` to `AI-04`; `SYS-01` to `SYS-03` |
-| Documented expansion | 8 | `STU-09`, `STU-10`, `STU-12`, `STU-13`; `ADMIN-01` to `ADMIN-03`; `AI-05` |
-| Future / deferred | 0 | No feature is classified as future/deferred in this pass |
-| Unclear | 8 | `AUTH-08`; `SHARED-06`; `SHARED-07`; `SHARED-10`; `STU-11`; `STU-14`; `STU-15`; `FAC-08` |
-| **Total** | **55** | |
-
-### 7.5 Count by implementation status
-
-| Status | Feature count | Notes |
-| :--- | ---: | :--- |
-| Verified UI | 31 | UI inspected; data is mostly mock |
-| Partial UI | 6 | Material workflows or surfaces are missing |
-| Mock-only | 8 | End-to-end behavior is simulated |
-| Missing UI | 5 | No user-facing surface |
-| Missing backend | 5 | Backend or data-layer capability not implemented |
-| Existing backend | 0 | No production backend was found |
-| Unverified | 0 | No claim remained unverified after repository inspection |
-| **Total** | **55** | |
-
-### 7.6 AI-related feature count
-
-| Metric | Count | IDs |
-| :--- | ---: | :--- |
-| AI and intelligent-assistant features | **5** | `AI-01` to `AI-05` |
-| AI features with a user-facing surface | 2 | `AI-01`, `AI-02` |
-| AI features requiring backend design before implementation | 5 | `AI-01` to `AI-05` |
-| AI entries classified Core MVP | 4 | `AI-01` to `AI-04` |
-| AI entries classified Documented expansion | 1 | `AI-05` |
-
-### 7.7 Unresolved decisions
-
-| Metric | Count |
-| :--- | ---: |
-| Decisions logged in the decision register | **20** |
-| Open, not deferred | 19 |
-| Open, explicitly deferred | 1 (`DEC-13`) |
-
-### 7.8 Priority distribution
-
-| Priority | Feature count |
-| :--- | ---: |
-| P0 | 20 |
-| P1 | 22 |
-| P2 | 13 |
+| Authentication | 8 |
+| Student features | 16 |
+| Faculty features | 9 |
+| Shared features | 14 |
+| AI features | 4 |
+| Future features | 4 |
 | **Total** | **55** |
 
----
-
-## 8. Coverage and Evidence Gaps
-
-### 8.1 Confirmed coverage
-
-- **Student capabilities** are represented from dashboard through profile, academics, assignments, projects, communication, settings, and the Phase 2 ecosystem.
-- **Faculty capabilities** are represented from dashboard through classes, students, attendance, assignments, marks, timetable, resources, and settings.
-- **Authentication and institutional access** are represented as eight distinct features, including provisioning, activation, login, recovery, session lifecycle, and account security.
-- **Campus AI for students and faculty** is explicitly represented, together with shared retrieval infrastructure, the RAG knowledge base, and leadership access.
-- **Higher-level roles** are represented as documented expansion features, not as current MVP commitments.
-- **Shared and system capabilities** are represented separately so that entities such as notices, events, files, search, and notifications have one owner.
-
-### 8.2 Evidence gaps and limitations
-
-1. **No production backend exists.** `backend/server.js` is an 8-line Express stub. All academic, identity, file, notification, and AI data is mock or local.
-2. **No HOD, Principal, VP, or Admin UI exists.** Only middleware route prefixes hint at planned route names.
-3. **No dedicated Explore Directory or student Attendance page exists.** Both capabilities are distributed across other screens.
-4. **Faculty event publishing is missing.** The faculty events page browses and opens details but does not create or publish.
-5. **Faculty assignment grading is a placeholder.** The Evaluate action calls `alert()`; marks entry is a separate workflow.
-6. **Project attribution conflicts with the schema.** Multi-member attribution is required, but the documented schema stores a single `studentId`.
-7. **Mock behavior is extensive.** Activation OTP, password reset OTP, file uploads, downloads, project persistence, resources, saved items, and AI responses are simulated.
-8. **The project plan `.docx` and `.pdf` were not parsed line by line.** The `.html` companion was inspected for sections 11, 12, 14, 16, 18, 21, Appendices A and C; the locked SOT remains the primary authority.
-9. **Route counts differ across documents.** This inventory treats 53 page entry files as implementation evidence, not as a product scope count.
-10. **No automated authorization tests exist.** Negative cases such as a student requesting another student's marks, or faculty requesting an unassigned class, are unverified.
+The app currently has 53 page routes. Every one of them is covered below.
 
 ---
 
-## 9. Recommended Review Order
+# 1. Authentication
 
-1. **Resolve the scope boundary first.** Decide whether the already-built Phase 2 UI remains documented expansion or is promoted, and confirm the HOD/Principal/VP/Admin MVP boundary. This affects `CONFLICT-01` and `DEC-17`.
-2. **Approve the authentication and identity foundation.** Review `AUTH-01` to `AUTH-07`, `SHARED-01`, `SHARED-02`, and `SHARED-09`. Resolve `DEC-01`, `DEC-03`, `DEC-19`, and `DEC-20`.
-3. **Approve the academic data model.** Review `DEC-02`, `DEC-04`, `DEC-05`, and `DEC-06` together with `STU-02` to `STU-06` and `FAC-02` to `FAC-07`. Do not let individual specs invent competing Course, Enrollment, Attendance, or Marks models.
-4. **Approve communication and storage.** Review `SHARED-03`, `SHARED-04`, `SHARED-07`, `SHARED-08`, and `SHARED-11`. Resolve `DEC-07`, `DEC-08`, `DEC-09`, and `DEC-10`.
-5. **Approve student identity and discovery.** Review `STU-07`, `STU-08`, `SHARED-05`, and `SHARED-06`. Resolve `DEC-11` and `DEC-12`.
-6. **Approve AI planning only after data and authorization are settled.** Review `AI-01` to `AI-04`. Keep `DEC-13` deferred; resolve `DEC-14`, `DEC-15`, and `DEC-16`.
-7. **Approve administrative and system features last.** Review `ADMIN-01` to `ADMIN-03`, `AI-05`, and `SYS-01` to `SYS-03`.
-8. **Lock the inventory baseline** after cross-feature review, then begin writing individual feature specifications in the approved order.
+How people get into the system. The locked source of truth is strict here: accounts are created by the college, never by self sign-up.
 
-### 9.1 Minimum approval set before any backend implementation
+### 1.1 Institutional User Provisioning & Account Lifecycle
 
-At minimum, the following must be approved and locked first:
+- **Who uses it:** College administration (no screen yet)
+- **Routes:** none yet (planned under `/admin`)
+- **What it does:** The college creates every student and staff record before anyone can log in, assigns the role, and manages states such as invited, active, suspended, graduated.
+- **Backend needed:** Yes — nothing exists yet.
+- **Pending decisions:** How are records brought in (file upload or one by one)? Who is allowed to create HOD, Principal, and Admin accounts? What happens to a record when a student graduates?
+- **Future document:** `authentication/institutional-user-provisioning.md`
 
-- `AUTH-01`, `AUTH-02`, `AUTH-03`, `AUTH-04`, `AUTH-05`, `AUTH-07`
-- `SHARED-01`, `SHARED-02`, `SHARED-09`
-- `DEC-01`, `DEC-02`, `DEC-03`, `DEC-19`, `DEC-20`
+### 1.2 Student Account Activation
 
-No database schema, API route, authentication flow, or AI service should be implemented before this minimum set is approved.
+- **Who uses it:** Students, first time only
+- **Routes:** `/auth/student/activate`, `/auth/student/confirm`, `/auth/student/password`
+- **What it does:** Three steps. The student proves identity with enrollment number and college email, receives an OTP (a one-time code sent to the registered email or phone), confirms the details the college already filled in, then sets their own password.
+- **Backend needed:** Yes — the OTP and the account creation are simulated in the browser.
+- **Pending decisions:** Which OTP service do we use? How long is a code valid? How do we stop the same student activating twice? Are the current password rules final?
+- **Future document:** `authentication/student-account-activation.md`
+
+### 1.3 Student Login
+
+- **Who uses it:** Students
+- **Routes:** `/auth/student` (the site root `/` redirects here)
+- **What it does:** Student signs in with enrollment number or college email plus password, then lands on the dashboard.
+- **Backend needed:** Yes — the demo accepts any password.
+- **Pending decisions:** The screen offers a "Create an Account" action, but the locked source of truth says only the college creates accounts. That action must be removed or redefined.
+- **Future document:** `authentication/student-login.md`
+
+### 1.4 Faculty & Staff Account Activation
+
+- **Who uses it:** Faculty and staff, first time only
+- **Routes:** `/auth/faculty/activate`
+- **What it does:** Same three-step flow as students, but using Employee ID instead of enrollment number.
+- **Backend needed:** Yes.
+- **Pending decisions:** The demo login code has no matching faculty activation function, so this is UI only. Also: is HOD a role chosen here, or assigned later by an administrator?
+- **Future document:** `authentication/faculty-staff-activation.md`
+
+### 1.5 Staff Login & Role Routing
+
+- **Who uses it:** Faculty, HOD, Principal, VP, Admin
+- **Routes:** `/auth/faculty`, `/auth/staff/login`
+- **What it does:** One login for all non-student users. After login the system reads the person's role and sends them to the right area.
+- **Backend needed:** Yes — the demo always returns a faculty user.
+- **Pending decisions:** Two URLs exist for one screen; we should pick one. HOD, Principal, VP, and Admin landing pages do not exist yet.
+- **Future document:** `authentication/staff-login-and-role-routing.md`
+
+### 1.6 Password Reset
+
+- **Who uses it:** Students, faculty, staff
+- **Routes:** `/auth/forgot-password`
+- **What it does:** Choose role, confirm identity through the college email, verify an OTP, then set a new password.
+- **Backend needed:** Yes.
+- **Pending decisions:** The demo uses a fixed code `849201`. Decide: reset code or reset link, whether existing sessions are cancelled after a reset, attempt limits, and what a suspended account sees.
+- **Future document:** `authentication/password-reset.md`
+
+### 1.7 Session, Logout & Protected Routes
+
+- **Who uses it:** Everyone
+- **Routes:** applies to every `/student/**` and `/faculty/**` page
+- **What it does:** Remembers who is logged in, sends people to login when they are not, blocks a student from opening faculty pages (and the reverse), and clears everything on logout.
+- **Backend needed:** Yes — this is the biggest current gap.
+- **Pending decisions:** **Security issue.** The browser currently stores a plain readable cookie (`college_os_session=true`), which anyone can fake by hand to appear logged in. The locked source of truth requires a secure, server-issued cookie the browser cannot read or edit. This has to be rebuilt, not patched.
+- **Future document:** `authentication/session-and-route-protection.md`
+
+### 1.8 Two-Factor Authentication & Account Security
+
+- **Who uses it:** Students (no faculty version yet)
+- **Routes:** `/student/settings/security`
+- **What it does:** Turn on a second login step, see where the account is logged in, revoke a session, and view recent security activity.
+- **Backend needed:** Yes — all of it is demo data.
+- **Pending decisions:** Two-factor login is **not required** by the locked source of truth. Decide whether to keep it in scope, postpone it, or drop it. The security activity list is sample data, not a real log.
+- **Future document:** `authentication/account-security-and-two-factor.md`
 
 ---
 
-## 10. Final Status
+# 2. Student Features
 
-This is the **initial feature inventory for review**. It is a planning artifact only.
+What a student sees and does after logging in.
 
-It does **not** authorize backend implementation, database schema creation, API route creation, AI integration, or application-code modification. The next step is a structured review of this inventory, followed by approval of the scope boundaries and the minimum foundation set above.
+### 2.1 Student Dashboard
 
-Until that review is complete, the feature specifications listed in this document remain **proposed paths only** and have not been created.
+- **Who uses it:** Students
+- **Routes:** `/student`
+- **What it does:** The daily starting page: next class, upcoming deadlines, attendance level, recent notices, events, quick actions, and a Campus AI shortcut.
+- **Backend needed:** Yes — every figure is demo data.
+- **Pending decisions:** Which numbers are official? Attendance percentage and pending-task counts currently come from separate demo files and can disagree.
+- **Future document:** `student/student-dashboard.md`
+
+### 2.2 Academic Performance & Grade Cards
+
+- **Who uses it:** Students
+- **Routes:** `/student/academics`, `/student/academics/grade-card`
+- **What it does:** Shows CGPA and SGPA, semester trend, subject grades, internal marks, and a full transcript, with print and download grade card actions.
+- **Backend needed:** Yes.
+- **Pending decisions:** GPA formula, grade scale, who is allowed to release results, and when marks become visible to students. Print and download currently do nothing real.
+- **Future document:** `student/academic-performance-and-grade-cards.md`
+
+### 2.3 Subject Catalog & Course Details
+
+- **Who uses it:** Students
+- **Routes:** `/student/academics/subjects`, `/student/academics/subjects/[code]`
+- **What it does:** Browse enrolled subjects and open one to see syllabus, faculty, resources, attendance, internal marks, and related assignments.
+- **Backend needed:** Yes.
+- **Pending decisions:** The source of truth has no proper course or subject list — subjects appear only as text codes. This needs a real definition before most academic features can be built. The "Ask Faculty" action on the subject page currently does nothing.
+- **Future document:** `student/subject-catalog-and-course-details.md`
+
+### 2.4 Timetable & Academic Calendar
+
+- **Who uses it:** Students
+- **Routes:** `/student/academics/timetable`
+- **What it does:** Week, day, month, and agenda views of classes, plus exams, holidays, and personal reminders.
+- **Backend needed:** Yes.
+- **Pending decisions:** Only administrators may edit timetables according to the source of truth, so students only read. Still open: room and clash handling, and what happens when the academic year rolls over.
+- **Future document:** `student/timetable-and-academic-calendar.md`
+
+### 2.5 Attendance Monitoring
+
+- **Who uses it:** Students
+- **Routes:** no page of its own — shown inside `/student/academics` and `/student/academics/subjects/[code]`
+- **What it does:** Subject-wise attendance percentage with a warning when the student is close to the minimum required.
+- **Backend needed:** Yes.
+- **Pending decisions:** The UI assumes 75% — confirm that. Does arriving late count as present? Can a student dispute a wrong entry? Should this get its own page?
+- **Future document:** `student/attendance-monitoring.md`
+
+### 2.6 Assignments & Submissions
+
+- **Who uses it:** Students
+- **Routes:** `/student/assignments`, `/student/assignments/[id]`
+- **What it does:** Lists assignments with deadline and status, shows details and grading criteria, and lets the student upload a file, submit, and view submission history and feedback.
+- **Backend needed:** Yes — upload and submit are simulated in the browser.
+- **Pending decisions:** Can a student resubmit? What is the late penalty? File size and type limits? Where are files stored?
+- **Future document:** `student/assignments-and-submissions.md`
+
+### 2.7 Student Profile & Portfolio
+
+- **Who uses it:** Students; other students view the public version
+- **Routes:** `/student/profile`, `/student/profile/edit`, `/student/profile/[id]`
+- **What it does:** Combines college-verified details (enrollment number, department, semester) with student-written bio, skills, links, projects, and achievements.
+- **Backend needed:** Yes.
+- **Pending decisions:** Which fields a student may edit versus which stay read-only is not enforced anywhere yet.
+- **Future document:** `student/student-profile-and-portfolio.md`
+
+### 2.8 Projects Showcase
+
+- **Who uses it:** Students (faculty can view)
+- **Routes:** `/student/projects`, `/student/projects/[id]`
+- **What it does:** Publish projects with description, tech stack, GitHub and live links, and images. Others can like, comment, and ask to join a team.
+- **Backend needed:** Yes — everything is stored in the browser today.
+- **Pending decisions:** **Conflict to resolve.** A project is meant to support several student members, but the documented schema stores only one student ID. Decide this before building.
+- **Future document:** `student/projects-showcase.md`
+
+### 2.9 Internships & Hackathons (Phase 2)
+
+- **Who uses it:** Students
+- **Routes:** `/student/internships`, `/student/internships/[id]`
+- **What it does:** Browse internship openings and hackathons, open details, apply or register, and submit an opportunity for listing.
+- **Backend needed:** Yes.
+- **Pending decisions:** Marked Phase 2 in the source of truth but already built. Confirm whether it stays in scope. Who verifies listings? Are hackathon teams part of this?
+- **Future document:** `student/internships-and-hackathons.md`
+
+### 2.10 Application Tracking (Phase 2)
+
+- **Who uses it:** Students
+- **Routes:** `/student/internships/applications`
+- **What it does:** Tracks internship applications, their status, personal notes, attached documents, and withdrawal.
+- **Backend needed:** Yes.
+- **Pending decisions:** Who updates the status, the student or the college? Are outside employers involved at all?
+- **Future document:** `student/application-tracking.md`
+
+### 2.11 Resume Builder
+
+- **Who uses it:** Students
+- **Routes:** `/student/internships/resume-builder`
+- **What it does:** Builds a resume from profile data with a live preview, a quality score, and export.
+- **Backend needed:** Yes.
+- **Pending decisions:** This is not clearly listed in the source of truth, so confirm it is in scope. Real PDF export? The "smart assistant" panel inside it also raises the same privacy questions as the AI features.
+- **Future document:** `student/resume-builder.md`
+
+### 2.12 Lost & Found (Phase 2)
+
+- **Who uses it:** Students
+- **Routes:** `/student/lost-and-found`, `/student/lost-and-found/my-reports`
+- **What it does:** Report a lost or found item, browse reports, contact the owner, claim an item, and see possible matches.
+- **Backend needed:** Yes.
+- **Pending decisions:** Who physically holds the item, how a claim is proven, who moderates posts, and how long reports are kept.
+- **Future document:** `student/lost-and-found.md`
+
+### 2.13 Campus Feed & Groups (Phase 2)
+
+- **Who uses it:** Students
+- **Routes:** `/student/feed`, `/student/feed/[id]`, `/student/feed/groups/[id]`
+- **What it does:** Campus posts with likes, comments, bookmarks, and reporting, plus community groups with members, events, and projects.
+- **Backend needed:** Yes.
+- **Pending decisions:** Moderation rules, whether anonymous posting is allowed, and whether faculty can post. Direct messaging is still out of scope.
+- **Future document:** `student/campus-feed-and-groups.md`
+
+### 2.14 Saved Items
+
+- **Who uses it:** Students
+- **Routes:** `/student/saved`
+- **What it does:** Bookmarks projects, internships, events, notices, and posts, and groups them into collections.
+- **Backend needed:** Yes — saves live only in this browser today, so they disappear on another device.
+- **Pending decisions:** Not mentioned in the source of truth. Decide which item types can be saved and whether collections can be shared.
+- **Future document:** `student/saved-items.md`
+
+### 2.15 Notification Center
+
+- **Who uses it:** Students
+- **Routes:** `/student/notifications`
+- **What it does:** All alerts in one place with unread counts, filters, and a clear-read action.
+- **Backend needed:** Yes — there is no real source of notifications yet.
+- **Pending decisions:** Real-time delivery or only on page load? How long are notifications kept? (The delivery side is described under Shared Features.)
+- **Future document:** `student/notification-center.md`
+
+### 2.16 Student Settings
+
+- **Who uses it:** Students
+- **Routes:** `/student/settings`
+- **What it does:** Account details, theme, font, notification preferences, security shortcuts, and help.
+- **Backend needed:** Partly — theme and font already work in the browser; everything else is demo.
+- **Pending decisions:** Which preferences should be saved to the account so they follow the student to another device?
+- **Future document:** `student/student-settings.md`
+
+---
+
+# 3. Faculty Features
+
+What a faculty member can do. Every faculty action is limited to the classes they are assigned.
+
+### 3.1 Faculty Dashboard
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty`
+- **What it does:** Today's classes, a quick class overview, recent student activity, pending tasks, announcements, events, and an AI card.
+- **Backend needed:** Yes.
+- **Pending decisions:** How "pending tasks" and "student activity" are calculated. Both are hardcoded today.
+- **Future document:** `faculty/faculty-dashboard.md`
+
+### 3.2 Assigned Classes & Rosters
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/classes`
+- **What it does:** Shows only the classes, sections, and subjects assigned to this faculty member, with student counts and summaries.
+- **Backend needed:** Yes.
+- **Pending decisions:** **Key decision.** There is no real model for "which faculty teaches which class" — it is a demo list. Every faculty permission depends on this, so it must be decided early.
+- **Future document:** `faculty/assigned-classes-and-rosters.md`
+
+### 3.3 Assigned Students Directory
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/students`
+- **What it does:** Students inside the faculty member's own classes, with academic summary, contact details, and projects.
+- **Backend needed:** Yes.
+- **Pending decisions:** A faculty member must never see students outside their assigned classes; this needs testing. Which personal details may be shown?
+- **Future document:** `faculty/assigned-students-directory.md`
+
+### 3.4 Attendance Management
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/attendance`
+- **What it does:** Pick a class, mark each student present, absent, or late, view summaries and trends, and correct a mistake.
+- **Backend needed:** Yes.
+- **Pending decisions:** Is attendance per lecture or per day? Does late count as present? The "bulk CSV upload" action is only a placeholder alert today.
+- **Future document:** `faculty/attendance-management.md`
+
+### 3.5 Assignments: Create, Review & Grade
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/assignments`
+- **What it does:** Create assignments with deadline, grading criteria, and attachments; review student submissions; download all; grade them.
+- **Backend needed:** Yes.
+- **Pending decisions:** **Gap.** The "Evaluate" button only shows an alert. Grading needs a real screen, and it must feed the marks students see.
+- **Future document:** `faculty/assignment-authoring-and-grading.md`
+
+### 3.6 Marks Entry & Results Publishing
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/marks`
+- **What it does:** Choose class, subject, and exam, enter marks, auto-calculate grades, mark absent students, validate, then publish and lock results.
+- **Backend needed:** Yes.
+- **Pending decisions:** Exam types and maximum marks, the grade formula, who may publish and lock, and how a correction is made after publishing.
+- **Future document:** `faculty/marks-entry-and-publishing.md`
+
+### 3.7 Teaching Timetable & Change Requests
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/timetable`
+- **What it does:** Weekly and daily teaching schedule with class details, plus a request to reschedule or arrange a substitute.
+- **Backend needed:** Yes.
+- **Pending decisions:** Who approves a change request? Right now the request goes nowhere. Only administrators can edit timetables according to the source of truth.
+- **Future document:** `faculty/teaching-timetable-and-change-requests.md`
+
+### 3.8 Academic Resources
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/resources`
+- **What it does:** Upload and organise teaching files, group them in folders, and share them with a class.
+- **Backend needed:** Yes.
+- **Pending decisions:** Not listed as a core module in the source of truth; confirm scope. There is also no student page to open these resources yet, so sharing has no destination.
+- **Future document:** `faculty/academic-resources.md`
+
+### 3.9 Faculty Settings
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/settings`
+- **What it does:** Faculty profile fields such as cabin and bio, plus preferences, security shortcuts, and help.
+- **Backend needed:** Partly.
+- **Pending decisions:** Which fields are college-controlled and which the faculty member may edit? There is no faculty two-factor page.
+- **Future document:** `faculty/faculty-settings.md`
+
+---
+
+# 4. Shared Features
+
+Capabilities used by more than one role. These are grouped together so we define each one only once.
+
+### 4.1 User Identity & Profile Foundation
+
+- **Who uses it:** Everyone
+- **Routes:** no page of its own; used by every profile and login screen
+- **What it does:** Keeps one account per person, linked to exactly one student or faculty profile, and separates college-controlled fields from personal ones.
+- **Backend needed:** Yes.
+- **Pending decisions:** Whether profiles live in their own records or inside the user record is undecided. Everything else depends on this, so it comes first.
+- **Future document:** `shared/user-identity-and-profiles.md`
+
+### 4.2 Roles and Permissions
+
+- **Who uses it:** Everyone
+- **Routes:** no page of its own; applies to every protected route
+- **What it does:** Decides what each role may read and change: students only their own records, faculty only their assigned classes, and so on.
+- **Backend needed:** Yes — today the browser only hides menus, which is not real protection.
+- **Pending decisions:** The exact rules for HOD, Principal, VP, and Admin. Also whether a blocked request should say "not allowed" or "not found".
+- **Future document:** `shared/roles-and-permissions.md`
+
+### 4.3 Notices & Announcements
+
+- **Who uses it:** Students, faculty, HOD, Principal, Admin
+- **Routes:** `/student/notices`, `/student/notices/[id]`, `/faculty/notices`
+- **What it does:** Official circulars with priority, attachments, and a target audience. Faculty can create, edit, and delete notices.
+- **Backend needed:** Yes.
+- **Pending decisions:** **Conflict to resolve.** The source of truth uses college, HOD, and faculty notice levels, but the documented schema uses all, students, and faculty audiences. Pick one model. HOD and Principal publishing screens do not exist yet.
+- **Future document:** `shared/notices-and-announcements.md`
+
+### 4.4 Events
+
+- **Who uses it:** Students, faculty, HOD, Principal, Admin
+- **Routes:** `/student/events`, `/student/events/[id]`, `/faculty/events`
+- **What it does:** Browse events in a list or calendar, open details, register, and propose an event.
+- **Backend needed:** Yes.
+- **Pending decisions:** **Gap.** Faculty can view events but cannot create or publish one, even though the source of truth allows faculty to manage events. Seat limits, approval flow, and cancellation rules are undecided.
+- **Future document:** `shared/events.md`
+
+### 4.5 Explore & Peer Discovery
+
+- **Who uses it:** Students, faculty
+- **Routes:** no dedicated page — spread across `/student/search`, `/student/profile/[id]`, and `/faculty/students`
+- **What it does:** Helps people find other students and their projects by branch, semester, and skill.
+- **Backend needed:** Yes.
+- **Pending decisions:** The source of truth names an "Explore Directory" as a core module, but there is no `/student/explore` page. Decide whether to build one or accept the current split. Also decide what a student is allowed to hide.
+- **Future document:** `shared/explore-and-peer-discovery.md`
+
+### 4.6 Global Search
+
+- **Who uses it:** Students (faculty search still limited)
+- **Routes:** `/student/search`, plus the ⌘K search in the top bar
+- **What it does:** One search across students, projects, internships, events, notices, subjects, posts, and lost and found items.
+- **Backend needed:** Yes — search currently runs on demo data in the browser.
+- **Pending decisions:** Not mentioned in the source of truth. Search must respect permissions so a student can never find another student's private data.
+- **Future document:** `shared/global-search.md`
+
+### 4.7 Notifications (delivery system)
+
+- **Who uses it:** Everyone
+- **Routes:** no page of its own; powers the bell panel and the student notification center
+- **What it does:** Creates and delivers alerts for deadlines, notices, events, applications, and account changes.
+- **Backend needed:** Yes.
+- **Pending decisions:** Which events should create a notification. In-app only, or email too? Real-time or on refresh?
+- **Future document:** `shared/notifications.md`
+
+### 4.8 File Upload & Secure Download
+
+- **Who uses it:** Everyone
+- **Routes:** no page of its own; used by assignments, notices, resources, projects, and events
+- **What it does:** Stores uploaded files and checks who is allowed to download each one.
+- **Backend needed:** Yes.
+- **Pending decisions:** **Key gap.** No file storage exists at all. Decide where files live, size and type limits, and how downloads are protected from people sharing a direct link.
+- **Future document:** `shared/file-upload-and-download.md`
+
+### 4.9 API Validation & Error Handling
+
+- **Who uses it:** Everyone (indirectly)
+- **Routes:** no page; applies to every future server endpoint
+- **What it does:** One consistent way for the server to check input and return errors, so every screen handles failures the same way.
+- **Backend needed:** Yes.
+- **Pending decisions:** The shape of a standard error response. This should be decided with the first backend feature we build, not separately.
+- **Future document:** `shared/api-validation-and-errors.md`
+
+### 4.10 Audit Log
+
+- **Who uses it:** Administrators, later HOD and Principal
+- **Routes:** sample card only at `/student/settings/security`; no real log page
+- **What it does:** Records important actions such as logins, grade changes, attendance edits, notice publishing, and role changes.
+- **Backend needed:** Yes.
+- **Pending decisions:** Not clearly required by the source of truth. Decide which actions must be recorded and who may read the log.
+- **Future document:** `shared/audit-log.md`
+
+### 4.11 Official College Profile
+
+- **Who uses it:** Everyone; edited by administrators
+- **Routes:** no page yet — branding only appears in login screens, the sidebar, and error pages
+- **What it does:** Represents the institution itself: name, logo, address, official contacts, and who is authorised to publish on its behalf. Kept separate from any individual admin's account.
+- **Backend needed:** Yes.
+- **Pending decisions:** Is there a public college page, or only an admin edit screen?
+- **Future document:** `shared/college-profile.md`
+
+### 4.12 App Shell & Navigation
+
+- **Who uses it:** Everyone
+- **Routes:** every `/student/**` and `/faculty/**` page
+- **What it does:** Sidebar, top bar, mobile menu, search, notifications, profile menu, and logout, with a different menu for each role.
+- **Backend needed:** No — already works.
+- **Pending decisions:** HOD, Principal, and Admin menus do not exist yet.
+- **Future document:** `shared/app-shell-and-navigation.md`
+
+### 4.13 Theme, Fonts & Responsive Layout
+
+- **Who uses it:** Everyone
+- **Routes:** every page
+- **What it does:** Light and dark mode, twelve font choices, and layouts that adapt to phone, tablet, and desktop.
+- **Backend needed:** No — it already runs in the browser.
+- **Pending decisions:** Should the chosen theme follow the user to another device? Currently it is saved only in that browser.
+- **Future document:** `shared/theme-and-typography.md`
+
+### 4.14 Error Pages & Recovery
+
+- **Who uses it:** Everyone
+- **Routes:** site-wide 404 page, page error screen, full-app error screen
+- **What it does:** Shows a friendly not-found page, lets the user retry after a page error, and offers a reload if the whole app fails.
+- **Backend needed:** No — already works.
+- **Pending decisions:** One known dead link: the 404 page points to `/student/campus-feed`, which does not exist.
+- **Future document:** `shared/error-pages-and-recovery.md`
+
+---
+
+# 5. AI Features
+
+The two assistants look separate in the UI but the plan is one shared engine behind both.
+
+### 5.1 Student Campus AI
+
+- **Who uses it:** Students
+- **Routes:** `/student/campus-ai`
+- **What it does:** A chat assistant for the student's own timetable, attendance, marks, assignments, notices, and college documents. It shows where an answer came from and says clearly when it does not have the information.
+- **Backend needed:** Yes — no real AI exists. Replies are keyword-matched demo text.
+- **Pending decisions:** Which AI provider and model. Whether conversations are saved, and for how long. What exact wording to use when the answer is unavailable.
+- **Future document:** `ai/student-campus-ai.md`
+
+### 5.2 Faculty Campus AI
+
+- **Who uses it:** Faculty
+- **Routes:** `/faculty/campus-ai`
+- **What it does:** The same assistant for faculty, limited to their assigned classes: students, attendance, marks, assignments, notices, and policies.
+- **Backend needed:** Yes — same keyword demo as the student version.
+- **Pending decisions:** **Sensitive.** How much student detail may the AI show faculty, whole-class summaries or individual records? Can it perform actions such as creating an assignment, or only answer questions? Should faculty AI use be recorded? All undecided.
+- **Future document:** `ai/faculty-campus-ai.md`
+
+### 5.3 Campus AI Engine (shared)
+
+- **Who uses it:** Both assistants
+- **Routes:** none yet (planned as a server endpoint)
+- **What it does:** The single service that checks who is asking, looks up only the data that person is allowed to see, searches college documents, and refuses when information is missing.
+- **Backend needed:** Yes.
+- **Pending decisions:** This must be built after login, roles, and academic data exist. No provider or model is chosen, on purpose.
+- **Future document:** `ai/campus-ai-engine.md`
+
+### 5.4 College Document Knowledge Base
+
+- **Who uses it:** Both assistants; uploaded by administrators
+- **Routes:** no page; ingestion and admin tooling not built
+- **What it does:** Stores official college documents such as rules, syllabi, and circulars in a searchable form so the AI can quote the relevant text with a source instead of guessing. This approach is called retrieval-augmented generation: find the official passage first, then answer from it.
+- **Backend needed:** Yes.
+- **Pending decisions:** Who uploads and approves documents, which documents are allowed, and how department-only documents are kept away from other departments.
+- **Future document:** `ai/document-knowledge-base.md`
+
+---
+
+# 6. Future Features
+
+Documented roles and capabilities that are **not** part of the current plan to build. They are listed so the design does not accidentally block them later.
+
+### 6.1 HOD Department View
+
+- **Who uses it:** Head of Department
+- **Routes:** none (planned under `/hod`)
+- **What it does:** Department-wide view of classes, faculty, attendance, marks, and departmental notices.
+- **Backend needed:** Yes.
+- **Pending decisions:** Is this in scope at all right now? What may an HOD change, as opposed to only view?
+- **Future document:** `future/hod-department-view.md`
+
+### 6.2 Principal / VP View
+
+- **Who uses it:** Principal, Vice Principal
+- **Routes:** none (planned under `/principal` and `/vp`)
+- **What it does:** Campus-wide academic overview, cross-department figures, and official campus circulars.
+- **Backend needed:** Yes.
+- **Pending decisions:** Is this in scope now? What is the difference between Principal and VP permissions? Are there approval steps?
+- **Future document:** `future/principal-and-vp-view.md`
+
+### 6.3 Admin / System Settings
+
+- **Who uses it:** Administrator
+- **Routes:** none (planned under `/admin`)
+- **What it does:** Creates users, edits the college profile, manages timetables, overrides locked grades, and reviews the audit log.
+- **Backend needed:** Yes.
+- **Pending decisions:** How Admin, HOD, and Principal are separated. Whether administrators need stronger login (two-factor). Which destructive actions need a second confirmation.
+- **Future document:** `future/admin-and-system-settings.md`
+
+### 6.4 Leadership AI
+
+- **Who uses it:** HOD, Principal, VP, Admin
+- **Routes:** none
+- **What it does:** Department-level and campus-level questions for leadership, plus review of what the AI retrieved.
+- **Backend needed:** Yes.
+- **Pending decisions:** Whether this exists at all. If it does, whether leadership sees individual records or only summaries.
+- **Future document:** `future/leadership-ai.md`
+
+**Note on already-built Phase 2 student features.**
+Internships, hackathons, application tracking, resume builder, lost and found, and the campus feed are listed under **Student Features** and marked Phase 2. They are not repeated here, to avoid two entries for one feature.
+
+---
+
+## Decisions we need from you before writing feature documents
+
+These block the most work if left open:
+
+1. **Session security.** Replace the fake browser cookie with a proper server session. This is a real security hole today, not a preference.
+2. **User identity.** One account linked to one student or faculty profile — confirm the shape.
+3. **Classes and faculty assignment.** We need a real definition of course, class, section, and "who teaches what", because every faculty permission depends on it.
+4. **Projects with multiple members.** The schema currently allows one student per project, but the product needs teams.
+5. **Notice audience model.** One model for college, department, and class targeting.
+6. **Higher roles.** Are HOD, Principal, VP, and Admin in the current scope, or clearly later?
+7. **AI boundary.** Especially how much student information Faculty AI may reveal.
+
+---
+
+## What this document is not
+
+This is a list for review. It does not approve implementation, and it does not define database schemas or API contracts. No backend code should be written until the relevant feature document is written and approved.
