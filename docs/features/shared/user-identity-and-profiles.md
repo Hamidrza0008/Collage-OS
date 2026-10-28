@@ -27,6 +27,7 @@ The User Identity & Profile Foundation establishes the unified identity architec
 ### 1.3 Out-of-Scope (Explicit Non-Goals)
 - **No Self-Registration or Role Elevation (SOT §21.1, §22.1–§22.2):** Users cannot create their own accounts or choose their roles; all accounts originate from institutional provisioning (`AUTH-01`).
 - **No Parallel Profile Models for Leadership (SOT §16.0):** HOD, Principal, Vice Principal, and System Administrator do not have separate collections (e.g. `hodProfiles` or `adminProfiles`); their permissions are governed by RBAC (`SHARED-02`), and their profile data resides in `facultyProfiles`.
+- **No Campus Handle / Username (`@username`):** Neither the SOT nor the Feature Inventory approves a custom campus `@handle` or username subsystem. Institutional identity relies strictly on official institutional identifiers (`studentId`, `facultyId`, `fullName`, and `officialEmail`). The `@username` field present in the legacy frontend edit UI is an unapproved UI artifact and is strictly out of scope.
 - **No Social Network Messaging (SOT §21.6):** Direct peer-to-peer messaging, friend requests, or chat rooms are strictly excluded from Phase 1.
 - **No Direct Academic Writes via Profile:** Course registrations, grade updates, and attendance are handled exclusively through their respective academic modules, never via profile updates.
 
@@ -130,7 +131,7 @@ The User Identity & Profile Foundation establishes the unified identity architec
 
 ### 3.2 Current UI Implementation Gaps & Deviations
 1. **Client-Controlled Display Name in Edit Form:** In `frontend/components/profile/edit/EditProfileIdentity.jsx`, the UI provides an editable text input for "Display Name" (`name`). Per SOT §16.2, `fullName` is an institution-controlled field and must be strictly read-only.
-2. **Arbitrary "Campus Handle" (`username`):** The edit form allows entering a custom `@username`. Neither SOT §16.1 nor §16.2 includes a `username` field; institutional identity relies strictly on `studentId` and `officialEmail`.
+2. **Unapproved Campus Handle (`username`):** In `frontend/components/profile/edit/EditProfileIdentity.jsx`, the UI provides an editable input for `@username`. This field is not approved in the SOT or Feature Inventory. It is an unapproved UI artifact and must be removed from the frontend edit form. Institutional identity relies strictly on `studentId`, `facultyId`, `fullName`, and `officialEmail`.
 3. **Client-Side Storage Reliance:** `EditProfileAssembler.jsx` reads and writes profile changes to browser `localStorage` (`editProfileData.js`) and relies on `college_os_session=true` cookie placeholder. This must be replaced with the authenticated REST API.
 4. **Mocked Academic Metrics:** `/student/profile` displays static stats (CGPA 8.74, Attendance 84.6%). These must not be stored as mutable strings on `studentProfiles`, but computed or joined dynamically from the authoritative academic collections (`marks`, `attendance`).
 5. **No Administrative Correction UI:** There is currently no administrative screen for updating institutional fields when a student legally changes their name or corrects an enrollment mistake.
@@ -219,10 +220,13 @@ sequenceDiagram
    - A `studentProfiles` record must never link to a `users` record whose `role !== "student"`.
    - A `facultyProfiles` record must never link to a `users` record whose `role === "student"`.
 2. **Immutability Invariant:** A user can never change their own `studentId`, `facultyId`, `fullName`, `officialEmail`, `department`, `semester`, `section`, `designation`, or `assignedClassIds` via self-service APIs.
-3. **Account State Gating:**
-   - `accountStatus === "INVITED"`: User cannot access protected profile update endpoints; must complete activation (`AUTH-02`, `AUTH-04`).
-   - `accountStatus === "SUSPENDED"`: Immediate revocation of all session privileges; reads and writes return `403 Forbidden`.
-   - `accountStatus === "GRADUATED"`: Read-only portfolio access; all update actions return `403 Forbidden`.
+3. **Authentication vs. Authorization & Account Lifecycle Gating (SOT §6.8):**
+   - **Authentication:** Verifies that a request carries a cryptographically valid, unexpired server-issued JWT via `college_os_session`.
+   - **Authorization:** Verifies the user's live database `accountStatus`, authoritative `role`, and assigned scope on every request:
+     - `accountStatus === "ACTIVE"`: Full role-permitted read and write access within assigned scope.
+     - `accountStatus === "GRADUATED"`: Retains read-only archive access to transcript, grade cards, and portfolio. **All write/mutation requests (POST, PUT, PATCH, DELETE) are strictly blocked server-side with `403 FORBIDDEN` (`ACCOUNT_GRADUATED_READ_ONLY`)**, regardless of client UI controls.
+     - `accountStatus === "SUSPENDED"`: Immediate hold; logins blocked and all sessions revoked. Any request returns `403 FORBIDDEN` (`ACCOUNT_SUSPENDED`).
+     - `accountStatus === "INVITED"`: Pre-provisioned; cannot authenticate until OTP activation (`AUTH-02`, `AUTH-04`) is completed. Protected endpoints return `403 FORBIDDEN` (`ACCOUNT_NOT_ACTIVATED`).
 4. **Data Isolation:** Private student data (phone number, probation status) is never exposed on public peer profile routes (`/student/profile/[id]`).
 
 ### 5.2 Server-Side Validations
@@ -643,7 +647,7 @@ Administrative correction endpoint to update official records upon registrar con
 
 ### 12.3 Existing UI Gaps to Address
 - **Display Name Input in Edit Profile:** Update `frontend/components/profile/edit/EditProfileIdentity.jsx` to render `fullName` as a read-only field (matching `EditProfileAcademicSnapshot.jsx`), rather than an editable text input.
-- **Remove Arbitrary Handle Input:** Remove the `@username` field from the student edit profile form or document it as a purely cosmetic display handle if approved in the future.
+- **Remove Unapproved Handle Input:** Remove the `@username` field from `frontend/components/profile/edit/EditProfileIdentity.jsx` as it is not part of approved scope.
 - **Transition from localStorage to REST API:** Wire `EditProfileAssembler.jsx` to `GET /api/v1/auth/me` and `PATCH /api/v1/users/students/profile`.
 
 ---

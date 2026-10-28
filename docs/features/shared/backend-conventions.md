@@ -70,9 +70,11 @@ For all `4xx` and `5xx` responses:
 | `201 Created` | — | Successful resource creation. |
 | `204 No Content` | — | Successful operation with empty body (e.g., resource deletion). |
 | `400 Bad Request` | `VALIDATION_FAILED` | Malformed JSON, missing mandatory fields, invalid data formats. |
-| `401 Unauthorized` | `UNAUTHENTICATED` | Missing, expired, or invalid session token. |
-| `403 Forbidden` | `FORBIDDEN` | Valid token, but role or scope lacks permission for this action. |
-| `403 Forbidden` | `ACCOUNT_INACTIVE` | Account state is `INVITED`, `SUSPENDED`, or `GRADUATED` (for writes). |
+| `401 Unauthorized` | `UNAUTHENTICATED` | Missing, expired, or cryptographically invalid session token. |
+| `403 Forbidden` | `FORBIDDEN` | Valid session, but role or scope lacks permission for this action. |
+| `403 Forbidden` | `ACCOUNT_SUSPENDED` | Account is placed on administrative hold; logins blocked and sessions revoked. |
+| `403 Forbidden` | `ACCOUNT_GRADUATED_READ_ONLY` | Graduated account attempting a write/mutation; read-only archive access only. |
+| `403 Forbidden` | `ACCOUNT_NOT_ACTIVATED` | Account is in `INVITED` state; OTP activation required before accessing endpoints. |
 | `404 Not Found` | `RESOURCE_NOT_FOUND`| Resource does not exist, or hidden to prevent enumeration. |
 | `409 Conflict` | `DUPLICATE_RESOURCE`| Unique index collision (e.g. email or enrollment ID already exists). |
 | `422 Unprocessable`| `BUSINESS_RULE_VIOLATION`| Syntactically valid payload violates business invariants. |
@@ -122,26 +124,48 @@ Client input must be validated server-side before passing to business logic or d
   }
   ```
 
-### 4.2 Protected Request Pipeline
+### 4.2 Authentication vs. Authorization & Account Lifecycle Enforcement
+
+College OS strictly enforces the architectural boundary between **Authentication** and **Authorization**:
+
+- **Authentication (Session Validity):** Answers *"Who is making this request, and is their session cryptographically valid?"*
+  - Verifies that the incoming request presents a server-issued JWT via the `college_os_session` HttpOnly cookie.
+  - Validates cryptographic signature and expiration.
+  - Extracts the authoritative `userId` (`sub`) and institutional tenancy `institutionId`.
+- **Authorization (Lifecycle & Scope Enforcement):** Answers *"Is this account currently allowed to perform this action on this resource?"*
+  - Re-retrieves the live `users` record from the database on every protected request. Frontend claims or unverified token claims are never trusted.
+  - Enforces the **Account Lifecycle State Machine** (SOT §6.8):
+    - **`ACTIVE`:** Granted full role-permitted read and write capabilities within assigned scope.
+    - **`GRADUATED`:** Granted read-only archive access to permitted historical records (e.g. transcript, grade sheets, portfolio showcase). **All write and mutation operations (POST, PUT, PATCH, DELETE) are strictly blocked server-side with `403 FORBIDDEN` (`ACCOUNT_GRADUATED_READ_ONLY`)**, regardless of client UI state or direct manual API requests.
+    - **`SUSPENDED`:** Account placed on administrative hold. Logins are blocked, and all active sessions are revoked immediately. Any request returns `403 FORBIDDEN` (`ACCOUNT_SUSPENDED`).
+    - **`INVITED`:** Pre-provisioned account awaiting OTP verification and password setup (`AUTH-02`, `AUTH-04`). Cannot access protected operational endpoints; returns `403 FORBIDDEN` (`ACCOUNT_NOT_ACTIVATED`).
+
+### 4.3 Protected Request Pipeline
 Every request to a protected endpoint must pass through a standard middleware chain:
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["Incoming Request"] --> B["authMiddleware"]
-    B --> C{"Valid Token & Active User?"}
-    C -- "No" --> D["401 Unauthenticated"]
-    C -- "Yes" --> E["rbacGuard(allowedRoles)"]
-    E --> F{"Role Permitted?"}
-    F -- "No" --> G["403 Forbidden"]
-    F -- "Yes" --> H["scopeResolver(req)"]
-    H --> I{"Within Assigned Scope?"}
-    I -- "No" --> J["403 Forbidden / 404"]
-    I -- "Yes" --> K["Controller Handler"]
+    B --> C{"Cryptographically Valid & Unexpired JWT?"}
+    C -- "No" --> D["401 Unauthorized (UNAUTHENTICATED)"]
+    C -- "Yes" --> E["lifecycleGuard: Live users DB Lookup"]
+    E --> F{"accountStatus?"}
+    F -- "SUSPENDED" --> G["403 Forbidden (ACCOUNT_SUSPENDED)"]
+    F -- "INVITED" --> H["403 Forbidden (ACCOUNT_NOT_ACTIVATED)"]
+    F -- "GRADUATED & Mutation (POST/PUT/PATCH/DELETE)" --> I["403 Forbidden (ACCOUNT_GRADUATED_READ_ONLY)"]
+    F -- "ACTIVE or (GRADUATED & Safe Read GET)" --> J["rbacGuard(allowedRoles)"]
+    J --> K{"Role Authorized?"}
+    K -- "No" --> L["403 Forbidden (FORBIDDEN)"]
+    K -- "Yes" --> M["scopeResolver(req)"]
+    M --> N{"Within Assigned Resource Scope?"}
+    N -- "No" --> O["403 Forbidden / 404 Not Found"]
+    N -- "Yes" --> P["Controller Business Logic"]
 ```
 
-1. **`authMiddleware`**: Extracts JWT from the cookie, verifies cryptographic signature, checks expiration, and retrieves the corresponding `users` record to confirm `accountStatus === "ACTIVE"`.
-2. **`rbacGuard(...roles)`**: Validates that `user.role` is included in the allowed roles for the endpoint.
-3. **`scopeResolver`**: Resolves dynamic scope:
+1. **`authMiddleware`**: Extracts JWT from the cookie, verifies cryptographic signature, checks expiration, and attaches authenticated token claims (`req.auth`).
+2. **`lifecycleGuard`**: Queries `users.findById(req.auth.sub)`. Enforces account lifecycle states: rejects `SUSPENDED`, rejects `INVITED`, blocks writes for `GRADUATED`, and attaches the live `user` record (`req.user`).
+3. **`rbacGuard(...allowedRoles)`**: Validates that `user.role` matches the approved roles for the target endpoint.
+4. **`scopeResolver`**: Resolves dynamic resource scope:
    - **Student:** Bounded to `user._id` and student's active `enrollment` class and subjects.
    - **Faculty:** Bounded to `teachingAssignments` (`classId`, `subjectId`) for the active `academicTermId` (SOT §16.6).
    - **HOD:** Bounded to records matching `departmentCode`.
