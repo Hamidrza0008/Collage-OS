@@ -104,7 +104,19 @@ Roles & Permissions (RBAC) establishes the authoritative, server-enforced access
 
 ## 4. Master Permission Matrix (SOT §18)
 
-The following matrix defines the authoritative permission boundaries across all six roles.
+The following matrix defines the authoritative, server-enforced permission boundaries across all six roles. It organizes access across **12 core functional domains** containing 39 granular action rows:
+1. Authentication & Lifecycle
+2. User & Staff Profiles
+3. Timetable & Academic Calendar
+4. Attendance & Roll-Call
+5. Assignments & Submissions
+6. Marks & Performance
+7. Academic Resources (Study Materials)
+8. Notices & Circulars
+9. Campus Events
+10. Projects Showcase & Explore Directory
+11. Campus AI Assistant
+12. Audit Logs & System Overrides
 
 **Legend:**
 - **Full:** Full create, read, update, delete permissions within assigned scope.
@@ -145,11 +157,11 @@ The following matrix defines the authoritative permission boundaries across all 
 | **Marks & Performance** |
 | View grade card / CGPA (`STU-02`) | Read (Own records) | Read (Assigned) | Read (Dept) | Read (Campus) | Read (Campus) |
 | Enter & update internal marks (`FAC-06`) | Denied | **Write (Assigned)** | Read / Audit *(Gap)*| Read (Campus) | Denied |
-| Publish & lock exam results (`FAC-06`) | Denied | Lock (Assigned) | Sign-off *(Gap)* | Read (Campus) | Final Lock / Admin Sign-off |
+| Publish & lock exam results (`FAC-06`) | Denied | Lock (Assigned) | Audit / Sign-off *(Gap)* | Read (Campus) | Final Lock / Admin Sign-off |
 | **Academic Resources (Study Materials)** |
 | Download permitted materials (`FAC-08`) | Read (Enrolled) | Read (Assigned) | Read (Dept) | Read (Campus) | Read (Campus) |
-| Upload study materials (`FAC-08`) | Denied | **Write (Assigned)** | Write (Dept) *(Gap)*| Denied | Storage Management |
-| Delete study materials (`FAC-08`) | Denied | Delete (Own upload)| Delete (Dept) *(Gap)*| Denied | Storage Management |
+| Upload study materials (`FAC-08`) | Denied | **Write (Assigned)** | Audit (Dept) *(Gap)*| Denied | Storage Management |
+| Delete study materials (`FAC-08`) | Denied | Delete (Own upload)| Audit (Dept) *(Gap)*| Denied | Storage Management |
 | **Notices & Circulars** |
 | Read official bulletins (`SHARED-03`) | Read (Permitted scope)| Read (Permitted scope)| Read (Campus) | Read (Campus) | Read (Campus) |
 | Publish class-level notice (`SHARED-03`) | Denied | Write (Assigned class)| Write (Dept) | Write (Campus) | Write (Campus) |
@@ -264,21 +276,23 @@ The authorization system must automatically generate an immutable record in `aud
 
 ## 7. Genuine Open Decisions & Recommended Defaults
 
-### 7.1 Unresolved HOD & Principal/VP Write Boundaries (Feature Inventory §7.2 Item 6)
-The Feature Inventory and SOT establish that HOD, Principal, and VP possess department-wide and campus-wide **read and audit** authority, as well as notice publishing authority. However, **which direct academic writes these leadership roles may execute (as opposed to audit-only) remains an unresolved decision**:
-- Can an HOD directly edit or override attendance marked by a faculty member?
-- Can an HOD directly enter or alter internal marks, or must they request a faculty correction?
-- Can a Principal directly modify grades before publishing?
+### 7.1 Unresolved HOD & Principal/VP Academic Write Boundaries (Feature Inventory §7.2 Item 6)
+The Feature Inventory (§7.2 Item 6) and SOT (§18) establish that HOD, Principal, and VP possess department-level and campus-level **read, audit, and circular publishing authority**. However, **whether and which direct academic writes these leadership roles may execute (as opposed to audit-only) remains an unresolved decision**:
+- **Attendance Roll-Call & Edits (`FAC-04`):** Can an HOD directly edit or override roll-call marked by a faculty member, or is their access strictly audit-only?
+- **Internal Marks & Grading (`FAC-05`, `FAC-06`):** Can an HOD directly enter, alter, or override student marks/grades, or must all corrections be routed through the assigned teaching faculty?
+- **Result Publishing Sign-Off (`FAC-06`):** SOT §18 assigns "Grade lock / administrative sign-off" to `admin` and "Audit department grades" to `hod`. Whether an HOD performs an intermediate formal sign-off step prior to admin locking is an unresolved workflow.
+- **Academic Resources (`FAC-08`):** SOT §18 defines HOD access as "Audit departmental materials". Whether an HOD can directly upload or delete department-wide materials without a specific `teachingAssignment` is unresolved.
+- **Principal / VP Academic Writes:** SOT §18 assigns campus-wide academic audit authority to Principal/VP. Direct write or grade alteration rights by executive leadership are unapproved.
 
-### 7.2 Proposed Default: Principle of Least Privilege
-Until the institution formally defines executive academic write workflows, the following **least-privilege defaults are recommended**:
+### 7.2 Proposed Architectural Recommendation (Principle of Least Privilege)
+The following boundaries are a **proposed least-privilege recommendation** for backend implementation, **NOT a confirmed or approved requirement of the SOT**:
 
 > [!IMPORTANT]
-> **Recommended Architectural Default (Least Privilege):**
-> 1. **Audit & Review by Default:** HOD, Principal, and VP roles are granted **read and audit permissions only** for daily attendance, internal marks, and assignment grades.
-> 2. **Faculty Primacy for Course Writes:** Only the faculty member assigned via `teachingAssignments` is authorized to enter marks or mark roll-call.
-> 3. **Formal Correction Workflow:** If an HOD identifies a marking error, they must request a correction from the assigned faculty member, or escalate to the System Administrator for an audited administrative override (`admin`).
-> 4. **Executive Notice Authority:** HODs retain direct publishing rights for department bulletins; Principal/VP retain direct publishing rights for campus circulars.
+> **Proposed Recommendation (Least Privilege Default):**
+> 1. **Audit & Read by Default:** HOD, Principal, and VP roles should possess **read and audit permissions only** for daily attendance, internal marks, assignment grading, and study materials.
+> 2. **Faculty Primacy for Course Writes:** Only the faculty member assigned via `teachingAssignments` for the active term should be authorized to mark roll-call, enter marks, grade assignments, or upload course materials.
+> 3. **Formal Escalation for Discrepancies:** If an HOD identifies an error in marks or attendance, they should request a correction from the assigned faculty member, or escalate to the System Administrator (`admin`) for an audited administrative override.
+> 4. **Confirmed Notice & Event Authority:** HOD retains approved publishing authority for departmental bulletins (`SHARED-03`) and departmental events (`SHARED-04`); Principal/VP retain approved publishing authority for campus circulars and event authorization.
 
 ---
 
