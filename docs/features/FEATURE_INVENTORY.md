@@ -2,7 +2,7 @@
 
 **Status:** draft for review
 
-**Last updated:** 27 October 2026
+**Last updated:** 28 October 2026
 
 **Scope basis:** `COLLEGE_OS_SOT.md` v1.3, Project Plan v1.1 (locked; see the Project Plan difference note below)
 
@@ -18,7 +18,7 @@ This is a feature list, not a technical design. No database schemas, API contrac
 | :--- | ---: | :--- |
 | Core MVP modules | **12** | The 11 original modules plus **Academic Resources & Study Materials** (added in SOT v1.2) |
 | Core institutional entity | 1 | Official College Profile |
-| Phase 2 modules | **4** | Internships, Hackathons, Campus Community Feed, Digital Lost & Found |
+| Phase 2 modules | **4** | Internships Ecosystem, Hackathons & Competitions, Campus Community Feed, Digital Lost & Found |
 
 The core/Phase 2 boundary follows Section 18 of the Project Plan and Sections 19–20 of the SOT. Phase 2 features do not delay the core MVP.
 
@@ -26,7 +26,7 @@ The core/Phase 2 boundary follows Section 18 of the Project Plan and Sections 19
 
 ## How to read this
 
-- **IDs** are short, stable labels used when discussing a feature (for example `STU-04`). They do not change once assigned. A removed feature's ID is retired, not reused.
+- **IDs** are short, stable labels used when discussing a feature (for example `STU-04` or `FAC-08`). They do not change once assigned. A removed feature's ID is retired and never reused for an unrelated feature.
 - **Backend needed** means: does this need real server work before it can function?
   Today the backend is an empty Express stub (`backend/server.js`), so almost everything needs server work.
   - **Yes** = real server logic has to be built.
@@ -46,6 +46,17 @@ The core/Phase 2 boundary follows Section 18 of the Project Plan and Sections 19
 | Shared features | 7 | 0 | 7 |
 | AI features | 4 | 0 | 4 |
 | **Total** | **33** | **4** | **37** |
+
+> [!NOTE]
+> **Module counts versus Feature-entry counts:**
+> The **12 Core MVP modules**, **1 Core institutional entity**, and **4 Phase 2 modules** represent the high-level functional domains defined in SOT §4, §16.4, and §20. The **37 feature entries** (33 Core MVP + 4 Phase 2) represent distinct operational workflows across Student, Faculty, and Shared boundaries. Several modules necessarily contain paired workflows for distinct user roles:
+> - **Attendance Tracking** spans `STU-05` (student monitoring) and `FAC-04` (faculty roll-call & management).
+> - **Assignments Workflow** spans `STU-06` (student submissions) and `FAC-05` (faculty authoring & grading).
+> - **Marks & Performance** spans `STU-02` (student grade cards & transcript) and `FAC-06` (faculty marks entry & publishing).
+> - **Timetable Management** spans `STU-04` (student timetable & calendar) and `FAC-07` (faculty teaching schedule & change requests).
+> - **Campus AI Assistant** spans `AI-01` (student assistant), `AI-02` (faculty assistant), `AI-03` (shared engine), and `AI-04` (document knowledge base).
+> - **Authentication & Identity** provides foundational provisioning and session entries (`AUTH-01` through `AUTH-07`), while shared infrastructure spans `SHARED-01`, `SHARED-02`, and `SHARED-08`.
+> - The **Official College Profile** singleton entity is tracked as `SHARED-11`.
 
 ---
 
@@ -141,10 +152,10 @@ What a student sees and does after signing in. Academic views share data with th
 - **What it does:** Shows CGPA and SGPA, semester trend, subject grades, internal assessment marks, and a full transcript, with print and download grade card actions. Subject pages give the essential subject, faculty, and syllabus context for these marks.
 - **Backend needed:** Yes.
 - **Pending decisions:** GPA formula, grade scale, who may release results, and when marks become visible. Print and download currently do nothing real.
-- **Scope note:** There is no separate Subject Catalog module. Subject information is part of this academic view. The existing "Ask Faculty" action on the subject page is **not approved scope** and should be removed from the UI.
+- **Scope note:** There is no separate Subject Catalog module. Subject information is part of this academic view (`STU-03` is retired). The existing "Ask Faculty" action on the subject page is **not approved scope** and should be removed from the UI.
 - **Future document:** `student/academic-performance-and-grade-cards.md`
 
-### STU-03 — Timetable & Academic Calendar
+### STU-04 — Timetable & Academic Calendar
 
 - **Who uses it:** Students
 - **Routes:** `/student/academics/timetable`
@@ -153,7 +164,7 @@ What a student sees and does after signing in. Academic views share data with th
 - **Pending decisions:** Only administrators may edit timetables per the SOT, so students read only. Still open: room and clash handling, and academic-year rollover.
 - **Future document:** `student/timetable-and-academic-calendar.md`
 
-### STU-04 — Attendance Monitoring
+### STU-05 — Attendance Monitoring
 
 - **Who uses it:** Students
 - **Routes:** no page of its own — shown inside `/student/academics` and `/student/academics/subjects/[code]`
@@ -162,7 +173,7 @@ What a student sees and does after signing in. Academic views share data with th
 - **Pending decisions:** Does arriving late count as present? Can a student dispute a wrong entry, and who resolves it? Is attendance calculated per lecture or per day (this must match `FAC-04`)?
 - **Future document:** `student/attendance-monitoring.md`
 
-### STU-05 — Assignments & Submissions
+### STU-06 — Assignments & Submissions
 
 - **Who uses it:** Students
 - **Routes:** `/student/assignments`, `/student/assignments/[id]`
@@ -171,16 +182,16 @@ What a student sees and does after signing in. Academic views share data with th
 - **Pending decisions:** Resubmission policy, late penalty, file size and type limits, and where submissions are stored.
 - **Future document:** `student/assignments-and-submissions.md`
 
-### STU-06 — Student Profile & Portfolio
+### STU-07 — Student Profile & Portfolio
 
 - **Who uses it:** Students; other students and faculty view the public version
 - **Routes:** `/student/profile`, `/student/profile/edit`, `/student/profile/[id]`
 - **What it does:** Combines college-verified details (name, enrollment number, department, semester, section) with student-controlled content: photo, bio, skills, GitHub and portfolio links, badges, and linked projects.
 - **Backend needed:** Yes.
-- **Pending decisions:** The read-only boundary for institution-controlled fields is not enforced anywhere yet. Profile and account settings live here; there is no separate general settings module.
+- **Pending decisions:** The read-only boundary for institution-controlled fields is not enforced anywhere yet. Profile and account settings live here; there is no separate general settings module (`STU-16` is retired).
 - **Future document:** `student/student-profile-and-portfolio.md`
 
-### STU-07 — Projects Showcase & Likes
+### STU-08 — Projects Showcase & Engagement
 
 - **Who uses it:** Students (faculty can view through the directory)
 - **Routes:** `/student/projects`, `/student/projects/[id]`
@@ -188,37 +199,19 @@ What a student sees and does after signing in. Academic views share data with th
 - **Backend needed:** Yes — everything is stored in the browser today.
 - **Design decision (resolved, SOT §14 and §16.5):** A project stores `creatorStudentId` plus `contributorStudentIds`, with the creator always included. The single-`studentId` schema is superseded. Attribution appears on every contributor's profile.
 - **Still open:** Whether a contributor must confirm attribution, and who may change contributors after publication.
-- **Scope note:** Public comments and team-join workflows currently in the UI are **not approved** for the core MVP and should not be treated as requirements. Team formation belongs to the Hackathons Phase 2 module.
+- **Scope note:** Public comments and team-join workflows currently in the UI are **not approved** for the core MVP and should not be treated as requirements. Dedicated team formation belongs to the Hackathons Phase 2 module (`STU-17`).
 - **Future document:** `student/projects-showcase.md`
 
-### STU-08 — Internships Ecosystem (Phase 2)
+### STU-09 — Internships Ecosystem (Phase 2)
 
 - **Who uses it:** Students
 - **Routes:** `/student/internships`, `/student/internships/[id]`, `/student/internships/applications`
-- **What it does:** A curated internships module covering listings, opportunity details, applying, and application tracking with statuses, notes, documents, and withdrawal. Application tracking is part of this module, not a separate feature.
+- **What it does:** A curated internships module covering company listings, opportunity details, applying, application tracking (with statuses, notes, documents, and withdrawal), and student referral matching as approved in SOT §20 and Project Plan Section 18. Application tracking is an integrated capability inside this module, not a separate feature (`STU-10` is retired). Resume Builder is not approved scope (`STU-11` is retired).
 - **Backend needed:** Yes.
-- **Pending decisions:** Who curates and verifies listings, and whether listings are internal or external. Application status taxonomy and who may update a status. The SOT also names referral matching; it is not built and needs confirmation before it is added.
+- **Pending decisions:** Who curates and verifies listings, and whether listings are internal or external. Application status taxonomy and who may update a status. Student referral matching implementation details (referral eligibility, who can refer, matching criteria, and referral status tracking) remain open for design, while the referral capability itself is an approved part of the ecosystem scope.
 - **Future document:** `student/internships-ecosystem.md`
 
-### STU-09 — Hackathons & Competitions (Phase 2)
-
-- **Who uses it:** Students
-- **Routes:** `/student/internships` (Hackathons tab)
-- **What it does:** Discovery of hackathons and competitions, event details, and registration. Team formation is part of this module.
-- **Backend needed:** Yes.
-- **Pending decisions:** Team formation rules: team size, invitations, leadership, and whether teams can be formed before registration closes. Hackathons are kept distinct from internships and are not merged into that module.
-- **Future document:** `student/hackathons-and-competitions.md`
-
-### STU-10 — Campus Community Feed (Phase 2)
-
-- **Who uses it:** Students
-- **Routes:** `/student/feed`, `/student/feed/[id]`, `/student/feed/groups/[id]`
-- **What it does:** An authenticated campus discussion feed with posts, likes, comments, bookmarks, and reporting.
-- **Backend needed:** Yes.
-- **Pending decisions:** Moderation policy, whether anonymous posting is allowed, and whether faculty may participate. A separate community-groups subsystem is **not approved**; the existing group pages should not be treated as approved scope without a decision.
-- **Future document:** `student/campus-community-feed.md`
-
-### STU-11 — Digital Lost & Found (Phase 2)
+### STU-12 — Digital Lost & Found (Phase 2)
 
 - **Who uses it:** Students
 - **Routes:** `/student/lost-and-found`, `/student/lost-and-found/my-reports`
@@ -227,6 +220,26 @@ What a student sees and does after signing in. Academic views share data with th
 - **Pending decisions:** Who holds an item, how ownership is proven during a claim, who resolves a disputed claim, and how long reports are retained.
 - **Audit requirement:** Claim submissions, verification decisions, and handovers must be recorded for audit, because they move physical property between people.
 - **Future document:** `student/digital-lost-and-found.md`
+
+### STU-13 — Campus Community Feed (Phase 2)
+
+- **Who uses it:** Students
+- **Routes:** `/student/feed`, `/student/feed/[id]`
+- **What it does:** An authenticated campus-wide discussion feed with discussion posts/threads, comments, likes/reactions, and reporting/moderation to ensure interactions remain academically and professionally focused (per SOT §20 and §21 non-goals: College OS is not a generic social network).
+- **Scope & Bookmarking note:** Neither the locked Project Plan v1.1 nor `COLLEGE_OS_SOT.md` includes bookmarking or saved items. Bookmarking is removed from approved Campus Community Feed requirements. The `/student/saved` route and standalone Saved Items (`STU-14`) remain retired and out of approved scope. A separate community groups subsystem is not approved in SOT/Project Plan; the existing `/student/feed/groups/[id]` route is UI only and not approved scope.
+- **Backend needed:** Yes.
+- **Pending decisions:** Moderation policy and review workflow (how reported posts are handled, moderator authorization), whether posting is restricted to students or includes faculty, and discussion formatting/threading rules.
+- **Future document:** `student/campus-community-feed.md`
+
+### STU-17 — Hackathons & Competitions (Phase 2)
+
+- **Who uses it:** Students
+- **Routes:** `/student/internships` (Hackathons tab)
+- **What it does:** Dedicated hackathon and competition hub. Covers competition-specific discovery, competition registration workflows, team formation matching, and project submissions as specified in SOT §20 and Project Plan Section 18.
+- **Core vs. Phase 2 Boundary:** General college events and basic event listings/announcements belong to Core MVP `SHARED-04` (Campus Events). `STU-17` provides the dedicated competition workflows (team formation matcher, competition-specific registration, and project submissions). Basic event listings in `SHARED-04` may include a hackathon announcement without providing this dedicated competition subsystem.
+- **Backend needed:** Yes.
+- **Pending decisions:** Team formation rules: team size, invitations, leadership, and whether teams can be formed before registration closes. Competition project submission format and review workflow. Listing curation.
+- **Future document:** `student/hackathons-and-competitions.md`
 
 ---
 
@@ -307,7 +320,7 @@ Every faculty action is bounded to the classes and subjects assigned to that fac
 - **What it does:** Faculty upload PDFs, notes, and other approved study material and associate each item with a subject and class or batch. Students browse material for their own subjects and classes, and download what they are permitted to access.
 - **Backend needed:** Yes.
 - **Design decision (resolved, SOT §11.5):** Allowed types are PDF, DOCX, and PPTX. The size limit is a configurable server-side value. Storage is private and addressed by an internal key, metadata carries a checksum, and every download is re-authorized and served through a short-lived reference. Removal ends student access but keeps the metadata and audit record. There is no automatic expiry.
-- **Still open:** The storage provider is not selected (see `SHARED-06`), and no student route exists yet for browsing material.
+- **Still open:** The storage provider is not selected (see `SHARED-08`), and no student route exists yet for browsing material.
 - **Future document:** `faculty/academic-resources-and-study-materials.md`
 
 ---
@@ -352,7 +365,8 @@ Capabilities used by more than one role. Each is defined once so no two features
 
 - **Who uses it:** Students, faculty, HOD, Principal/VP, Admin
 - **Routes:** `/student/events`, `/student/events/[id]`, `/faculty/events`
-- **What it does:** Event directory and calendar for symposiums, workshops, hackathons, and guest lectures, with details, venue, registration link, and registration.
+- **What it does:** General college event directory and calendar for symposiums, workshops, guest lectures, and general campus events, with event details, venue, date/time, banner artwork, and direct registration links/modals as supported by the approved Core scope.
+- **Core vs. Phase 2 Boundary:** Basic event listings may include a general announcement for a hackathon or technical competition without providing the dedicated hackathon subsystem. Dedicated competition discovery, competition registration workflows, team formation matching, and project submissions belong strictly to Phase 2 `STU-17` (Hackathons & Competitions).
 - **Backend needed:** Yes.
 - **Pending decisions:** **Gap.** The SOT allows authorized faculty to manage events, but the faculty events page can only browse and open details. Event ownership, approval, capacity, waitlist, and cancellation are undefined.
 - **Notification behaviour:** Event announcements and registration confirmations raise in-app notifications within this feature.
@@ -365,10 +379,10 @@ Capabilities used by more than one role. Each is defined once so no two features
 - **What it does:** Directory search and discovery of peers by skills, branch, or semester, with public profile inspection and project discovery.
 - **Backend needed:** Yes.
 - **Pending decisions:** Whether a dedicated directory page is needed or the current split across search and profiles is sufficient. What a student may hide from the directory.
-- **Scope note:** There is no separate universal search subsystem. Search lives here and is limited to directory and discovery content. The command palette remains a UI convenience only.
+- **Scope note:** There is no separate universal search subsystem (`SHARED-06` is retired). Search lives here and is limited to directory and discovery content. The command palette remains a UI convenience only.
 - **Future document:** `shared/explore-directory.md`
 
-### SHARED-06 — File Upload & Secure Download
+### SHARED-08 — File Upload & Secure Download
 
 - **Who uses it:** Everyone, through the features that accept files
 - **Routes:** no page of its own
@@ -378,7 +392,7 @@ Capabilities used by more than one role. Each is defined once so no two features
 - **Still open:** The storage provider is not selected. Malware scanning, orphan cleanup, and a concrete retention period are not yet defined.
 - **Future document:** `shared/file-upload-and-download.md`
 
-### SHARED-07 — Official College Profile
+### SHARED-11 — Official College Profile
 
 - **Who uses it:** Everyone; edited by authorized administrators
 - **Routes:** no dedicated page; branding appears in the portal, sidebar, and error pages
@@ -439,12 +453,12 @@ These are real requirements, but they are not separate product features and are 
 
 | Concern | Where it is handled |
 | :--- | :--- |
-| **Notifications** | No standalone subsystem. Notices, assignments, events, internships, and Lost & Found raise in-app notifications within their own workflows. The existing bell panel and student notification page are UI surfaces for these events. |
-| **Auditing** | Required for authentication and role changes, attendance edits, mark changes and locks, notice publishing, and Lost & Found claim resolution. Each owning feature records who acted and when. There is no separate audit product. |
-| **API validation and error handling** | Shared engineering conventions, to be documented once in `shared/backend-conventions.md` before the first endpoint is built. Not a product module. |
-| **File handling** | `SHARED-06` defines storage, validation, and authorized download for every workflow that accepts files. |
-| **App shell, navigation, theme, typography, responsive layout, error pages** | Existing UI/platform implementation. They are maintained as frontend concerns and do not need separate backend feature specifications. |
-| **Profile, account, and security settings** | Folded into `STU-06` (student profile), `SHARED-01` (faculty profile and account fields), and `AUTH-06`/`AUTH-07` (password and session security). There is no separate general settings module. |
+| **Notifications** | No standalone subsystem (`SHARED-07` and `STU-15` are retired). Notices (`SHARED-03`), assignments (`STU-06`, `FAC-05`), events (`SHARED-04`), internships (`STU-09`), and Lost & Found (`STU-12`) raise in-app notifications within their own workflows. The existing bell panel and student notification page are UI surfaces for these events. |
+| **Auditing** | Required for authentication and role changes (`AUTH-01`, `AUTH-07`), attendance edits (`FAC-04`), mark changes and locks (`FAC-06`), notice publishing (`SHARED-03`), and Lost & Found claim resolution (`STU-12`). Each owning feature records who acted and when. There is no separate audit product (`SHARED-10` is retired). |
+| **API validation and error handling** | Shared engineering conventions, to be documented once in `shared/backend-conventions.md` before the first endpoint is built. Not a product module (`SHARED-09` is retired). |
+| **File handling** | `SHARED-08` defines storage, validation, and authorized download for every workflow that accepts files. |
+| **App shell, navigation, theme, typography, responsive layout, error pages** | Existing UI/platform implementation. They are maintained as frontend concerns and do not need separate backend feature specifications (`SHARED-12`, `SHARED-13`, `SHARED-14` are retired). |
+| **Profile, account, and security settings** | Folded into `STU-07` (student profile), `SHARED-01` (faculty profile and account fields), and `AUTH-06`/`AUTH-07` (password and session security). There is no separate general settings module (`STU-16` and `FAC-09` are retired). |
 
 ### Existing UI routes without an approved feature entry
 
@@ -452,11 +466,35 @@ These screens exist in the repository but are not part of the approved scope. Th
 
 | Route | Treatment |
 | :--- | :--- |
-| `/student/internships/resume-builder` | Not approved. Remove or leave out of scope. |
-| `/student/saved` | Not approved. Bookmarking is not a product requirement. |
-| `/student/notifications` | UI surface only. No separate notification module. |
-| `/student/settings`, `/student/settings/security` | Folded into profile and authentication. Not a separate module. |
-| `/faculty/settings` | Folded into faculty profile. Not a separate module. |
+| `/student/internships/resume-builder` | Not approved. Resume builder (`STU-11`) is removed from approved scope. Remove or leave out of scope. |
+| `/student/saved` | Not approved. Bookmarking is not an approved product requirement in SOT or Project Plan. Standalone Saved Items (`STU-14`) is retired. |
+| `/student/feed/groups/[id]` | Not approved. Dedicated community groups subsystem is not in approved scope. |
+| `/student/notifications` | UI surface only. Standalone Notification Center (`STU-15`) and delivery (`SHARED-07`) are retired. |
+| `/student/settings`, `/student/settings/security` | Folded into profile and authentication (`STU-07`, `AUTH-06`, `AUTH-07`). Not a separate module (`STU-16` is retired). |
+| `/faculty/settings` | Folded into faculty profile and authentication (`SHARED-01`, `AUTH-06`, `AUTH-07`). Not a separate module (`FAC-09` is retired). |
+
+### Retired Feature IDs Registry
+
+IDs are stable and never reassigned to unrelated features. The following table records all retired IDs and their disposition:
+
+| Retired ID | Original Name / Area | Disposition / Reason |
+| :--- | :--- | :--- |
+| `AUTH-08` | Two-Factor Authentication & Account Security | Retired as standalone feature; folded into password reset/change (`AUTH-06`) and session security (`AUTH-07`). |
+| `STU-03` | Subject Catalog & Course Details | Retired as standalone feature; merged into Academic Performance, Marks & Grade Cards (`STU-02`). |
+| `STU-10` | Application Tracking | Retired as standalone feature; merged into Internships Ecosystem (`STU-09`). |
+| `STU-11` | Campus Resume Builder | Retired; removed from approved scope (not part of SOT or Project Plan). |
+| `STU-14` | Saved Items & Bookmarks | Retired; removed from approved scope (bookmarking is not an approved requirement; `/student/saved` is unapproved). |
+| `STU-15` | Notification Center | Retired as standalone feature; cross-cutting concern handled within owning workflows. |
+| `STU-16` | Student Settings | Retired as standalone feature; folded into Student Profile (`STU-07`) and authentication (`AUTH-06`/`AUTH-07`). |
+| `FAC-09` | Faculty Settings | Retired as standalone feature; folded into Faculty Profile (`SHARED-01`) and authentication (`AUTH-06`/`AUTH-07`). |
+| `SHARED-06` | Global Search | Retired as standalone subsystem; scoped peer search folded into `SHARED-05` (Explore Directory) and command palette remains UI convenience. |
+| `SHARED-07` | Notification Delivery | Retired as standalone feature; notification delivery handled within owning workflows. |
+| `SHARED-09` | API Validation & Error Handling | Retired as product-feature ID; reclassified as shared engineering convention (`shared/backend-conventions.md`). |
+| `SHARED-10` | Standalone Audit Logging | Retired as product-feature ID; auditing handled within owning workflows. |
+| `SHARED-12` | App Shell & Navigation | Retired as product-feature ID; reclassified as platform/frontend UI concern. |
+| `SHARED-13` | Theme, Fonts & Responsive Layout | Retired as product-feature ID; reclassified as platform/frontend UI concern. |
+| `SHARED-14` | Error Pages & Recovery | Retired as product-feature ID; reclassified as platform/frontend UI concern. |
+| `6.1–6.4` | Future Views (HOD, Principal, Admin, Leadership AI) | Retired as standalone dashboard entries; roles, RBAC permissions, and AI scopes preserved in `SHARED-02` and `AI-03`. |
 
 ---
 
@@ -471,10 +509,10 @@ These seven items were previously listed here as open questions. They are now do
 | 1 | **Session security** | Server-issued JWT in a cookie with `HttpOnly`, `Secure`, and an explicit `SameSite` policy; the role is re-resolved server-side. The current client-set cookie is an implementation gap to fix, not a permitted alternative. | §17 |
 | 2 | **Identity model** | One account per person, linked to exactly one profile: `studentProfiles` for students, the existing `facultyProfiles` for all staff roles. No duplicate staff profile model. HOD, Principal/VP, and Admin permissions remain enforced server-side. | §16.0–§16.3 |
 | 3 | **Classes and faculty assignment** | Minimum model: department, program/course, academic term, class/section, subject, student enrollment, and teaching assignment. Faculty scope derives from `teachingAssignments`, with the profile arrays as a recomputable cache. | §16.6 |
-| 4 | **Project contributors** | `creatorStudentId` plus `contributorStudentIds`, creator always included. A single `studentId` is explicitly insufficient; attribution appears on every contributor's profile. | §14, §16.5 |
+| 4 | **Project contributors** | `creatorStudentId` plus `contributorStudentIds`, creator always included. A single `studentId` is explicitly insufficient; attribution appears on every contributor's profile (`STU-08`). | §14, §16.5 |
 | 5 | **Notice audience** | Publishing authority comes from RBAC. Recipient scope is separate: `scopeType`, `scopeRef`, and `audienceRole`, with a documented mapping from the legacy `college`/`hod`/`faculty` levels. | §12.1–§12.3 |
 | 6 | **Faculty AI boundary** | Faculty AI reads only what the same faculty member may already read, bounded by assigned classes and subjects. Same ownership rules as the underlying feature, no credentials or unrelated private data, and no action the role cannot already take directly. | §15.3 |
-| 7 | **Academic Resources storage** | PDF, DOCX, and PPTX; configurable server-side size limit; private storage; metadata plus checksum; authorized short-lived download; removal without automatic expiry. Provider not selected. | §11.5 |
+| 7 | **Academic Resources storage** | PDF, DOCX, and PPTX; configurable server-side size limit; private storage; metadata plus checksum; authorized short-lived download; removal without automatic expiry. Provider not selected (see `SHARED-08`). | §11.5 |
 
 ## 7.2 Remaining genuine blockers
 
@@ -482,12 +520,12 @@ These are real gaps that a documentation decision cannot close: provider and for
 
 1. **OTP delivery provider.** No email or SMS service is configured. Code lifetime and resend limits follow from the provider choice.
 2. **GPA and grade formula.** Grade bands, credit weighting, and rounding are undefined; the institution must confirm them.
-3. **Attendance granularity.** Per-lecture versus per-day calculation, and how late arrival is weighted, must match between `STU-04` and `FAC-04`.
-4. **Storage provider.** The MVP file policy is provider-independent, but no provider or credentials exist yet.
+3. **Attendance granularity.** Per-lecture versus per-day calculation, and how late arrival is weighted, must match between `STU-05` and `FAC-04`.
+4. **Storage provider.** The MVP file policy is provider-independent (`SHARED-08`), but no provider or credentials exist yet.
 5. **AI provider, embedding model, and vector store.** Deliberately unselected until the AI phase; the router contract and refusal taxonomy depend on it.
 6. **HOD and Principal/VP write boundaries.** Read, audit, and notice-publishing rights are defined in the RBAC matrix. Which academic writes these roles may make directly (as opposed to audit-only) is not.
 7. **Student surface for Academic Resources.** No student route exists yet, so where students browse material is still a UI decision.
-8. **Contributor changes after publication.** Who may add or remove a project contributor, and whether the contributor must confirm attribution, is not defined.
+8. **Contributor changes after publication.** Who may add or remove a project contributor, and whether the contributor must confirm attribution, is not defined (`STU-08`).
 
 ## 7.3 Documented difference from the locked Project Plan
 
@@ -497,12 +535,30 @@ The locked Project Plan (`College_OS_Project_Plan_Source_of_Truth.pdf` and its `
 
 # 8. What changed in this revision
 
-The inventory now reflects SOT v1.3. Approved scope is unchanged; the open decisions are closed and the remaining gaps are named.
+The inventory has been updated with verified stable feature IDs, corrected Phase 2 scopes, and explicit boundary clarifications:
 
-- **Scope basis:** now `COLLEGE_OS_SOT.md` v1.3.
-- **Resolved:** session security, identity model, academic relationships, project contributors, notice audience, faculty AI boundary, and Academic Resources storage policy. Section 7 now records the decisions with pointers into the SOT instead of listing them as open questions.
-- **Per-feature updates:** `AUTH-01`, `AUTH-04`, `AUTH-07`, `STU-07`, `FAC-02`, `FAC-08`, `SHARED-01`, `SHARED-03`, `SHARED-06`, and `AI-02` now state the decision or the SOT rule and, where relevant, what implementation work remains.
-- **Unchanged:** the 37-feature count, the 12 core modules, the Official College Profile, and the four Phase 2 modules. No feature was added or removed in this revision.
+- **Restoration of stable original IDs:**
+  - **Student features:** Restored `STU-04` (Timetable & Academic Calendar), `STU-05` (Attendance Monitoring), `STU-06` (Assignments & Submissions), `STU-07` (Student Profile & Portfolio), `STU-08` (Projects Showcase & Engagement), `STU-09` (Internships Ecosystem), `STU-12` (Digital Lost & Found), and `STU-13` (Campus Community Feed).
+  - **Hackathons & Competitions (Phase 2):** Assigned fresh stable ID `STU-17`, verified as never previously assigned in the Feature Inventory.
+  - **Shared features:** Restored `SHARED-08` (File Upload & Secure Download) and `SHARED-11` (Official College Profile).
+  - **Retired IDs Registry:** Documented all retired IDs (`STU-03`, `STU-10`, `STU-11`, `STU-14`, `STU-15`, `STU-16`, `SHARED-06`, `SHARED-07`, `SHARED-09`, `SHARED-10`, `SHARED-12`, `SHARED-13`, `SHARED-14`, `AUTH-08`, `FAC-09`, and legacy section 6 future views) to guarantee they are never reassigned.
+- **Internships referral scope corrected (`STU-09`):**
+  - Confirmed student referral matching as an approved part of the Phase 2 Internships Ecosystem scope per SOT §20 and Project Plan Section 18.
+  - Removed misleading phrasing that described the approved referral capability as unapproved or needing confirmation.
+  - Clarified that while the capability is approved, specific implementation details (referral eligibility, who can refer, matching rules, status tracking) remain open decisions. Application tracking remains integrated inside `STU-09`.
+- **Campus Events vs. Phase 2 Hackathons boundary clarified:**
+  - `SHARED-04` (Campus Events, Core MVP): general college event discovery, directory, calendar, official announcements, and basic event registration/links. Basic listings may include a hackathon announcement without providing the dedicated hackathon subsystem.
+  - `STU-17` (Hackathons & Competitions, Phase 2): dedicated competition hub covering competition-specific discovery, registration workflows, team formation matching, and project submissions.
+- **Campus Feed bookmarking inconsistency resolved (`STU-13`):**
+  - Neither SOT v1.3 nor Project Plan v1.1 includes bookmarking or saved items. Bookmarking has been removed from approved Campus Community Feed requirements.
+  - The `/student/saved` route and standalone Saved Items (`STU-14`) remain strictly retired and out of approved scope.
+  - Campus Community Feed reporting and moderation behaviour has been explicitly grounded in SOT §20 and §21 non-goals (academic and professional discussions; not a generic social network).
+- **Scope and feature counts reconciled:**
+  - Preserved the **12 Core MVP modules**, **1 Core institutional entity** (`SHARED-11`), and **4 Phase 2 modules** (`STU-09`, `STU-12`, `STU-13`, `STU-17`).
+  - Total feature entries recalculated and verified: **37 feature entries** (33 Core MVP + 4 Phase 2).
+  - Added explicit documentation explaining the distinction between high-level module counts and operational feature-entry counts.
+- **Cross-cutting references updated:**
+  - Corrected all cross-references across sections, including `SHARED-08` for file handling, `STU-05` for attendance matching with `FAC-04`, `STU-08` for project attribution, and `STU-07` for profile settings.
 
 Earlier revisions, for context:
 
