@@ -29,7 +29,8 @@ docs/features/
 │   ├── institutional-user-provisioning.md ← AUTH-01 specification
 │   ├── student-account-activation.md      ← AUTH-02 specification
 │   ├── student-login.md                   ← AUTH-03 specification
-│   └── faculty-staff-activation.md        ← AUTH-04 specification
+│   ├── faculty-staff-activation.md        ← AUTH-04 specification
+│   └── staff-login-and-role-routing.md    ← AUTH-05 specification
 ├── student/
 ├── faculty/
 ├── shared/
@@ -45,13 +46,14 @@ File names are lowercase with hyphens, and match the feature name. For example:
 - `authentication/student-account-activation.md`
 - `authentication/student-login.md`
 - `authentication/faculty-staff-activation.md`
+- `authentication/staff-login-and-role-routing.md`
 - `shared/user-identity-and-profiles.md`
 - `shared/roles-and-permissions.md`
 - `student/student-dashboard.md`
 - `faculty/attendance-management.md`
 - `ai/faculty-campus-ai.md`
 
-Each feature also has a short stable ID, such as `AUTH-01`, `AUTH-02`, `AUTH-03`, `AUTH-04`, `STU-04`, `FAC-08`, `SHARED-01`, or `SHARED-02`, used when discussing and cross-referencing it. The ID appears in the inventory and in the feature document heading. IDs are never reassigned, so adding or removing a feature does not disturb the others.
+Each feature also has a short stable ID, such as `AUTH-01`, `AUTH-02`, `AUTH-03`, `AUTH-04`, `AUTH-05`, `STU-04`, `FAC-08`, `SHARED-01`, or `SHARED-02`, used when discussing and cross-referencing it. The ID appears in the inventory and in the feature document heading. IDs are never reassigned, so adding or removing a feature does not disturb the others.
 
 ---
 

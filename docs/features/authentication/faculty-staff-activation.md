@@ -31,7 +31,7 @@ Core functional scope comprises:
 - **Multi-Factor Institutional Identity Matching:** Validating that the submitted Employee ID (`facultyProfiles.facultyId`) and official college email (or approved verified contact) strictly match an existing pre-provisioned record in `users` and `facultyProfiles`.
 - **Role Derivation from Database Authority:** Resolving the user's role strictly from the authoritative database record. No client-supplied role selections are accepted.
 - **Cryptographic OTP Handshake:** Generating, dispatching, and verifying a time-bound, single-use One-Time Password via the staff member's official contact channel.
-- **Read-Only Institutional Confirmation:** Displaying pre-provisioned appointment data (Name, Department, Designation, Employee ID, Authoritative Role) without permitting client modification of institutional fields.
+- **Read-Only Institutional Profile Confirmation:** Displaying pre-provisioned staff profile data from `facultyProfiles` (`fullName`, `facultyId`, `department`, `designation`) and `users.role` without permitting client modification of institutional fields. (This confirmation view references the existing `facultyProfiles` model and introduces no separate appointment or HR entities).
 - **Staff Password Creation:** Setting a private, user-owned password meeting institutional complexity requirements, hashed server-side using `bcrypt` (salt rounds $\ge 12$, exceeding SOT §6.7 requirement of $\ge 10$).
 - **Atomic Activation & Lifecycle Transition:** Atomically consuming the activation challenge, updating `users.accountStatus` to `ACTIVE`, setting `isActivated = true`, and timestamping `activatedAt = new Date()`.
 - **Audit Logging:** Writing an immutable record of the activation event to `auditLogs`.
@@ -59,13 +59,13 @@ Core functional scope comprises:
 | **Already Activated Staff** | Any staff (`ACTIVE`) | Blocked | Ineligible for activation. Server rejects attempt with error directing user to Staff Login (`AUTH-05`). |
 | **Suspended Staff** | Any staff (`SUSPENDED`) | Blocked | Under administrative hold. Activation requests are immediately rejected (`403 FORBIDDEN`). |
 | **Relieved / Offboarded Staff** | Any staff (`RELIEVED`) | Blocked | Inactive institutional record; cannot initiate or complete activation. |
-| **Student** | `student` (`INVITED`/`ACTIVE`) | Blocked on Staff Route | Enrollment numbers and student records are rejected with guidance to use `/auth/student/activate`. |
-| **Unprovisioned Visitor** | Unknown / Public | Blocked | Rejected with generic error indicating no matching institutional record exists. |
+| **Student** | `student` (`INVITED`/`ACTIVE`) | Blocked on Staff Route | Rejected with generic `404 NOT_FOUND` (`INSTITUTIONAL_RECORD_NOT_FOUND`) to prevent role and account existence enumeration; internal audit log records attempt. |
+| **Unprovisioned Visitor** | Unknown / Public | Blocked | Rejected with generic `404 NOT_FOUND` (`INSTITUTIONAL_RECORD_NOT_FOUND`). |
 
 ### 2.2 Security Ownership & Immutability Rules
 - **Role Anchoring (SOT §6.0, §7, §22.8):** The user's role is stored in `users.role` during institutional provisioning (`AUTH-01`). The activation endpoint ignores any role parameters submitted in request payloads and derives the role exclusively from the database record matching the Employee ID and verified contact.
 - **Multi-Factor Rule (SOT §6.3, §22.4):** Employee ID alone is **strictly insufficient** to activate an account or claim a staff identity. Employee IDs may appear on campus directories, class schedules, or departmental notice boards; mandatory OTP delivery to the verified institutional email/contact prevents impersonation and account hijacking.
-- **Immutability of Institutional Fields (SOT §8, §16.3, `SHARED-01`):** During activation step 2/3, the staff member is shown a read-only confirmation card of their appointment (`fullName`, `facultyId`, `department`, `designation`, `officialEmail`). These fields are strictly immutable; any payload attempting to modify them is rejected with `400 BAD_REQUEST` (`IMMUTABLE_FIELD_MODIFICATION`).
+- **Immutability of Institutional Fields (SOT §8, §16.3, `SHARED-01`):** During activation step 2/3, the staff member is shown a read-only confirmation view of their pre-provisioned profile details (`fullName`, `facultyId`, `department`, `designation`, `officialEmail`) drawn directly from `facultyProfiles`. These fields are strictly immutable; any payload attempting to modify them is rejected with `400 BAD_REQUEST` (`IMMUTABLE_FIELD_MODIFICATION`). This view represents the existing `facultyProfiles` model and introduces no secondary appointment or employment module.
 - **Profile Integrity Rule:** Every non-student account in `users` must map 1:1 to a linked record in `facultyProfiles` via `userId`. If a user record exists without a linked `facultyProfiles` document, activation aborts with `500 INTERNAL_SERVER_ERROR` and raises an urgent administrative alert.
 
 ---
@@ -102,9 +102,10 @@ Inspection of `frontend/components/auth/FacultyActivationPage.jsx` reveals the f
 3. **Institutional Matching & Eligibility Verification:**
    - Backend sanitizes input (trims strings, converts Employee ID to uppercase, normalizes email to lowercase).
    - Queries `facultyProfiles.findOne({ facultyId })` and loads linked `users` record via `userId`.
-   - Validates that `users.role` is a recognized staff role (`faculty`, `hod`, `principal`, `vp`, `admin`). If a student ID is submitted, the request is rejected with a redirect hint to `/auth/student/activate`.
+   - Validates that `users.role` is a recognized non-student staff role (`faculty`, `hod`, `principal`, `vp`, `admin`).
+   - If no staff record matches the Employee ID and official email (or if a student identifier is submitted), the server returns generic `404 NOT_FOUND` (`INSTITUTIONAL_RECORD_NOT_FOUND`). To prevent user enumeration and role scanning, the external response never discloses whether an account exists or what role it holds. An internal security audit event (`STAFF_ACTIVATION_REJECTED_NON_STAFF_IDENTITY`) is logged.
    - Validates lifecycle state: `users.accountStatus === "INVITED"` and `users.isActivated === false`. If already `ACTIVE`, return `409 CONFLICT` (`ACCOUNT_ALREADY_ACTIVATED`). If `SUSPENDED`, return `403 FORBIDDEN` (`ACCOUNT_SUSPENDED`).
-4. **Authoritative Role & Scope Derivation:** Backend retrieves the authoritative role, department, and designation directly from the pre-provisioned database records.
+4. **Authoritative Role & Scope Derivation:** Backend retrieves the authoritative role, department, and designation directly from the pre-provisioned database records (`facultyProfiles` and `users`).
 5. **OTP Generation & Dispatch:**
    - Server generates a cryptographically random 6-digit numeric OTP.
    - Computes keyed HMAC: `HMAC-SHA256(rawOtp, SERVER_SECRET)`.
@@ -115,15 +116,15 @@ Inspection of `frontend/components/auth/FacultyActivationPage.jsx` reveals the f
    - Backend verifies rate limits and expiration (`expiresAt > Date.now()`).
    - Increments `attemptsCount`. If attempts exceed threshold (proposed default: 5), challenge is invalidated.
    - Recomputes HMAC and executes constant-time comparison `crypto.timingSafeEqual`.
-   - Upon match, marks challenge `isOtpVerified = true` and issues a short-lived, signed **Activation Ticket** (JWT or server-cached token) embedding `challengeId`, `userId`, and `purpose: "STAFF_ACTIVATION_COMPLETE"` with 15-minute validity.
-8. **Institutional Confirmation:** Staff member reviews their verified appointment snapshot (Full Name, Employee ID, Department, Designation, Institutional Role). All fields are presented in read-only mode.
+   - Upon match, marks challenge `isOtpVerified = true` and issues a short-lived, signed **Activation Ticket** embedding `{ challengeId, userId, purpose: "STAFF_ACTIVATION_COMPLETE" }` with 15-minute validity.
+8. **Institutional Profile Confirmation:** Staff member reviews their verified profile snapshot (`fullName`, `facultyId`, `department`, `designation` from `facultyProfiles` and `role` from `users`). All fields are presented in read-only mode, reflecting the pre-provisioned data with no separate employment entities.
 9. **Password Configuration:** Staff member enters their new institutional password complying with password security criteria.
 10. **Atomic Activation Completion:**
     - Staff member submits password along with the Activation Ticket to the completion endpoint.
     - Inside an atomic MongoDB transaction:
       - Validates Activation Ticket signature, purpose, and unexpired state.
-      - Finds challenge document with `{ _id: challengeId, isOtpVerified: true, isConsumed: false }`.
-      - Atomically sets `isConsumed: true`. If already consumed (race condition or replay attempt), transaction aborts with `409 CONFLICT` (`CHALLENGE_ALREADY_CONSUMED`).
+      - Finds challenge document with `{ _id: challengeId, userId, isOtpVerified: true, isConsumed: false }`.
+      - Atomically sets `isConsumed: true`. If already consumed (race condition or replay attempt), transaction aborts with `409 CONFLICT` (`CHALLENGE_ALREADY_CONSUMED`). This server-side atomic flag ensures replay prevention; stateless tokens cannot self-invalidate on client requests.
       - Hashes password using `bcrypt` (salt rounds $\ge 12$).
       - Updates `users` record: `passwordHash = hash`, `accountStatus = "ACTIVE"`, `isActivated = true`, `activatedAt = new Date()`.
       - Logs immutable audit record `AUTH_STAFF_ACTIVATION_COMPLETED` with actor ID, role, department, and timestamp.
@@ -137,32 +138,30 @@ flowchart TD
     B --> C["Server: Validate Input Formats"]
     C -- "Malformed Input" --> D["Return 400 (VALIDATION_FAILED)"]
     C -- "Valid Format" --> E["Query facultyProfiles by facultyId -> users by userId"]
-    E --> F{"Record Found?"}
-    F -- "No Match" --> G["Return 404 (RECORD_NOT_FOUND)"]
-    F -- "Yes" --> H{"users.role is Non-Student?"}
-    H -- "No (Student Record)" --> I["Return 400 (ROLE_MISMATCH -> Go to /auth/student/activate)"]
-    H -- "Yes" --> J{"users.accountStatus"}
-    J -- "ACTIVE" --> K["Return 409 (ACCOUNT_ALREADY_ACTIVATED -> Go to Login)"]
-    J -- "SUSPENDED" --> L["Return 403 (ACCOUNT_SUSPENDED -> Contact Admin)"]
-    J -- "INVITED" --> M{"Check Resend Cooldown & Burst Limits"}
-    M -- "Throttled" --> N["Return 429 (RATE_LIMITED)"]
-    M -- "Allowed" --> O["Generate 6-Digit OTP & Compute HMAC-SHA256"]
-    O --> P["Save Challenge { userId, otpHash, purpose: STAFF_ACTIVATION, isConsumed: false }"]
-    P --> Q["Dispatch OTP via Official Email / Verified Contact"]
-    Q --> R["Staff Enters 6-Digit OTP on Step 2"]
-    R --> S{"Verify OTP: Unexpired & Attempts < Max?"}
-    S -- "Expired / Max Attempts" --> T["Return 410 / 429 (OTP_EXPIRED / MAX_ATTEMPTS_EXCEEDED)"]
-    S -- "Valid Window" --> U["crypto.timingSafeEqual(computedHMAC, storedHMAC)"]
-    U -- "Mismatch" --> V["Increment attemptsCount -> Return 401 (INVALID_OTP)"]
-    U -- "Match" --> W["Mark isOtpVerified: true & Issue Signed Activation Ticket"]
-    W --> X["Staff Views Read-Only Appointment Snapshot & Sets Password"]
-    X --> Y["Submit Password + Activation Ticket to Complete Endpoint"]
-    Y --> Z["MongoDB Transaction: Atomic isConsumed: false -> true"]
-    Z -- "Replay / Already Consumed" --> AA["Abort: Return 409 (CHALLENGE_ALREADY_CONSUMED)"]
-    Z -- "Success" --> AB["Hash Password (bcrypt cost >= 12)"]
-    AB --> AC["Update users: accountStatus = ACTIVE, isActivated = true, activatedAt = now"]
-    AC --> AD["Write Audit Log: AUTH_STAFF_ACTIVATION_COMPLETED"]
-    AD --> AE["Return 200 OK -> Client displays Step 4 Success & Routes to Staff Login"]
+    E --> F{"Valid Staff Record Found & role in Staff Roles?"}
+    F -- "No Match / Student Record / Mismatch" --> G["Log Security Audit -> Return 404 (INSTITUTIONAL_RECORD_NOT_FOUND)"]
+    F -- "Yes" --> H{"users.accountStatus"}
+    H -- "ACTIVE" --> I["Return 409 (ACCOUNT_ALREADY_ACTIVATED -> Go to Login)"]
+    H -- "SUSPENDED" --> J["Return 403 (ACCOUNT_SUSPENDED -> Contact Admin)"]
+    H -- "INVITED" --> K{"Check Resend Cooldown & Burst Limits"}
+    K -- "Throttled" --> L["Return 429 (RATE_LIMITED)"]
+    K -- "Allowed" --> M["Generate 6-Digit OTP & Compute HMAC-SHA256"]
+    M --> N["Save Challenge { userId, otpHash, purpose: STAFF_ACTIVATION, isConsumed: false }"]
+    N --> O["Dispatch OTP via Official Email / Verified Contact"]
+    O --> P["Staff Enters 6-Digit OTP on Step 2"]
+    P --> Q{"Verify OTP: Unexpired & Attempts < Max?"}
+    Q -- "Expired / Max Attempts" --> R["Return 410 / 429 (OTP_EXPIRED / MAX_ATTEMPTS_EXCEEDED)"]
+    Q -- "Valid Window" --> S["crypto.timingSafeEqual(computedHMAC, storedHMAC)"]
+    S -- "Mismatch" --> T["Increment attemptsCount -> Return 401 (INVALID_OTP)"]
+    S -- "Match" --> U["Mark isOtpVerified: true & Issue Signed Activation Ticket"]
+    U --> V["Staff Reviews Read-Only Profile Details (facultyProfiles) & Sets Password"]
+    V --> W["Submit Password + Activation Ticket to Complete Endpoint"]
+    W --> X["MongoDB Transaction: Atomic isConsumed: false -> true"]
+    X -- "Replay / Already Consumed" --> Y["Abort: Return 409 (CHALLENGE_ALREADY_CONSUMED)"]
+    X -- "Success" --> Z["Hash Password (bcrypt cost >= 12)"]
+    Z --> AA["Update users: accountStatus = ACTIVE, isActivated = true, activatedAt = now"]
+    AA --> AB["Write Audit Log: AUTH_STAFF_ACTIVATION_COMPLETED"]
+    AB --> AC["Return 200 OK -> Client displays Step 4 Success & Routes to Staff Login"]
 ```
 
 ---
@@ -303,9 +302,9 @@ Initiates staff activation by validating pre-provisioned identity and dispatchin
   ```
 - **Common Error Responses:**
   - `400 BAD_REQUEST`: `{ "code": "VALIDATION_FAILED", "message": "Valid Employee ID and official email are required." }`
-  - `400 BAD_REQUEST`: `{ "code": "ROLE_MISMATCH", "message": "Student records cannot be activated via the staff portal. Please visit /auth/student/activate." }`
   - `403 FORBIDDEN`: `{ "code": "ACCOUNT_SUSPENDED", "message": "This account is placed on administrative hold. Please contact institutional governance." }`
-  - `404 NOT_FOUND`: `{ "code": "INSTITUTIONAL_RECORD_NOT_FOUND", "message": "No pre-provisioned staff appointment matches this Employee ID and official email." }`
+  - `404 NOT_FOUND`: `{ "code": "INSTITUTIONAL_RECORD_NOT_FOUND", "message": "No pre-provisioned staff record matches this Employee ID and official email. Please verify with campus administration." }`
+    *(Returned uniformly for unprovisioned identities, mismatched emails, and student records to eliminate account enumeration and role discovery).*
   - `409 CONFLICT`: `{ "code": "ACCOUNT_ALREADY_ACTIVATED", "message": "This account has already been activated. Please proceed to Staff Login.", "redirectTo": "/auth/faculty" }`
   - `429 TOO_MANY_REQUESTS`: `{ "code": "RATE_LIMITED", "message": "Too many requests. Please wait before requesting another verification code." }`
 
@@ -441,8 +440,8 @@ For privileged executive roles (`principal`, `vp`, `admin`), activation addition
 - [ ] **AC-1:** Eligible unactivated faculty (`role: "faculty"`, `accountStatus: "INVITED"`) successfully activate using Employee ID and official email.
 - [ ] **AC-2:** Eligible unactivated HOD (`role: "hod"`), Principal/VP (`role: "principal" | "vp"`), and Admin (`role: "admin"`) successfully activate using their pre-provisioned records without role elevation or alteration.
 - [ ] **AC-3:** Role is derived authoritatively from the database; client-supplied role values are strictly ignored.
-- [ ] **AC-4:** Multi-factor matching requires both Employee ID and official email/contact to match the same record; mismatched pairs return `404 NOT_FOUND`.
-- [ ] **AC-5:** Student records submitted to `/auth/faculty/activate` are rejected with `400 BAD_REQUEST` (`ROLE_MISMATCH`).
+- [ ] **AC-4:** Multi-factor matching requires both Employee ID and official email/contact to match the same record; mismatched pairs return generic `404 NOT_FOUND` (`INSTITUTIONAL_RECORD_NOT_FOUND`).
+- [ ] **AC-5:** Student records submitted to `/auth/faculty/activate` return generic `404 NOT_FOUND` (`INSTITUTIONAL_RECORD_NOT_FOUND`) externally while logging an internal security audit event, preventing role and identity enumeration.
 - [ ] **AC-6:** OTP is time-bound (10 minutes proposed default), single-use, account-bound, and protected against brute-force (max 5 attempts).
 - [ ] **AC-7:** Password meets complexity requirements and is hashed using `bcrypt` (salt rounds $\ge 12$).
 - [ ] **AC-8:** Challenge consumption is atomic; replay attempts return `409 CONFLICT` (`CHALLENGE_ALREADY_CONSUMED`).
@@ -458,8 +457,8 @@ For privileged executive roles (`principal`, `vp`, `admin`), activation addition
 
 ### 11.3 Negative & Security Test Scenarios
 1. **Unprovisioned Employee ID:** Submitting non-existent ID `EMP-9999` &rarr; returns `404 NOT_FOUND` (`INSTITUTIONAL_RECORD_NOT_FOUND`).
-2. **Employee ID / Email Mismatch:** Submitting `EMP-1042` with email belonging to another faculty member &rarr; returns `404 NOT_FOUND`.
-3. **Student Record on Staff Portal:** Submitting a valid student enrollment number (e.g. `CS-2022-049`) &rarr; returns `400 BAD_REQUEST` (`ROLE_MISMATCH`).
+2. **Employee ID / Email Mismatch:** Submitting `EMP-1042` with email belonging to another faculty member &rarr; returns `404 NOT_FOUND` (`INSTITUTIONAL_RECORD_NOT_FOUND`).
+3. **Student Record on Staff Portal:** Submitting a student enrollment number (e.g. `CS-2022-049`) &rarr; returns generic `404 NOT_FOUND` (`INSTITUTIONAL_RECORD_NOT_FOUND`) externally; logs `STAFF_ACTIVATION_REJECTED_NON_STAFF_IDENTITY` internally.
 4. **Role Tampering Attempt:** Request payload includes `"role": "admin"` during faculty activation &rarr; server ignores payload role and activates strictly as `faculty`.
 5. **Replay of Activation Ticket:** Attacker captures and re-submits an already-consumed activation ticket &rarr; returns `409 CONFLICT` (`CHALLENGE_ALREADY_CONSUMED`).
 6. **Expired OTP Submission:** Entering OTP after 10-minute expiry window &rarr; returns `410 GONE` (`OTP_EXPIRED`).
