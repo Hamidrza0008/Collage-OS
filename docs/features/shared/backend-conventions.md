@@ -136,8 +136,8 @@ College OS strictly enforces the architectural boundary between **Authentication
   - Re-retrieves the live `users` record from the database on every protected request. Frontend claims or unverified token claims are never trusted.
   - Enforces the **Account Lifecycle State Machine** (SOT §6.8):
     - **`ACTIVE`:** Granted full role-permitted read and write capabilities within assigned scope.
-    - **`GRADUATED`:** Granted read-only archive access to permitted historical records (e.g. transcript, grade sheets, portfolio showcase). **All write and mutation operations (POST, PUT, PATCH, DELETE) are strictly blocked server-side with `403 FORBIDDEN` (`ACCOUNT_GRADUATED_READ_ONLY`)**, regardless of client UI state or direct manual API requests.
-    - **`SUSPENDED`:** Account placed on administrative hold. Logins are blocked, and all active sessions are revoked immediately. Any request returns `403 FORBIDDEN` (`ACCOUNT_SUSPENDED`).
+    - **`GRADUATED`:** Granted read-only archive access to permitted historical records for graduated students (e.g. transcript, grade sheets, portfolio showcase). **All write and mutation operations (POST, PUT, PATCH, DELETE) are strictly blocked server-side with `403 FORBIDDEN` (`ACCOUNT_GRADUATED_READ_ONLY`)**, regardless of client UI state or direct manual API requests. *(Note: Specific archive permissions and lifecycle representation for offboarded staff remain an unresolved policy decision; see SOT §6.8 vs §16.1).*
+    - **`SUSPENDED`:** Account placed on administrative hold. Logins are blocked, and active session access is immediately rejected via server-side database lookup (`users.findById` in `lifecycleGuard`). Any request returns `403 FORBIDDEN` (`ACCOUNT_SUSPENDED`). *(Note: Any secondary explicit token-denylist or tokenVersion mechanism remains an open implementation detail).*
     - **`INVITED`:** Pre-provisioned account awaiting OTP verification and password setup (`AUTH-02`, `AUTH-04`). Cannot access protected operational endpoints; returns `403 FORBIDDEN` (`ACCOUNT_NOT_ACTIVATED`).
 
 ### 4.3 Protected Request Pipeline

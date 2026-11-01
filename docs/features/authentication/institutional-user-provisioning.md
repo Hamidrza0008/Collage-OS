@@ -140,7 +140,7 @@ stateDiagram-v2
 | **`INVITED`** | **NO** | Blocked | None | None | Pre-provisioned record created by college. User cannot log in. Awaiting OTP activation flow (`AUTH-02`, `AUTH-04`). Returns `403 FORBIDDEN` (`ACCOUNT_NOT_ACTIVATED`). |
 | **`ACTIVE`** | **YES** | Permitted | Full role-permitted scope | Full role-permitted scope | Normal operating state. Full access to dashboard, academics, AI, and profile updates within assigned scope. |
 | **`SUSPENDED`** | **NO** | Revoked | None | None | Administrative hold (disciplinary or security). Logins blocked immediately. Any active session is revoked; protected requests return `403 FORBIDDEN` (`ACCOUNT_SUSPENDED`). |
-| **`GRADUATED`** | **YES** | Permitted | Read-only archive access | **STRICTLY BLOCKED** | Student graduated or faculty offboarded. May log in to view and download historical records (transcripts, portfolios). All mutations return `403 FORBIDDEN` (`ACCOUNT_GRADUATED_READ_ONLY`). |
+| **`GRADUATED`** | **YES** | Permitted | Read-only archive access | **STRICTLY BLOCKED** | Student graduated (read-only archive access to transcripts and portfolio; mutations blocked). *Note on staff offboarding:* SOT §6.8 notes "Student graduated or faculty offboarded" for `GRADUATED/INACTIVE`, but SOT §16.1 limits `users.accountStatus` to `"GRADUATED"` while SOT §16.3 defines faculty status as `"RELIEVED"`. Whether offboarded staff use `users.accountStatus = "GRADUATED"`, a separate `INACTIVE` state, or suspension is an unresolved schema ambiguity (see Section 10.3). |
 
 ### 4.2 State Transition Matrix & Authority
 | Current State | Target State | Triggering Mechanism | Authorized Actor | Audit Required? |
@@ -395,7 +395,7 @@ Administrative endpoint to transition account states (`SUSPENDED`, `ACTIVE`, `GR
   ```
 - **Side Effects:**
   - Immediately marks account as `SUSPENDED` in database.
-  - Automatically revokes any active JWT sessions for this `userId` (via token revocation table or token version increment).
+  - Revokes active access: on every protected request, the server re-queries `users.findById` and verifies `accountStatus === "ACTIVE"` (SOT §17); any request presenting a previously issued JWT is immediately rejected. Any secondary explicit token-denylist or `tokenVersion` mechanism remains an open implementation detail.
   - Writes immutable record to `auditLogs`.
 
 ---
@@ -485,6 +485,8 @@ interface IProvisionAuditEntry {
 #### Genuinely Open Decisions
 1. **Bulk Ingestion Format & Schema Mapping:** Whether batch uploads use CSV, XLSX, or JSON, and how institutional registrar errors in bulk files are reported (e.g. line-by-line validation summary).
 2. **Executive Role Provisioning Workflow:** Exact administrative approval protocol for provisioning HOD, Principal, VP, and new Admin accounts (e.g. dual-authorization registrar key).
+3. **Staff Offboarding Lifecycle Representation:** SOT §6.8 references "Student graduated or faculty offboarded" for `GRADUATED/INACTIVE`, but SOT §16.1 defines `users.accountStatus` strictly as `"INVITED" | "ACTIVE" | "SUSPENDED" | "GRADUATED"`, while SOT §16.3 defines `facultyProfiles.academicStatus` as `"ACTIVE" | "ON_LEAVE" | "RELIEVED"`. Whether offboarded staff are marked with `users.accountStatus = "GRADUATED"`, a separate `INACTIVE` state, or administrative suspension, and what residual archive access rights apply to relieved staff, remains an unresolved institutional policy decision.
+4. **Explicit JWT Revocation Mechanism:** Immediate session blocking is guaranteed via server-side `users.findById` re-evaluation on protected requests (SOT §17). Whether a secondary explicit token-denylist (e.g. Redis cache) or user `tokenVersion` counter is deployed remains an open implementation detail.
 
 #### Proposed Implementation Details
 - Proposed REST endpoints: `POST /api/v1/admin/provision/student`, `POST /api/v1/admin/provision/staff`, `POST /api/v1/admin/provision/bulk`, `PATCH /api/v1/admin/users/:id/lifecycle`.
