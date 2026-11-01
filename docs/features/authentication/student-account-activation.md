@@ -13,18 +13,17 @@
 ## 1. Executive Summary & Purpose
 
 ### 1.1 Purpose
-Student Account Activation is the secure, multi-factor onboarding bridge connecting an institutionally pre-provisioned student identity to an active, student-owned user account. In strict accordance with the College OS core invariant—**No Open Registration** (SOT §21.1, §22.2)—students cannot self-register an arbitrary account or choose their institutional attributes. Instead, an eligible student must prove ownership of their pre-provisioned record using a mandatory multi-factor handshake:
+Student Account Activation is the secure, multi-factor onboarding bridge connecting an institutionally pre-provisioned student identity to an active, student-owned user account. In strict accordance with the College OS core invariant—**No Open Registration** (SOT §21.1, §22.2)—students cannot self-register an arbitrary account or choose their institutional attributes. Instead, an eligible student must prove ownership of their pre-provisioned record using a mandatory multi-factor handshake (SOT §6.2, §22.4):
 $$\text{Enrollment Number / PRN} + \text{Official College Email / Verified Contact} + \text{Time-bound OTP}$$
 
 Upon successful cryptographic OTP verification, the student reviews their verified, read-only institutional data (`fullName`, `department`, `semester`, `section`, `studentId`), optionally initializes showcase portfolio fields (`bio`, `skills`), and sets their private password. The account then transitions atomically from `INVITED` to `ACTIVE`.
 
 ### 1.2 In-Scope (Approved Core MVP Scope)
-- **Multi-Factor Identity Matching:** Verifying that the submitted Enrollment Number (`studentId`) and official college email match an existing pre-provisioned record in `users` and `studentProfiles`.
-- **Time-Bound, Single-Use OTP Verification:** Generating, hashing, dispatching, and verifying a cryptographically secure One-Time Password bound exclusively to student activation.
+- **Multi-Factor Identity Matching:** Verifying that the submitted Enrollment Number (`studentId`) and official college email or verified institutional contact match an existing pre-provisioned record in `users` and `studentProfiles`.
+- **Time-Bound, Single-Use OTP Verification:** Generating, hashing, dispatching, and verifying a cryptographically secure One-Time Password bound exclusively to student activation via the student's official college email or verified institutional contact.
 - **Read-Only Institutional Confirmation:** Displaying verified institutional credentials to the student without permitting client-side mutation of academic records.
-- **User Password Creation:** Secure client-side password creation complying with institutional complexity rules, hashed server-side using `bcrypt` (salt rounds &ge; 12).
-- **Atomic State Transition:** Updating `users.accountStatus` to `ACTIVE`, setting `isActivated = true`, and stamping `activatedAt = Date.now()`.
-- **Invalidation of Activation Secrets:** Immediate single-use consumption and invalidation of the OTP upon completion.
+- **User Password Creation:** Secure client-side password creation complying with institutional complexity rules, hashed server-side using `bcrypt` (salt rounds &ge; 12, meeting SOT §6.2 cost &ge; 10).
+- **Atomic State Transition & Single-Use Consumption:** Atomically consuming the activation challenge and updating `users.accountStatus` to `ACTIVE`, setting `isActivated = true`, and stamping `activatedAt = Date.now()`.
 - **Audit Trail Recording:** Writing an immutable audit log entry for the account activation event.
 
 ### 1.3 Out-of-Scope (Explicit Non-Goals)
@@ -76,24 +75,25 @@ Inspection of the current frontend repository reveals several critical implement
 ## 4. End-to-End Activation Flow & Flowcharts
 
 ### 4.1 Step-by-Step Activation Lifecycle
-1. **Initiation (`/auth/student/activate`):** The student inputs their `enrollmentNo` (`studentId`) and official institutional `email`.
+1. **Initiation (`/auth/student/activate`):** The student inputs their `enrollmentNo` (`studentId`) and approved official contact information (official college email or verified phone, per SOT §6.2/§22.4).
 2. **Record Matching & Eligibility Check:** Backend queries `studentProfiles` and `users`. It validates:
    - Record exists and belongs to role `student`.
    - `users.accountStatus === "INVITED"` and `isActivated === false`.
    - If account is `ACTIVE`, `SUSPENDED`, or not found, return safe generic response to prevent identity probing.
-3. **OTP Generation & Dispatch:** A cryptographically random 6-digit OTP is generated. A secure SHA-256 hash (`otpHash`) is stored in a temporary activation challenge document with a 10-minute expiry. The raw code is transmitted via the approved college email service.
+3. **OTP Generation & Dispatch:** A cryptographically random 6-digit OTP is generated. To protect against offline brute-force attacks on the low-entropy 6-digit code, the server stores a keyed `HMAC-SHA256(rawOtp, serverHmacSecret)` (`otpHash`) in a temporary `otpChallenges` document with a 10-minute expiry (SOT §17). The raw code is transmitted via the student's official college email or verified institutional contact.
 4. **OTP Submission & Challenge Verification:** The student inputs the 6-digit code. The server verifies:
    - Challenge has not expired (`expiresAt > Date.now()`).
-   - Attempt count is below maximum threshold (&le; 5 attempts).
-   - SHA-256 hash of entered code matches `otpHash`.
-5. **Issuance of Short-Lived Activation Ticket:** Upon successful OTP verification, the server issues a short-lived (15-minute) signed `activationToken` (JWT) containing `{ sub: userId, purpose: "STUDENT_ACTIVATION_CONFIRMED" }`.
+   - Attempt count is below maximum threshold (proposed default: &le; 5 attempts).
+   - Keyed HMAC hash of entered code matches stored `otpHash`.
+5. **Issuance of Bound Activation Token:** Upon successful OTP verification, the server marks the challenge record as `isOtpVerified = true` and issues a short-lived signed JWT `activationToken` (proposed default: 15-minute expiry) containing:
+   `{ sub: userId, challengeId: challenge._id, purpose: "STUDENT_ACTIVATION" }`.
 6. **Institutional Details Confirmation (`/auth/student/confirm`):** The client presents the `activationToken` to fetch verified, read-only institutional data (`fullName`, `department`, `semester`, `section`, `studentId`).
 7. **Password Setup (`/auth/student/password`):** The student provides their chosen password. The client submits the password alongside the `activationToken`.
-8. **Final Atomic Activation:**
+8. **Final Atomic Activation & Guaranteed One-Time Use:**
    - Password is validated against complexity rules and hashed using `bcrypt` (salt rounds &ge; 12).
-   - In MongoDB Atlas, `users` is atomically updated: `passwordHash = hash`, `accountStatus = "ACTIVE"`, `isActivated = true`, `activatedAt = new Date()`.
+   - In MongoDB Atlas, an atomic transaction verifies that `otpChallenges` matching `{ _id: challengeId, userId, isConsumed: false, isOtpVerified: true }` exists and updates `isConsumed = true`. If the challenge was already consumed, expired, or invalid, the operation aborts with `400 BAD_REQUEST` (`TOKEN_INVALID` or `ALREADY_ACTIVATED`), preventing token replay.
+   - Concurrently within the transaction, `users` is updated: `passwordHash = hash`, `accountStatus = "ACTIVE"`, `isActivated = true`, `activatedAt = new Date()`.
    - `studentProfiles` is updated with any initial portfolio showcase fields (`bio`, `skills`).
-   - The temporary OTP challenge and `activationToken` are permanently invalidated.
 9. **Hand-Off to Login (SOT §6.2):** The student is redirected to `/auth/student` with a success notice to complete their first authenticated login.
 
 ### 4.2 Comprehensive Activation Flowchart
@@ -132,30 +132,42 @@ flowchart TD
 
 ## 5. OTP Security, Operational Rules & Threat Mitigations
 
-### 5.1 OTP Generation & Storage Invariants
-- **Cryptographic Randomness:** OTPs must be generated using cryptographically secure pseudorandom number generators (e.g. `crypto.randomInt(100000, 999999)`), producing a 6-digit numeric string.
-- **No Plaintext OTP Storage:** The raw OTP must **never** be stored in the database. The database must store only a one-way cryptographic hash:
-  $$\text{otpHash} = \text{SHA-256}(\text{rawOtp} + \text{serverSalt})$$
-- **Strict Purpose & Account Binding:** The OTP document binds strictly to `{ userId, targetEmail, purpose: "STUDENT_ACTIVATION" }`. An OTP issued for activation cannot be accepted for password reset (`AUTH-06`) or staff activation (`AUTH-04`).
-- **Single-Use Consumption:** The moment an OTP is successfully verified, its state is marked `isConsumed = true`, or the document is deleted. Replaying the same code is impossible.
+### 5.1 OTP Generation & Cryptographic Storage Invariants
+- **Cryptographic Randomness (Proposed Default):** OTPs are generated using a cryptographically secure pseudorandom number generator (e.g. `crypto.randomInt(100000, 999999)`), producing a 6-digit numeric string.
+- **Low-Entropy Defense & Keyed HMAC Storage (Proposed Security Design):**
+  A 6-digit numeric code possesses very low entropy ($10^6$ or 1,000,000 possible combinations). Storing a standard unsalted or database-salted `SHA-256(rawOtp)` is vulnerable to instant offline dictionary generation if the database is leaked or accessed by an unauthorized party.
+  To mitigate this, College OS proposes storing a keyed HMAC:
+  $$\text{otpHash} = \text{HMAC-SHA256}(\text{rawOtp}, \text{serverHmacSecret})$$
+  where `serverHmacSecret` is a high-entropy secret key managed outside MongoDB Atlas (e.g. via an environment secret or cloud Key Management Service). Without access to `serverHmacSecret`, an attacker with a database snapshot cannot perform offline dictionary recovery on the 6-digit OTP. *(This is a proposed security enhancement; SOT §17 locks the presence of `otpHash` without mandating the algorithm).*
+- **No Plaintext OTP Storage:** The raw OTP must **never** be stored in the database or logged in application traces.
+- **Strict Purpose & Account Binding:** The OTP document binds strictly to `{ userId, targetContact, purpose: "STUDENT_ACTIVATION" }`. An OTP issued for activation cannot be accepted for password reset (`AUTH-06`) or staff activation (`AUTH-04`).
+- **Guaranteed One-Time Use & Replay Defense:**
+  A stateless JWT `activationToken` cannot guarantee one-time use merely because an OTP was consumed. To prevent token reuse and race conditions:
+  1. The `activationToken` embeds the unique `challengeId` (`otpChallenges._id`).
+  2. Completion of activation requires an atomic conditional database operation:
+     `OtpChallenge.findOneAndUpdate({ _id: challengeId, userId, isOtpVerified: true, isConsumed: false }, { $set: { isConsumed: true, consumedAt: new Date() } })`.
+  3. If no challenge document is updated (because it was already consumed, expired, or tampered with), the request fails immediately with `400 BAD_REQUEST` (`TOKEN_INVALID` or `ALREADY_ACTIVATED`).
 
-### 5.2 Attempt Limits, Expiration & Throttling (Required Operational Controls)
-| Operational Control | Requirement / Proposed Parameter | Purpose / Security Defense |
-| :--- | :--- | :--- |
-| **OTP Lifetime** | 10 Minutes (SOT §17) | Closes window of opportunity for intercepted codes. |
-| **Max Verification Attempts**| 5 Attempts per OTP challenge | Prevents brute-force guessing of the 6-digit keyspace ($10^6$). |
-| **Resend Cooldown** | 60 Seconds between dispatch requests | Prevents SMS/Email flooding and denial-of-wallet/service. |
-| **Max Resends per Day** | 5 Dispatches per 24 hours per account | Blocks persistent spamming of institutional mailboxes. |
-| **Concurrent Race Guard** | Atomic conditional update or DB lock | Prevents concurrent duplicate activations of the same account. |
+### 5.2 Attempt Limits, Expiration & Throttling
+The table below distinguishes locked SOT requirements from proposed operational parameters:
+
+| Operational Control | Classification | Parameter Value | Security / Operational Purpose |
+| :--- | :--- | :--- | :--- |
+| **OTP Lifetime** | Approved Requirement (SOT §17) | **10 Minutes** | Closes window of opportunity for intercepted codes. |
+| **Max Verification Attempts**| Proposed Default | **5 Attempts** per challenge | Prevents online brute-force guessing of the 6-digit keyspace. |
+| **Resend Cooldown** | Proposed Default | **60 Seconds** between dispatches | Prevents dispatch flooding and denial-of-service/wallet. |
+| **Max Resends per Day** | Proposed Default | **5 Dispatches** per 24 hours | Blocks persistent spamming of institutional mailboxes/SMS. |
+| **Activation Token Lifetime**| Proposed Default | **15 Minutes** | Restricts window between OTP verification and password setup. |
+| **Concurrent Race Guard** | Approved Requirement | Atomic DB transaction | Prevents concurrent duplicate activations of the same account. |
 
 ### 5.3 User Enumeration Defense
-When an activation request fails at Step 1 (e.g. enrollment number not found or mismatched email), the API returns a uniform, generic error response:
+When an activation request fails at Step 1 (e.g. enrollment number not found or mismatched contact), the API returns a uniform, generic error response:
 ```json
 {
   "success": false,
   "error": {
     "code": "INVALID_ACTIVATION_CREDENTIALS",
-    "message": "We could not find an unactivated student record matching this Enrollment Number and Email. Please verify your details or contact the college registrar."
+    "message": "We could not find an unactivated student record matching this Enrollment Number and Contact. Please verify your details or contact the college registrar."
   }
 }
 ```
@@ -174,13 +186,16 @@ import { Schema, Document, Types } from 'mongoose';
 export interface IOtpChallenge extends Document {
   _id: Types.ObjectId;
   userId: Types.ObjectId;        // References users._id
-  targetEmail: string;           // Canonical institutional email
-  otpHash: string;               // SHA-256 hash of the 6-digit code
+  targetContact: string;         // Canonical institutional email or verified phone
+  contactType: 'EMAIL' | 'PHONE';// Channel used for OTP dispatch
+  otpHash: string;               // Keyed HMAC-SHA256 hash of the 6-digit code
   purpose: 'STUDENT_ACTIVATION' | 'STAFF_ACTIVATION' | 'PASSWORD_RESET';
   attemptsCount: number;         // Incremented on every failed verify attempt
   maxAttempts: number;           // Defaults to 5
-  isConsumed: boolean;           // Marked true upon verification
-  expiresAt: Date;               // TTL index: 10 minutes from creation
+  isOtpVerified: boolean;        // Set true upon successful OTP validation
+  isConsumed: boolean;           // Marked true upon final password creation
+  consumedAt?: Date;             // Timestamp when activation completed
+  expiresAt: Date;               // TTL index: 10 minutes from creation (SOT §17)
   createdAt: Date;
   updatedAt: Date;
 }
@@ -188,7 +203,8 @@ export interface IOtpChallenge extends Document {
 const OtpChallengeSchema = new Schema<IOtpChallenge>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-    targetEmail: { type: String, required: true, lowercase: true, trim: true },
+    targetContact: { type: String, required: true, lowercase: true, trim: true },
+    contactType: { type: String, required: true, enum: ['EMAIL', 'PHONE'], default: 'EMAIL' },
     otpHash: { type: String, required: true },
     purpose: {
       type: String,
@@ -197,7 +213,9 @@ const OtpChallengeSchema = new Schema<IOtpChallenge>(
     },
     attemptsCount: { type: Number, default: 0 },
     maxAttempts: { type: Number, default: 5 },
+    isOtpVerified: { type: Boolean, default: false },
     isConsumed: { type: Boolean, default: false },
+    consumedAt: { type: Date },
     expiresAt: { type: Date, required: true }
   },
   { timestamps: true }
@@ -223,16 +241,17 @@ Initiates the activation handshake by validating the institutional record and di
   ```json
   {
     "enrollmentNo": "CS-2022-049",
-    "email": "aarav.sharma@csmu.edu.in"
+    "contact": "aarav.sharma@csmu.edu.in"
   }
   ```
+  *(Accepts official college email or registered phone number matching the pre-provisioned record, per SOT §6.2/§22.4).*
 - **Success Response (`200 OK`):**
   ```json
   {
     "success": true,
     "data": {
-      "message": "A 6-digit verification code has been dispatched to your official college email.",
-      "maskedEmail": "aa******@csmu.edu.in",
+      "message": "A 6-digit verification code has been dispatched to your official institutional contact.",
+      "maskedContact": "aa******@csmu.edu.in",
       "expiresInSeconds": 600
     }
   }
@@ -246,14 +265,14 @@ Initiates the activation handshake by validating the institutional record and di
 ---
 
 ### 7.2 `POST /api/v1/auth/student/activate/verify-otp` (Proposed)
-Verifies the submitted OTP against the stored SHA-256 hash and issues a short-lived activation ticket.
+Verifies the submitted OTP against the stored keyed HMAC hash and issues a short-lived activation ticket bound to the challenge.
 
 - **Authentication:** Public
 - **Request Body:**
   ```json
   {
     "enrollmentNo": "CS-2022-049",
-    "email": "aarav.sharma@csmu.edu.in",
+    "contact": "aarav.sharma@csmu.edu.in",
     "otp": "849201"
   }
   ```
@@ -276,6 +295,7 @@ Verifies the submitted OTP against the stored SHA-256 hash and issues a short-li
     }
   }
   ```
+- **Side Effects:** Server marks `otpChallenges.isOtpVerified = true` and binds `activationToken` to `{ challengeId: challenge._id, userId }`.
 - **Error Responses:**
   - `400 BAD_REQUEST`: `{ "success": false, "error": { "code": "OTP_INVALID", "message": "Incorrect verification code. 4 attempts remaining." } }`
   - `400 BAD_REQUEST`: `{ "success": false, "error": { "code": "OTP_EXPIRED", "message": "Verification code has expired. Please request a new one." } }`
@@ -284,7 +304,7 @@ Verifies the submitted OTP against the stored SHA-256 hash and issues a short-li
 ---
 
 ### 7.3 `POST /api/v1/auth/student/activate/complete` (Proposed)
-Completes the activation by creating the user password and updating the account state to `ACTIVE`.
+Completes the activation by creating the user password and atomically updating the account state to `ACTIVE` and consuming the challenge.
 
 - **Authentication:** Requires `activationToken` presented in the `Authorization: Bearer <token>` header or request body.
 - **Request Body:**
@@ -307,16 +327,16 @@ Completes the activation by creating the user password and updating the account 
   }
   ```
 - **Error Responses:**
-  - `400 BAD_REQUEST`: `{ "success": false, "error": { "code": "TOKEN_INVALID", "message": "Activation challenge token is invalid or expired." } }`
+  - `400 BAD_REQUEST`: `{ "success": false, "error": { "code": "TOKEN_INVALID", "message": "Activation challenge token is invalid, expired, or already consumed." } }`
   - `409 CONFLICT`: `{ "success": false, "error": { "code": "ALREADY_ACTIVATED", "message": "Account was activated in another session." } }`
   - `422 UNPROCESSABLE`: `{ "success": false, "error": { "code": "WEAK_PASSWORD", "message": "Password must be at least 8 characters and contain uppercase, lowercase, numbers, and symbols." } }`
-- **Side Effects:**
-  - `users.passwordHash` set to bcrypt hash of `password`.
+- **Side Effects (Atomic Transaction):**
+  - Verifies challenge record `_id === token.challengeId` is not consumed and marks `isConsumed = true`.
+  - `users.passwordHash` set to bcrypt hash of `password` (cost factor &ge; 12).
   - `users.accountStatus` updated to `ACTIVE`.
   - `users.isActivated` set to `true`.
   - `users.activatedAt` set to current timestamp.
   - Optional `studentProfiles.bio` and `skills` updated.
-  - Challenge invalidated.
   - Immutable audit record written to `auditLogs`.
 
 ---
@@ -406,14 +426,19 @@ Completes the activation by creating the user password and updating the account 
 
 ### 12.1 Resolved Design Decisions
 - **No Open Self-Registration (SOT §6.1, §22.2):** Resolved. Pre-provisioning by institution is mandatory.
-- **Multi-Factor Requirement (SOT §6.2, §22.4):** Resolved. Enrollment Number + Official Email + OTP is required.
-- **User Password Ownership (SOT §6.7, §22.5):** Resolved. Student creates password; hashed via bcrypt.
+- **Multi-Factor Requirement (SOT §6.2, §22.4):** Resolved. Enrollment Number + Official College Email or Verified Contact (Phone) + Time-bound OTP is required.
+- **User Password Ownership (SOT §6.7, §22.5):** Resolved. Student creates password; hashed via bcrypt (cost factor &ge; 10 in SOT §6.2, &ge; 12 recommended).
 - **Institutional Field Immutability (SOT §8, §16.2):** Resolved. Institutional records confirmed in Step 2 cannot be edited.
+- **Atomic Activation & Single-Use Consumption:** Resolved. Challenge record is consumed atomically with user state transition to `ACTIVE`.
 
-### 12.2 Genuinely Open Decisions (Inventory §7.2)
-1. **OTP Delivery Provider:** Concrete email or SMS service provider (e.g. Amazon SES, SendGrid, Twilio) is unselected.
-2. **Final Password Policy Parameters:** The current baseline requires 8+ characters, mixed case, numbers, and symbols. Confirmation of exact institutional minimums (e.g. 10 or 12 characters) remains open with administration.
-3. **Resend and Rate-Limit Thresholds:** Baseline recommendations (60s cooldown, 5 attempts max, 5 resends/day) require institutional IT confirmation.
+### 12.2 Proposed Security Designs & Implementation Details
+- **Keyed HMAC-SHA256 for OTP Storage:** Proposed security design to protect against low-entropy ($10^6$) dictionary attacks on 6-digit codes.
+- **Challenge-Bound Activation Ticket:** Proposed mechanism carrying `challengeId` and verified against MongoDB Atlas conditional update to prevent token replay.
+
+### 12.3 Genuinely Open Decisions (Inventory §7.2)
+1. **OTP Delivery Provider & Primary Channel:** Concrete email or SMS service provider (e.g. Amazon SES, SendGrid, Twilio) is unselected. Confirmation of whether email or SMS is default or user-selectable remains open.
+2. **Final Password Policy Parameters:** The baseline proposed default requires 8+ characters, mixed case, numbers, and symbols. Confirmation of exact institutional minimums (e.g. 10 or 12 characters) remains open with administration.
+3. **Resend and Rate-Limit Thresholds:** Baseline proposed defaults (60s cooldown, 5 attempts max, 5 resends/24 hours) require institutional IT confirmation.
 
 ### 12.3 Existing UI Gaps to Address
 - **Missing OTP Input Form:** `frontend/components/auth/StudentActivationPage.jsx` must be updated to include the OTP entry and verification step before advancing to `/auth/student/confirm`.
